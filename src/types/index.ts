@@ -27,5 +27,4 @@ export * from './FAQ';
 export * from './HeroSlide';
 export * from './FoundationProfile';
 export * from './BankAccount';
-export * from './Statics'; 
 export * from './NavigationItem';

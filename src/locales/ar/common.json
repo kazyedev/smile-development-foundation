@@ -1,0 +1,16 @@
+{
+  "navigation": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "programs": "البرامج",
+    "projects": "المشاريع",
+    "news": "الأخبار",
+    "contact": "اتصل بنا"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "submit": "إرسال",
+    "cancel": "إلغاء"
+  }
+}
