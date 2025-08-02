@@ -1,30 +1,30 @@
 // Core entities
-export * from './Project';
-export * from './Program';
-export * from './Activity';
+export * from './project';
+export * from './program';
+export * from './activity';
 
 // Team and people
-export * from './DirectorMember';
-export * from './TeamMember';
-export * from './Partner';
+export * from './directorMember';
+export * from './teamMember';
+export * from './partner';
 
 // Media
-export * from './Photo';
-export * from './Video';
+export * from './photo';
+export * from './video';
 
 // Content
-export * from './Publication';
-export * from './Report';
-export * from './Story';
-export * from './News';
-export * from './NewsCategory';
+export * from './publication';
+export * from './report';
+export * from './story';
+export * from './news';
+export * from './newsCategory';
 
 // Other
-export * from './Job';
-export * from './FAQ';
+export * from './job';
+export * from './faq';
 
 // Foundation and UI
-export * from './HeroSlide';
-export * from './FoundationProfile';
-export * from './BankAccount';
-export * from './NavigationItem';
+export * from './heroSlide';
+export * from './foundationProfile';
+export * from './bankAccount';
+export * from './navigationItem';

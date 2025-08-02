@@ -1,4 +1,4 @@
-import { BankAccount } from "./BankAccount";
+import { BankAccount } from "./bankAccount";
 
 interface Static {
   icon: string;

@@ -1,4 +1,4 @@
-import { VolunteerQuestions } from "./VolunteerQuestions";
+import { VolunteerQuestions } from "./volunteerQuestions";
 
 export interface VolunteerRequest {
   id: number;

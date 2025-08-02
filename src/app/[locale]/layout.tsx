@@ -1,13 +1,14 @@
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
-  // params: { locale }
-}: {
+  params,
+}: Readonly<{
   children: React.ReactNode;
-  // params: { locale: string };
-}) {
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale } = await params;
   return (
-    <div>
-      {/* <div>Locale Layout for {locale}</div> */}
+    <div dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      
       {children}
     </div>
   );

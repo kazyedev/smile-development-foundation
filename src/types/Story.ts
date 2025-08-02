@@ -1,7 +1,7 @@
-import { Activity } from './Activity';
-import { MediaCategory } from './MediaCategory';
-import { Program } from './Program';
-import { Project } from './Project';
+import { Activity } from './activity';
+import { MediaCategory } from './mediaCategory';
+import { Program } from './program';
+import { Project } from './project';
 
 export interface Story {
   isEnglish: boolean;

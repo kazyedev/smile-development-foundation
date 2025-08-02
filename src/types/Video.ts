@@ -1,4 +1,4 @@
-import { MediaCategory } from './MediaCategory';
+import { MediaCategory } from './mediaCategory';
 
 export interface Video  {
   titleEn: string;

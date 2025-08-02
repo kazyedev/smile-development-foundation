@@ -1,5 +1,6 @@
-import CMSHeader from "@/components/cms/CMSHeader";
-import Sidebar from "@/components/cms/Sidebar";
+import DashboardHeader from "@/components/cms/DahsboardHeader";
+import Sidebar from "@/components/cms/DashboardSidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function CmsLayout({
   children
@@ -8,9 +9,11 @@ export default function CmsLayout({
 }) {
   return (
     <div>
-      <CMSHeader />
-      <Sidebar />
-      {children}
+      <SidebarProvider>
+      <DashboardHeader />
+        <Sidebar />
+        {children}
+      </SidebarProvider>
     </div>
   );
 }
