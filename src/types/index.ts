@@ -15,7 +15,7 @@ export * from './video';
 // Content
 export * from './publication';
 export * from './report';
-export * from './story';
+export * from './successStory';
 export * from './news';
 export * from './newsCategory';
 

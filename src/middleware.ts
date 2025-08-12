@@ -1,12 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { locales } from './lib/i18n';
 
 const PUBLIC_FILE = /\.(.*)$/;
 const LOCALES = ['en', 'ar'];
 const DEFAULT_LOCALE = 'en';
 
+// function getLocale(request: NextRequest) {
+//   const { pathname } = request.nextUrl;
+//   const pathnameSegments = pathname.split('/').filter(Boolean);
+//   return pathnameSegments[0] || DEFAULT_LOCALE;
+// }
+
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const pathnameSegments = pathname.split('/').filter(Boolean);
+
+  // Check if there is any supported locale in the pathname
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  )
+
+  if (pathnameHasLocale) {
+    return NextResponse.next();
+  }
 
   // Ignore static files and system routes
   if (

@@ -1,26 +1,28 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
-export default function Footer() {
+export default function Footer({ locale }: { locale: string }) {
+  const isLocaleEnglish = locale === "en";
+  
+
   return (
     <footer className="bg-background text-foreground">
       {/* CTA Section */}
-      <section className="bg-card text-center py-20 px-6">
+      <section className="bg-[var(--muted)] dark:bg-card text-center py-20 px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-bold text-card-foreground leading-tight mb-6">
-            Make a difference today.
+            {isLocaleEnglish ? "Make a difference today." : "اجعل الفرق الآن"}
             <br />
-            Your impact starts now.
+            {isLocaleEnglish ? "Your impact starts now." : "تبدأ أثرك الآن"}
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-            Join our mission to create positive change in communities around the world. 
-            Every contribution makes a difference.
+            {isLocaleEnglish ? "Join our mission to create positive change in communities around the world. Every contribution makes a difference." : "انضم إلى مهمتنا لإحداث تغيير إيجابي في المجتمعات في جميع أنحاء العالم. كل المساهمة تجعل فرقاً."}
           </p>
           <Button 
             asChild
             className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6 py-3 h-auto text-base"
           >
-            <a href="/donate">Donate Now →</a>
+            <a href={`/${locale}/donate`}>{isLocaleEnglish ? "Donate Now" : "تبرع الآن"} →</a>
           </Button>
         </div>
       </section>
@@ -30,11 +32,10 @@ export default function Footer() {
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
           <div className="lg:flex-1">
             <h3 className="text-xl font-semibold text-foreground mb-3">
-              Stay connected
+              {isLocaleEnglish ? "Stay connected" : "ابقى على تواصل"}
             </h3>
             <p className="text-muted-foreground text-base">
-              Subscribe to our newsletter for the latest updates on our programs, 
-              success stories, and ways to get involved.
+              {isLocaleEnglish ? "Subscribe to our newsletter for the latest updates on our programs, success stories, and ways to get involved." : "اشترك في النشرة الإخبارية للحصول على آخر التحديثات عن برامجنا وقصص النجاح وطرق المشاركة."}
             </p>
           </div>
           
@@ -42,7 +43,7 @@ export default function Footer() {
             <Input 
               type="email"
               name="email"
-              placeholder="Your email address" 
+              placeholder={isLocaleEnglish ? "Your email address" : "عنوان بريدك الإلكتروني"}
               className="bg-input border-border text-foreground placeholder:text-muted-foreground flex-1"
               required
             />
@@ -50,7 +51,7 @@ export default function Footer() {
               type="submit"
               className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-8 whitespace-nowrap"
             >
-              Subscribe
+              {isLocaleEnglish ? "Subscribe" : "اشترك"}
             </Button>
           </form>
         </div>
@@ -61,73 +62,73 @@ export default function Footer() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
-              <h4 className="font-semibold text-foreground mb-4">About</h4>
+              <h4 className="font-semibold text-foreground mb-4">{isLocaleEnglish ? "About" : "عن المؤسسة"}</h4>
               <nav className="space-y-3">
-                <a href="/about-us" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  About Us
+                <a href={`/${locale}/about-us`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "About Us" : "عن المؤسسة"}
                 </a>
-                <a href="/board-of-directors" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Board of Directors
+                <a href={`/${locale}/board-of-directors`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Board of Directors" : "مجلس الإدارة"}
                 </a>
-                <a href="/team-members" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Team Members
+                <a href={`/${locale}/team-members`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Team Members" : "فريق العمل"}
                 </a>
-                <a href="/faqs" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  FAQs
+                <a href={`/${locale}/faqs`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "FAQs" : "الأسئلة الشائعة"}
                 </a>
               </nav>
             </div>
             
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Initiatives</h4>
+              <h4 className="font-semibold text-foreground mb-4">{isLocaleEnglish ? "Initiatives" : "المبادرات"}</h4>
               <nav className="space-y-3">
-                <a href="/programs" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Programs
+                <a href={`/${locale}/programs`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Programs" : "البرامج"}
                 </a>
-                <a href="/projects" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Projects
+                <a href={`/${locale}/projects`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Projects" : "المشاريع"}
                 </a>
-                <a href="/activities" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Activities
+                <a href={`/${locale}/activities`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Activities" : "الأنشطة"}
                 </a>
-                <a href="/news" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  News
+                <a href={`/${locale}/news`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "News" : "الأخبار"}    
                 </a>
               </nav>
             </div>
             
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Media</h4>
+              <h4 className="font-semibold text-foreground mb-4">{isLocaleEnglish ? "Media" : "الوسائط"}</h4>
               <nav className="space-y-3">
-                <a href="/media/images" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Photo Gallery
+                <a href={`/${locale}/media/images`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Photo Gallery" : "معرض الصور"}
                 </a>
-                <a href="/media/videos" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Videos
+                <a href={`/${locale}/media/videos`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Videos" : "الفيديوهات"}
                 </a>
-                <a href="/media/publications" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Publications
+                <a href={`/${locale}/media/publications`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Publications" : "النشرات"}
                 </a>
-                <a href="/media/success-stories" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Success Stories
+                <a href={`/${locale}/media/success-stories`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Success Stories" : "قصص النجاح"}
                 </a>
               </nav>
             </div>
             
             <div>
-              <h4 className="font-semibold text-foreground mb-4">Get Involved</h4>
+              <h4 className="font-semibold text-foreground mb-4">{isLocaleEnglish ? "Get Involved" : "المشاركة"}</h4>
               <nav className="space-y-3">
-                <a href="/donate" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Donate
+                <a href={`/${locale}/donate`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Donate" : "تبرع"}
                 </a>
-                <a href="/become-a-volunteer" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Volunteer
+                <a href={`/${locale}/become-a-volunteer`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Volunteer" : "متطوع"}
                 </a>
-                <a href="/work-with-us" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Work With Us
+                <a href={`/${locale}/work-with-us`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Work With Us" : "العمل معنا"}
                 </a>
-                <a href="/contact-us" className="block text-muted-foreground hover:text-foreground transition-colors">
-                  Contact Us
+                <a href={`/${locale}/contact-us`} className="block text-muted-foreground hover:text-foreground transition-colors">
+                  {isLocaleEnglish ? "Contact Us" : "تواصل معنا"}
                 </a>
               </nav>
             </div>
@@ -139,13 +140,13 @@ export default function Footer() {
       <section className="border-t border-border py-6 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col md:flex-row items-center gap-4 text-muted-foreground text-sm">
-            <p>© 2025 Smile Development Foundation. All rights reserved.</p>
+            <p>© 2025 Smile Development Foundation. {isLocaleEnglish ? "All rights reserved." : "جميع الحقوق محفوظة."}</p>
             <div className="flex items-center gap-4">
-              <a href="/privacy-policy" className="hover:text-foreground transition-colors">
-                Privacy Policy
+                <a href={`/${locale}/privacy-policy`} className="hover:text-foreground transition-colors">
+                {isLocaleEnglish ? "Privacy Policy" : "سياسة الخصوصية"}
               </a>
-              <a href="/terms-of-service" className="hover:text-foreground transition-colors">
-                Terms of Service
+              <a href={`/${locale}/terms-of-service`} className="hover:text-foreground transition-colors">
+                {isLocaleEnglish ? "Terms of Service" : "الشروط والأحكام"}  
               </a>
             </div>
           </div>

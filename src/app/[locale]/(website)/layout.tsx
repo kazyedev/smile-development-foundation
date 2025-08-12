@@ -1,16 +1,19 @@
 import Header from "@/components/website/Header";
 import Footer from "@/components/website/Footer";
 
-export default function WebsiteLayout({
+export default async function WebsiteLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { locale: string };
 }) {
+  const { locale } = await params;
   return (
-    <div>
+    <div className="overflow-x-hidden">
       <Header />
       <main>{children}</main>
-      <Footer />
+      <Footer locale={locale} />
     </div>
   );
 }

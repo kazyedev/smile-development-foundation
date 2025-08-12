@@ -8,17 +8,18 @@ import VideosSection from "@/components/website/sections/VideosSection";
 import StaticSection from "@/components/website/sections/StaticSection";
 import NewsSection from "@/components/website/sections/NewsSection";
 
-export default function HomePage() {
+export default async function HomePage({ params }: { params: { locale: string } }) {
+  const { locale } = await params;
   return (
     <main className="flex flex-col gap-4 ">
       <HeroSection />
-      <AboutSection />
-      <ProjectsSection />
-      <ActivitiesSection />
-      <SuccessStoriesSection />
-      <VideosSection />
-      <StaticSection />
-      <NewsSection />
+      <AboutSection locale={locale} />
+      <ProjectsSection locale={locale} />
+      <ActivitiesSection locale={locale} />
+      <SuccessStoriesSection locale={locale} />
+      <VideosSection locale={locale} />
+      <StaticSection locale={locale} />
+      <NewsSection locale={locale} />
     </main>
   );
 }

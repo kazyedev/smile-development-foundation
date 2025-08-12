@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { LucideSearch, Sun, Moon, Menu, X } from 'lucide-react';
+import { LucideSearch, Sun, Moon, Menu, X, Languages } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -13,36 +13,57 @@ export default function Header() {
   const [delayedHoveredMenu, setDelayedHoveredMenu] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [mounted, setMounted] = useState(false);
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '/';
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [showHeader, setShowHeader] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const lastScrollY = useRef(0);
+  const router = useRouter();
 
-  const locale = pathname.split('/')[1];
+  type Locale = 'en' | 'ar';
+  type MenuKey = 'about' | 'projects' | 'media' | 'contact';
+  const currentLocale: Locale = pathname.startsWith('/ar') ? 'ar' : 'en';
 
+
+
+  const menuLabels: Record<Locale, Record<MenuKey, string>> = {
+    en: {
+      about: 'About Us',
+      projects: 'Projects',
+      media: 'Media',
+      contact: 'Contact Us',
+    },
+    ar: {
+      about: 'عن المؤسسة',
+      projects: 'المشاريع',
+      media: 'الوسائط',
+      contact: 'تواصل معنا',
+    },
+  };
   const menuItems = {
+
+
     about: [
-      { label: 'About Us', href: `/${locale}/about-us` },
-      { label: 'Board of Directors', href: `/${locale}/board-of-directors` },
-      { label: 'Team Members', href: `/${locale}/team-members` }
+      { label: 'About Us', labelAr: 'عن المؤسسة', href: `/${currentLocale}/about-us` },
+      { label: 'Board of Directors', labelAr: 'مجلس الإدارة', href: `/${currentLocale}/board-of-directors` },
+      { label: 'Team Members', labelAr: 'فريق العمل', href: `/${currentLocale}/team-members` },
     ],
     projects: [
-      { label: 'All Projects', href: `/${locale}/projects` },
-      { label: 'Categories', href: `/${locale}/projects/categories` }
+      { label: 'All Projects', labelAr: 'جميع المشاريع', href: `/${currentLocale}/projects` },
+      { label: 'Categories', labelAr: 'الفئات', href: `/${currentLocale}/projects/categories` },
     ],
     media: [
-      { label: 'Images', href: `/${locale}/media/images` },
-      { label: 'Videos', href: `/${locale}/media/videos` },
-      { label: 'Publications', href: `/${locale}/media/publications` },
-      { label: 'Reports', href: `/${locale}/media/reports` },
-      { label: 'Success Stories', href: `/${locale}/media/success-stories` }
+      { label: 'Images', labelAr: 'الصور', href: `/${currentLocale}/media/images` },
+      { label: 'Videos', labelAr: 'الفيديوهات', href: `/${currentLocale}/media/videos` },
+      { label: 'Publications', labelAr: 'النشرات', href: `/${currentLocale}/media/publications` },
+      { label: 'Reports', labelAr: 'التقارير', href: `/${currentLocale}/media/reports` },
+      { label: 'Success Stories', labelAr: 'القصص الناجحة', href: `/${currentLocale}/media/success-stories` },
     ],
     contact: [
-      { label: 'Contact Us', href: `/${locale}/contact-us` },
-      { label: 'Become a Volunteer', href: `/${locale}/become-a-volunteer` },
-      { label: 'Work with Us', href: `/${locale}/work-with-us` }
-    ]
+      { label: 'Contact Us', labelAr: 'تواصل معنا', href: `/${currentLocale}/contact-us` },
+      { label: 'Become a Volunteer', labelAr: 'أصبح متطوعا', href: `/${currentLocale}/become-a-volunteer` },
+      { label: 'Work with Us', labelAr: 'العمل معنا', href: `/${currentLocale}/work-with-us` },
+    ],
   };
 
   useEffect(() => {
@@ -74,29 +95,39 @@ export default function Header() {
     timeoutRef.current = setTimeout(() => setDelayedHoveredMenu(null), 250);
   };
 
+  const toggleLocale = () => {
+    const newLocale: Locale = currentLocale === 'en' ? 'ar' : 'en';
+    const segments = pathname.split('/');
+    segments[1] = newLocale;
+    const newPath = segments.join('/');
+    router.push(newPath);
+  };
+
   if (!mounted) return null;
 
   return (
     <header
-      className={`fixed w-full top-0 z-50 transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-full'
+      className={`fixed w-full top-0 z-50 transition-transform duration-300  ${showHeader ? 'translate-y-0' : '-translate-y-full'
         }`}
     >
       <div className="bg-[var(--background)] text-[var(--foreground)] border-b border-[var(--border)] shadow-sm">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="container mx-auto px-8 py-3 flex items-center justify-between">
           {/* Logo */}
-          <Link href={`/${locale}`} className="flex items-center gap-3">
+          <Link href={`/${currentLocale}`} className="flex items-center gap-3">
             <Image src="/assets/logo.png" alt="Logo" width={40} height={40} />
-            <h1 className="font-bold text-xl text-[var(--brand-primary)]">Smile Foundation</h1>
+            <h1 className="font-bold text-xl text-[var(--brand-primary)]">
+              {currentLocale === 'en' ? 'Smile Foundation' : 'مؤسسة ابتسامة التنموية'}
+            </h1>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-6">
             <Link
-              href={`/${locale}`}
-              className={`hover:text-[var(--brand-primary)] ${pathname === '/' ? 'text-[var(--brand-primary)] font-bold' : ''
+              href={`/${currentLocale}`}
+              className={`hover:text-[var(--brand-primary)] ${pathname === `/${currentLocale}` ? 'text-[var(--brand-primary)] font-bold' : ''
                 }`}
             >
-              Home
+              {currentLocale === 'en' ? 'Home' : 'الرئيسية'}
             </Link>
 
             {Object.entries(menuItems).map(([key, items]) => {
@@ -115,7 +146,7 @@ export default function Header() {
                     className={`px-2 py-1 w-full flex items-center gap-1 cursor-pointer transition ${isActive ? 'text-[var(--brand-primary)] font-bold' : 'hover:text-[var(--brand-primary)]'
                       }`}
                   >
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                    {menuLabels[currentLocale][key as MenuKey]}
                     <svg
                       className={`w-4 h-4 transition-transform ${delayedHoveredMenu === key ? 'rotate-180' : ''
                         }`}
@@ -139,7 +170,7 @@ export default function Header() {
                         onMouseEnter={() => handleMouseEnter(key)}
                         onMouseLeave={handleMouseLeave}
                       >
-                        {items.map(({ label, href }) => {
+                        {items.map(({ label, labelAr, href }) => {
                           const isItemActive =
                             pathname === href;
 
@@ -152,9 +183,9 @@ export default function Header() {
                                   : 'hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]'
                                 }
                                 `}
-                                  >
+                            >
                               <Link href={href} className="block">
-                                {label}
+                                {currentLocale === 'en' ? label : labelAr}
                               </Link>
                             </motion.li>
                           );
@@ -169,12 +200,17 @@ export default function Header() {
 
           {/* Controls */}
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
-            <button className="bg-[var(--brand-primary)] px-4 py-2 text-white rounded-md">Donate</button>
-            <LucideSearch className="w-5 h-5 cursor-pointer hover:text-[var(--brand-primary)]" />
-            <button onClick={toggleTheme} className="p-2 rounded hover:bg-[var(--accent)]">
+            <button className="bg-[var(--brand-primary)] px-4 py-2 text-white rounded-md hidden md:block">
+              {currentLocale === 'en' ? 'Donate' : 'تبرع'}
+            </button>
+            <LucideSearch className="w-5 h-5 cursor-pointer hover:text-[var(--brand-primary)] hidden md:block" />
+            <button onClick={toggleTheme} className="p-2 rounded hover:bg-[var(--accent)] hidden md:block">
               {resolvedTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <button className="lg:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
+            <button onClick={toggleLocale} className="p-2 rounded hover:bg-[var(--accent)] hidden md:block" aria-label="Toggle language">
+              <Languages className="w-5 h-5" />
+            </button>
+            <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
@@ -184,15 +220,17 @@ export default function Header() {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ x: locale === 'ar' ? 300 : -300 }}
+              initial={{ x: currentLocale === 'ar' ? 300 : -300 }}
               animate={{ x: 0 }}
-              exit={{ x: locale === 'ar' ? 300 : -300 }}
-              className={`fixed top-0 ${locale === 'ar' ? 'right-0' : 'left-0'} h-screen w-64 bg-[var(--background)] border-[var(--border)] shadow-lg z-50 p-6`}
+              exit={{ x: currentLocale === 'ar' ? 300 : -300 }}
+              className={`fixed top-0 ${currentLocale === 'ar' ? 'right-0' : 'left-0'} h-screen w-64 bg-[var(--background)] border-[var(--border)] shadow-lg z-50 p-6`}
             >
               {Object.entries(menuItems).map(([key, items]) => (
                 <div key={key} className="mb-6">
-                  <p className="font-semibold mb-2">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
-                  {items.map(({ label, href }) => (
+                  <p className="font-semibold mb-2">
+                    {currentLocale === 'en' ? key.charAt(0).toUpperCase() + key.slice(1) : menuLabels[currentLocale][key as MenuKey]}
+                  </p>
+                  {items.map(({ label, labelAr, href }) => (
                     <Link
                       key={href}
                       href={href}
@@ -201,12 +239,26 @@ export default function Header() {
                         : ''
                         }`}
                     >
-                      {label}
+                      {currentLocale === 'en' ? label : labelAr}
                     </Link>
                   ))}
                 </div>
               ))}
+              <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                <button className="bg-[var(--brand-primary)] px-4 py-2 text-white rounded-md">
+                  {currentLocale === 'en' ? 'Donate' : 'تبرع'}
+                </button>
+                <LucideSearch className="w-5 h-5 cursor-pointer hover:text-[var(--brand-primary)]" />
+                <button onClick={toggleTheme} className="p-2 rounded hover:bg-[var(--accent)]">
+                  {resolvedTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
+                <button onClick={toggleLocale} className="p-2 rounded hover:bg-[var(--accent)]" aria-label="Toggle language">
+                  <Languages className="w-5 h-5" />
+                </button>
+              </div>
+
             </motion.div>
+
           )}
         </AnimatePresence>
       </div>

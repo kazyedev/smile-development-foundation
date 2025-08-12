@@ -143,7 +143,7 @@ export default function HeroSection({
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gray-900">
+    <div className="relative w-full h-screen overflow-hidden bg-gray-900 overflow-x-hidden">
       {/* Slides Container */}
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
@@ -193,7 +193,7 @@ export default function HeroSection({
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+                  className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight text-center md:text-start"
                 >
                   {title}
                 </motion.h1>
@@ -209,7 +209,7 @@ export default function HeroSection({
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.6, duration: 0.8 }}
-                  className="flex flex-col sm:flex-row gap-4"
+                  className="flex flex-col sm:flex-row gap-4 "
                 >
                   <button className="bg-brand-primary hover:bg-brand-primary/90 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-colors">
                     Learn More

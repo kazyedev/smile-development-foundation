@@ -1,5 +1,7 @@
 import { Project } from "@/types/project";
 import ProjectCard from "../ProjectCard";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 const mockProjects: Project[] = [
   {
     id: 1,
@@ -28,6 +30,14 @@ const mockProjects: Project[] = [
         titleAr: "الآبار المنصوبة",
         value: 32,
         unitEn: "Wells",
+        unitAr: "بئر",
+      },
+      {
+        icon: "Droplet",
+        titleEn: "Wells Installed",
+        titleAr: "المياه النظيفة المتاحة",
+        value: 32,
+        unitEn: "Clean Water",
         unitAr: "بئر",
       },
     ],
@@ -84,7 +94,24 @@ const mockProjects: Project[] = [
     goalsEn: ["Train 1,000 students", "Build 5 centers"],
     goalsAr: ["تدريب 1000 طالب", "بناء 5 مراكز"],
     videoUrl: "",
-    statics: [],
+    statics: [
+      {
+        icon: "Book",
+        titleEn: "Books Distributed",
+        titleAr: "الكتب الموزعة",
+        value: 1000,
+        unitEn: "Books",
+        unitAr: "كتاب",
+      },
+      {
+        icon: "Laptop",
+        titleEn: "Digital Labs",
+        titleAr: "مختبرات رقمية",
+        value: 1000,
+        unitEn: "Books",
+        unitAr: "كتاب",
+      },
+    ],
     financialContributions: [],
     deliverables: [],
     resources: [],
@@ -108,25 +135,42 @@ const mockProjects: Project[] = [
     isEnglish: true,
     isArabic: false,
     titleEn: "Solar Power for Schools",
-    titleAr: "",
+    titleAr: "الطاقة الشمسية للمدارس",
     descriptionEn: "Implementing solar panels to power remote schools.",
     descriptionAr: "",
     featuredImageUrl: "/assets/hero-3.jpg",
     color: "#F59E0B",
     banners: [],
     goalsEn: ["Lower electricity costs", "Promote sustainability"],
-    goalsAr: [],
+    goalsAr: ["تخفيض تكلفة الكهرباء", "تعزيز التنمية المستدامة"],
     videoUrl: "",
-    statics: [],
+    statics: [
+      {
+        icon: "Sun",
+        titleEn: "Solar Panels Installed",
+        titleAr: "الألواح الشمسية المنصوبة",
+        value: 1000,
+        unitEn: "Panels",
+        unitAr: "لوح",
+      },
+      {
+        icon: "BatteryFull",
+        titleEn: "Battery Storage",
+        titleAr: "تخزين البطاريات",
+        value: 1000,
+        unitEn: "Batteries",
+        unitAr: "بطارية",
+      },
+    ],
     financialContributions: [],
     deliverables: [],
     resources: [],
     slugEn: "solar-power-schools",
-    slugAr: "",
+    slugAr: "الطاقة الشمسية للمدارس",
     keywordsEn: ["solar", "schools", "energy"],
-    keywordsAr: [],
+    keywordsAr: ["شمس", "مدارس", "طاقة"],
     tagsEn: ["Solar", "Sustainability"],
-    tagsAr: [],
+    tagsAr: ["شمس", "تنمية مستدامة"],
     pageViews: 42,
     programId: 3,
     categoryId: 3,
@@ -139,14 +183,30 @@ const mockProjects: Project[] = [
 ];
 
 
-export default function ProjectsSection() {
+export default function ProjectsSection({ locale }: { locale: string }) {
   return (
-    <div className="flex flex-col  gap-4 px-4  py-10 border-t border-b border-[var(--secondary)]">
-      <h1 className="text-2xl font-bold text-center">Projects Section</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-4  justify-center items-center">
-        { mockProjects.slice(0, 3).map( ( project ) => (
-          <ProjectCard key={ project.id } project={ project }  />
-        ) ) }
+    <div className="flex flex-col gap-4 px-4 py-10 border-t border-b border-[var(--secondary)] bg-brand-primary/10">
+      <h1 className="text-2xl font-bold text-center">
+        {locale === "en" ? "Our Projects" : "مشاريعنا"}
+      </h1>
+      <p className="text-center text-muted-foreground max-w-2xl mx-auto">
+        {locale === "en" 
+          ? "Discover our impactful projects that are making a real difference in communities across the region through sustainable development and innovative solutions."
+          : "اكتشف مشاريعنا المؤثرة التي تحدث فرقًا حقيقيًا في المجتمعات عبر المنطقة من خلال التنمية المستدامة والحلول المبتكرة."
+        }
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-4 justify-center items-center mt-6">
+        {mockProjects.slice(0, 3).map((project) => (
+          <ProjectCard key={project.id} project={project} locale={locale} />
+        ))}
+      </div>
+      
+      <div className="flex justify-center mt-8">
+        <Link href={`/${locale}/projects`}>
+          <Button variant="outline" size="lg">
+            {locale === "en" ? "View All Projects" : "عرض جميع المشاريع"}
+          </Button>
+        </Link>
       </div>
     </div>
   );

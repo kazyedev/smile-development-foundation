@@ -42,8 +42,8 @@ export interface SectionPermissions {
   actions: SectionActions[];
 }
 
-export interface User {
-  id: number;
+export interface Profile {
+  id: string;
   nameEn: string;
   nameAr: string;
   email: string;

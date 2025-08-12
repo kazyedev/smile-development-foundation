@@ -9,6 +9,8 @@ interface AboutSectionProps {
 }
 
 export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
+    const isLocaleEnglish = locale === 'en';
+    
     const fadeInUp = {
         initial: { opacity: 0, y: 60 },
         animate: { opacity: 1, y: 0 },
@@ -30,29 +32,72 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
         }
     };
 
-    const cardLinks = [
-        {
-            href: `/${locale}/programs/medical-assistance`,
-            icon: LucideHeartHandshake,
-            title: "برنامج حياة للمساعدات الطبية",
-            bgColor: "bg-[var(--brand-primary)]"
+    const content = {
+        title: {
+            en: "A Yemeni Non-Profit Charitable Organization",
+            ar: "منظمة خيرية يمنية غير ربحية"
         },
-        {
-            href: `/${locale}/programs/scholarships`,
-            icon: LucideSchool,
-            title: "برنامج بدر للمنح الدراسية",
-            bgColor: "bg-[var(--brand-secondary)]"
+        description: {
+            en: "A Yemeni non-profit charitable organization established to contribute to alleviating the suffering of many Yemenis due to economic and social deterioration. We have chosen to strive earnestly and effectively to build and nurture the Yemeni people in health and educational fields. We have committed ourselves to creating sustainable positive change in our communities through innovative programs and dedicated service.",
+            ar: "منظمة خيرية يمنية غير ربحية تأسست لغرض المساهمة في التخفيف من معاناة الكثير من اليمنيين بسبب التدهور الاقتصادي والاجتماعي. لقد اخترنا أن نسعى جاهدين وفعالين لبناء ورعاية الإنسان اليمني في المجالات الصحية والتعليمية. لقد التزمنا بأنفسنا بخلق تغيير إيجابي مستدام في مجتمعاتنا من خلال برامج مبتكرة وخدمة مخلصة."
         },
-        {
-            href: `/${locale}/programs/development-center`,
-            icon: LucideUsers,
-            title: "مركز الراشد للتنمية",
-            bgColor: "bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)]"
-        }
-    ];
+        readMore: {
+            en: "Read More",
+            ar: "اقرأ المزيد"
+        },
+        vision: {
+            title: {
+                en: "Our Vision",
+                ar: "رؤيتنا"
+            },
+            content: {
+                en: "Leadership in social responsibility and sustainable community development",
+                ar: "الريادة في المسؤولية الاجتماعية والتنمية المجتمعية المستدامة"
+            }
+        },
+        mission: {
+            title: {
+                en: "Our Mission", 
+                ar: "رسالتنا"
+            },
+            content: {
+                en: "Contributing to alleviating the suffering of many Yemenis due to economic and social deterioration through innovative health and educational programs",
+                ar: "المساهمة في التخفيف من معاناة الكثير من اليمنيين بسبب التدهور الاقتصادي والاجتماعي من خلال برامج صحية وتعليمية مبتكرة"
+            }
+        },
+        programs: [
+            {
+                href: `/${locale}/programs/medical-assistance`,
+                icon: LucideHeartHandshake,
+                title: {
+                    en: "Hayat Medical Assistance Program",
+                    ar: "برنامج حياة للمساعدات الطبية"
+                },
+                bgColor: "bg-[var(--brand-primary)]"
+            },
+            {
+                href: `/${locale}/programs/scholarships`,
+                icon: LucideSchool,
+                title: {
+                    en: "Badr Scholarship Program",
+                    ar: "برنامج بدر للمنح الدراسية"
+                },
+                bgColor: "bg-[var(--brand-secondary)]"
+            },
+            {
+                href: `/${locale}/programs/development-center`,
+                icon: LucideUsers,
+                title: {
+                    en: "Al-Rashid Development Center",
+                    ar: "مركز الراشد للتنمية"
+                },
+                bgColor: "bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)]"
+            }
+        ]
+    };
 
     return (
-        <div className="bg-muted/50">
+        <div className="bg-muted/50 ">
             <div className="container mx-auto px-4 py-16">
                 {/* Main Content Section */}
                 <motion.div 
@@ -70,20 +115,22 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
                             className="text-3xl md:text-4xl font-bold text-foreground mb-6"
                             variants={fadeInUp}
                         >
-                            منظمة خيرية يمنية غير ربحية
+                            {isLocaleEnglish ? content.title.en : content.title.ar}
                         </motion.h2>
                         <motion.p 
                             className="text-muted-foreground leading-relaxed text-lg"
                             variants={fadeInUp}
                         >
-                            منظمة خيرية يمنية غير ربحية تأسست لغرض المساهمة في التخفيف من معاناة الكثير من اليمنيين بسبب التدهور الاقتصادي والاجتماعي. لقد اخترنا أن نسعى جاهدين وفعالين لبناء ورعاية الإنسان اليمني في المجالات الصحية والتعليمية. لقد التزمنا بأنفسنا ...
+                            {isLocaleEnglish ? content.description.en : content.description.ar}
+                            {" "}
                             <motion.a 
                                 className="text-[var(--brand-primary)] hover:text-[var(--brand-secondary)] transition-colors inline-flex items-center gap-1 font-medium"
-                                href="#"
-                                whileHover={{ x: -5 }}
+                                href={`/${locale}/about-us`}
+                                whileHover={{ x: isLocaleEnglish ? 5 : -5 }}
                             >
-                                <LucideArrowLeft className="inline w-4 h-4" />
-                                اقرأ المزيد
+                                {isLocaleEnglish && <span>{content.readMore.en}</span>}
+                                <LucideArrowLeft className={`inline w-4 h-4 ${isLocaleEnglish ? 'rotate-180' : ''}`} />
+                                {!isLocaleEnglish && <span>{content.readMore.ar}</span>}
                             </motion.a>
                         </motion.p>
                         
@@ -185,8 +232,12 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
                             >
                                 <LucideEye className="text-[var(--brand-primary)] text-4xl" />
                             </motion.div>
-                            <h3 className="text-2xl font-bold mb-3 text-foreground">رؤيتنا</h3>
-                            <p className="text-muted-foreground leading-relaxed">الريادة في المسؤولية الاجتماعية</p>
+                            <h3 className="text-2xl font-bold mb-3 text-foreground">
+                                {isLocaleEnglish ? content.vision.title.en : content.vision.title.ar}
+                            </h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                                {isLocaleEnglish ? content.vision.content.en : content.vision.content.ar}
+                            </p>
                         </div>
                         <motion.div 
                             className="h-1 w-20 bg-[var(--brand-primary)] mt-6 rounded-full"
@@ -212,8 +263,12 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
                             >
                                 <LucideRocket className="text-[var(--brand-secondary)] text-4xl" />
                             </motion.div>
-                            <h3 className="text-2xl font-bold mb-3 text-foreground">رسالتنا</h3>
-                            <p className="text-muted-foreground leading-relaxed">المساهمة في التخفيف من معاناة الكثير من اليمنيين بسبب التدهور الاقتصادي والاجتماعي</p>
+                            <h3 className="text-2xl font-bold mb-3 text-foreground">
+                                {isLocaleEnglish ? content.mission.title.en : content.mission.title.ar}
+                            </h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                                {isLocaleEnglish ? content.mission.content.en : content.mission.content.ar}
+                            </p>
                         </div>
                         <motion.div 
                             className="h-1 w-20 bg-[var(--brand-secondary)] mt-6 rounded-full"
@@ -247,16 +302,16 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
                     viewport={{ once: true }}
                     variants={staggerChildren}
                 >
-                    {cardLinks.map((card, index) => {
-                        const IconComponent = card.icon;
+                    {content.programs.map((program, index) => {
+                        const IconComponent = program.icon;
                         return (
                             <motion.div
                                 key={index}
                                 variants={fadeInUp}
                             >
-                                <Link href={card.href}>
+                                <Link href={program.href}>
                                     <motion.div 
-                                        className={`${card.bgColor} p-8 rounded-xl flex items-center gap-6 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer group text-white overflow-hidden relative`}
+                                        className={`${program.bgColor} p-8 rounded-xl flex items-center gap-6 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer group text-white overflow-hidden relative`}
                                         whileHover={{ 
                                             y: -5,
                                             scale: 1.02
@@ -283,18 +338,18 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
                                         <motion.span 
                                             className="font-bold text-lg leading-tight relative z-10 group-hover:text-white/95 transition-colors"
                                             initial={{ x: 0 }}
-                                            whileHover={{ x: 5 }}
+                                            whileHover={{ x: isLocaleEnglish ? 5 : -5 }}
                                         >
-                                            {card.title}
+                                            {isLocaleEnglish ? program.title.en : program.title.ar}
                                         </motion.span>
 
                                         {/* Arrow indicator */}
                                         <motion.div
-                                            className="absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                            initial={{ x: -10 }}
+                                            className={`absolute ${isLocaleEnglish ? 'right-6' : 'left-6'} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                                            initial={{ x: isLocaleEnglish ? -10 : 10 }}
                                             whileHover={{ x: 0 }}
                                         >
-                                            <LucideArrowLeft className="w-5 h-5 text-white" />
+                                            <LucideArrowLeft className={`w-5 h-5 text-white ${isLocaleEnglish ? 'rotate-180' : ''}`} />
                                         </motion.div>
                                     </motion.div>
                                 </Link>
