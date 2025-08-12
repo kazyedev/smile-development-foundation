@@ -55,14 +55,24 @@ export default function VideoCard({ video, locale, onPlay, condensed = false }: 
             height={340}
             className="w-full h-48 object-cover"
           />
-          <button
-            type="button"
-            onClick={onPlay}
-            className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors duration-300 cursor-pointer"
-            aria-label={isLocaleEnglish ? "Play video" : "تشغيل الفيديو"}
-          >
-            <Play className="w-16 h-16 text-white drop-shadow-lg opacity-80 group-hover:opacity-100 transition-opacity duration-300" fill="white" />
-          </button>
+          {onPlay ? (
+            <button
+              type="button"
+              onClick={onPlay}
+              className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors duration-300 cursor-pointer"
+              aria-label={isLocaleEnglish ? "Play video" : "تشغيل الفيديو"}
+            >
+              <Play className="w-16 h-16 text-white drop-shadow-lg opacity-80 group-hover:opacity-100 transition-opacity duration-300" fill="white" />
+            </button>
+          ) : (
+            <Link
+              href={`/${locale}/media/videos/${isLocaleEnglish ? video.slugEn : video.slugAr}`}
+              className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors duration-300 cursor-pointer"
+              aria-label={isLocaleEnglish ? "Play video" : "تشغيل الفيديو"}
+            >
+              <Play className="w-16 h-16 text-white drop-shadow-lg opacity-80 group-hover:opacity-100 transition-opacity duration-300" fill="white" />
+            </Link>
+          )}
           <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             {formatDuration(video.width, video.height)}
           </div>
@@ -114,7 +124,7 @@ export default function VideoCard({ video, locale, onPlay, condensed = false }: 
             {isLocaleEnglish ? "Watch Video" : "مشاهدة الفيديو"}
           </Button>
         ) : (
-          <Link href={`/media/videos/${isLocaleEnglish ? video.slugEn : video.slugAr}`} className="block">
+          <Link href={`/${locale}/media/videos/${isLocaleEnglish ? video.slugEn : video.slugAr}`} className="block">
             <Button variant="outline" size="sm">
               {isLocaleEnglish ? "Watch Video" : "مشاهدة الفيديو"}
             </Button>

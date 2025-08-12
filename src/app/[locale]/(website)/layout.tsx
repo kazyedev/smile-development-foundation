@@ -10,7 +10,7 @@ export default async function WebsiteLayout({
 }) {
   const { locale } = await params;
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden mt-10">
       <Header />
       <main>{children}</main>
       <Footer locale={locale} />
