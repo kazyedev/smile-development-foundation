@@ -93,7 +93,7 @@ export default function VideosSection({ locale }: { locale: string }) {
           : "شاهد القصص الملهمة واللحظات من وراء الكواليس لمشاريعنا ومبادراتنا المجتمعية التي تُظهر التأثير الحقيقي لعملنا."
         }
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-4 justify-center items-center mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 w-full max-w-7xl mx-auto">
         {mockVideos.slice(0, 3).map((video) => (
           <VideoCard key={video.slugEn} video={video} locale={locale} />
         ))}

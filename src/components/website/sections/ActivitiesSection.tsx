@@ -92,7 +92,7 @@ export default function ActivitiesSection({ locale }: { locale: string }) {
           : "استكشف أحدث أنشطة وفعاليات المجتمع التي تجلب التغيير الإيجابي لحياة من نخدمهم."
         }
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-4 justify-center items-center mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 w-full max-w-7xl mx-auto">
         {mockActivities.slice(0, 3).map((activity) => (
           <ActivityCard key={activity.slugEn} activity={activity} locale={locale} />
         ))}

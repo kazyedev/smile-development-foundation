@@ -106,7 +106,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
       <p className="text-center text-muted-foreground max-w-2xl mx-auto">
         {locale === "en" ? "Discover inspiring stories of transformation and impact from our community members whose lives have been changed through our programs and initiatives." : "اكتشف قصص التحول والتأثير من أعضاء مجتمعنا الذين غيرت حياتهم من خلال برامجنا والمبادرات."}
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-4 justify-center items-center mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 w-full max-w-7xl mx-auto">
         {mockSuccessStories.slice(0, 3).map((story) => (
           <SuccessStoryCard key={story.slugEn} story={story} locale={locale} />
         ))}

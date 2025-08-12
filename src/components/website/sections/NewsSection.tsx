@@ -8,6 +8,8 @@ const mockNews: News[] = [
     id: 1,
     isEnglish: true,
     isArabic: true,
+    includeInSitemapEn: true,
+    includeInSitemapAr: true,
     titleEn: "Foundation Launches New Clean Water Initiative in Rural Egypt",
     titleAr: "المؤسسة تطلق مبادرة جديدة للمياه النظيفة في ريف مصر",
     featuredImageUrl: "/assets/hero-1.jpg",
@@ -33,6 +35,8 @@ const mockNews: News[] = [
     id: 2,
     isEnglish: true,
     isArabic: true,
+    includeInSitemapEn: true,
+    includeInSitemapAr: true,
     titleEn: "Youth Leadership Program Graduates 150 Future Leaders",
     titleAr: "برنامج القيادة الشبابية يخرج 150 قائدًا مستقبليًا",
     featuredImageUrl: "/assets/hero-2.jpg",
@@ -58,6 +62,8 @@ const mockNews: News[] = [
     id: 3,
     isEnglish: true,
     isArabic: true,
+    includeInSitemapEn: true,
+    includeInSitemapAr: true,
     titleEn: "Medical Mission Provides Free Healthcare to 3,000 Patients",
     titleAr: "البعثة الطبية تقدم رعاية صحية مجانية لـ 3,000 مريض",
     featuredImageUrl: "/assets/hero-3.jpg",
@@ -93,7 +99,7 @@ export default function NewsSection({ locale }: { locale: string }) {
           : "ابق على اطلاع بأحدث مبادراتنا وقصص النجاح وأخبار التأثير المجتمعي التي تُظهر العمل المستمر لمؤسستنا."
         }
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-4 justify-center items-center mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 w-full max-w-7xl mx-auto">
         {mockNews.slice(0, 3).map((newsItem) => (
           <NewsCard key={newsItem.id} news={newsItem} locale={locale} />
         ))}
