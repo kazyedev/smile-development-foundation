@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -13,8 +14,9 @@ import Link from "next/link";
 import { Play, Eye, MapPin, HardDrive } from "lucide-react";
 import { formatLargeNumber } from "@/utils/formatLargeNumber";
 
-export default function VideoCard({ video, locale }: { video: Video, locale: string }) {
+export default function VideoCard({ video, locale, onPlay, condensed = false }: { video: Video, locale: string, onPlay?: () => void, condensed?: boolean }) {
   const isLocaleEnglish = locale === "en";
+  const hideMetaClass = condensed ? 'md:hidden' : '';
   
   const formatFileSize = (bytes: number) => {
     const mb = bytes / (1024 * 1024);
@@ -53,9 +55,14 @@ export default function VideoCard({ video, locale }: { video: Video, locale: str
             height={340}
             className="w-full h-48 object-cover"
           />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors duration-300">
+          <button
+            type="button"
+            onClick={onPlay}
+            className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors duration-300 cursor-pointer"
+            aria-label={isLocaleEnglish ? "Play video" : "تشغيل الفيديو"}
+          >
             <Play className="w-16 h-16 text-white drop-shadow-lg opacity-80 group-hover:opacity-100 transition-opacity duration-300" fill="white" />
-          </div>
+          </button>
           <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
             {formatDuration(video.width, video.height)}
           </div>
@@ -68,13 +75,13 @@ export default function VideoCard({ video, locale }: { video: Video, locale: str
         </CardTitle>
         
         {(video.locationEn || video.locationAr) && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className={`flex items-center gap-2 text-sm text-muted-foreground ${hideMetaClass}`}>
             <MapPin className="w-4 h-4" />
             <span>{isLocaleEnglish ? video.locationEn : video.locationAr}</span>
           </div>
         )}
         
-        <CardDescription className="text-sm text-muted-foreground line-clamp-3">
+        <CardDescription className={`text-sm text-muted-foreground line-clamp-3 ${hideMetaClass}`}>
           {isLocaleEnglish ? video.descriptionEn : video.descriptionAr}
         </CardDescription>
         
@@ -88,7 +95,7 @@ export default function VideoCard({ video, locale }: { video: Video, locale: str
       </CardContent>
 
       <CardFooter className="p-4 pt-0 mt-auto flex justify-between items-center">
-        <div className="flex gap-2 text-xs">
+        <div className={`flex gap-2 text-xs ${hideMetaClass}`}>
           {isLocaleEnglish 
             ? video.tagsEn.slice(0, 2).map((tag) => (
                 <span key={tag} className="bg-muted-foreground/10 px-2 py-1 rounded-md text-muted-foreground">
@@ -102,11 +109,17 @@ export default function VideoCard({ video, locale }: { video: Video, locale: str
               ))
           }
         </div>
-        <Link href={`/media/videos/${isLocaleEnglish ? video.slugEn : video.slugAr}`} className="block">
-          <Button variant="outline" size="sm">
+        {onPlay ? (
+          <Button variant="outline" size="sm" onClick={onPlay}>
             {isLocaleEnglish ? "Watch Video" : "مشاهدة الفيديو"}
           </Button>
-        </Link>
+        ) : (
+          <Link href={`/media/videos/${isLocaleEnglish ? video.slugEn : video.slugAr}`} className="block">
+            <Button variant="outline" size="sm">
+              {isLocaleEnglish ? "Watch Video" : "مشاهدة الفيديو"}
+            </Button>
+          </Link>
+        )}
       </CardFooter>
     </Card>
   );
