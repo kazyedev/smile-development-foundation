@@ -70,7 +70,7 @@ export default function ProjectCard({ project, locale }: { project: Project, loc
               ))
           }
         </div>
-        <Link href={`/projects/${isLocaleEnglish ? project.slugEn : project.slugAr}`} className="block">
+        <Link href={`/${locale}/projects/${isLocaleEnglish ? project.slugEn : project.slugAr}`} className="block">
           <Button variant="outline" size="sm">
             {isLocaleEnglish ? "View Project" : "عرض المشروع"}
           </Button>

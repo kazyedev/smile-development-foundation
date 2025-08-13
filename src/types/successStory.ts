@@ -10,6 +10,7 @@ export interface Story {
   titleAr: string;
   featuredImageUrl: string;
   video: string;
+  programId?: number;
   personNameEn: string;
   personNameAr: string;
   personAge: number;
