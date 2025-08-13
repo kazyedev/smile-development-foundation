@@ -15,6 +15,8 @@ import { mockPrograms } from '@/data/mockPrograms';
 import { mockStories } from '@/data/mockStories';
 import { mockPublications } from '@/data/mockPublications';
 import { mockReports } from '@/data/mockReports';
+import { mockNews } from '@/data/mockNews';
+import { mockNewsCategories } from '@/data/mockNewsCategories';
 
 export default function Header() {
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
@@ -29,7 +31,7 @@ export default function Header() {
   const router = useRouter();
 
   type Locale = 'en' | 'ar';
-  type MenuKey = 'about' | 'projects' | 'media' | 'contact';
+  type MenuKey = 'about' | 'projects' | 'media' | 'news' | 'contact';
   const currentLocale: Locale = pathname.startsWith('/ar') ? 'ar' : 'en';
 
 
@@ -40,12 +42,14 @@ export default function Header() {
       projects: 'Projects',
       media: 'Media',
       contact: 'Contact Us',
+      news: 'News',
     },
     ar: {
       about: 'عن المؤسسة',
       projects: 'المشاريع',
       media: 'الوسائط',
       contact: 'تواصل معنا',
+      news: 'الأخبار',
     },
   };
   const menuItems = {
@@ -66,6 +70,10 @@ export default function Header() {
       { label: 'Publications', labelAr: 'النشرات', href: `/${currentLocale}/media/publications` },
       { label: 'Reports', labelAr: 'التقارير', href: `/${currentLocale}/media/reports` },
       { label: 'Success Stories', labelAr: 'القصص الناجحة', href: `/${currentLocale}/media/success-stories` },
+    ],
+    news: [
+      { label: 'All News', labelAr: 'كل الأخبار', href: `/${currentLocale}/news` },
+      { label: 'Categories', labelAr: 'الفئات', href: `/${currentLocale}/news/categories` },
     ],
     contact: [
       { label: 'Contact Us', labelAr: 'تواصل معنا', href: `/${currentLocale}/contact-us` },
@@ -142,6 +150,32 @@ export default function Header() {
             if (!available) {
               parts[1] = to;
               parts.splice(3); // go to /:locale/projects
+              return parts.join('/');
+            }
+            parts[1] = to;
+            parts[3] = encode(to === 'en' ? found.slugEn : found.slugAr);
+            return parts.join('/');
+          }
+        }
+      }
+
+      if (section === 'news') {
+        if (parts[3] === 'categories' && parts.length >= 5) {
+          const slug = decode(parts[4]);
+          const found = mockNewsCategories.find(c => c.slugEn === slug || c.slugAr === slug);
+          if (found) {
+            parts[1] = to;
+            parts[4] = encode(to === 'en' ? found.slugEn : found.slugAr);
+            return parts.join('/');
+          }
+        } else if (parts.length >= 4) {
+          const slug = decode(parts[3]);
+          const found = mockNews.find(n => n.slugEn === slug || n.slugAr === slug);
+          if (found) {
+            const available = to === 'en' ? (found.isEnglish ?? true) : (found.isArabic ?? true);
+            if (!available) {
+              parts[1] = to;
+              parts.splice(3);
               return parts.join('/');
             }
             parts[1] = to;

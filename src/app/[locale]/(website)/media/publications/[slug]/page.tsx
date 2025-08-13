@@ -2,10 +2,12 @@ import { mockPublications } from "@/data/mockPublications";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { use } from "react";
 
-export default function MediaPublicationDetailPage({ params: { slug, locale } }: { params: { slug: string; locale: string } }) {
-  const decoded = decodeURIComponent(slug);
-  const isEn = locale === 'en';
+export default function MediaPublicationDetailPage({ params }: { params: Promise<{ slug: string; locale: string }> }) {
+  const { slug, locale } = use(params);
+  const decoded = decodeURIComponent(slug || '');
+  const isEn = (locale || 'en') === 'en';
   const pub = mockPublications.find(p => p.slugEn === decoded || p.slugAr === decoded);
   if (!pub) return notFound();
 

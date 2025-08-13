@@ -2,10 +2,12 @@ import { mockReports } from "@/data/mockReports";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { use } from "react";
 
-export default function MediaReportDetailPage({ params: { slug, locale } }: { params: { slug: string; locale: string } }) {
-  const decoded = decodeURIComponent(slug);
-  const isEn = locale === 'en';
+export default function MediaReportDetailPage({ params }: { params: Promise<{ slug: string; locale: string }> }) {
+  const { slug, locale } = use(params);
+  const decoded = decodeURIComponent(slug || '');
+  const isEn = (locale || 'en') === 'en';
   const r = mockReports.find(x => x.slugEn === decoded || x.slugAr === decoded);
   if (!r) return notFound();
 
