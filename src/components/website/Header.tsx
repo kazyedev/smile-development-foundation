@@ -13,6 +13,7 @@ import { mockProjects } from '@/data/mockProjects';
 import { mockProjectCategories } from '@/data/mockProjectCategories';
 import { mockPrograms } from '@/data/mockPrograms';
 import { mockStories } from '@/data/mockStories';
+import { mockPublications } from '@/data/mockPublications';
 
 export default function Header() {
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
@@ -185,6 +186,20 @@ export default function Header() {
             if (!available) {
               parts[1] = to;
               parts.splice(4); // /:locale/media/success-stories
+              return parts.join('/');
+            }
+            parts[1] = to;
+            parts[4] = encode(to === 'en' ? found.slugEn : found.slugAr);
+            return parts.join('/');
+          }
+        } else if (mediaType === 'publications') {
+          const found = mockPublications.find(p => p.slugEn === slug || p.slugAr === slug);
+          if (found) {
+            const available = to === 'en' ? (typeof (found as any).isEnglish === 'boolean' ? (found as any).isEnglish : true)
+                                         : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
+            if (!available) {
+              parts[1] = to;
+              parts.splice(4); // /:locale/media/publications
               return parts.join('/');
             }
             parts[1] = to;

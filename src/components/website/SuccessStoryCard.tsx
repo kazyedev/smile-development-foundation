@@ -77,7 +77,7 @@ export default function SuccessStoryCard({ story, locale }: { story: Story, loca
             </span>
           ))}
         </div>
-        <Link href={`/media/success-stories/${isLocaleEnglish ? story.slugEn : story.slugAr}`} className="block">
+        <Link href={`/${locale}/media/success-stories/${isLocaleEnglish ? story.slugEn : story.slugAr}`} className="block">
           <Button variant="outline" size="sm">
             {isLocaleEnglish ? "Read Story" : "قراءة القصة"}
           </Button>
