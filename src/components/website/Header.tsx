@@ -7,6 +7,12 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { AnimatePresence, motion } from 'framer-motion';
+import { mockVideos } from '@/data/mockVideos';
+import { mockPhotos } from '@/data/mockPhotos';
+import { mockProjects } from '@/data/mockProjects';
+import { mockProjectCategories } from '@/data/mockProjectCategories';
+import { mockPrograms } from '@/data/mockPrograms';
+import { mockStories } from '@/data/mockStories';
 
 export default function Header() {
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
@@ -97,11 +103,106 @@ export default function Header() {
 
   const toggleLocale = () => {
     const newLocale: Locale = currentLocale === 'en' ? 'ar' : 'en';
-    const segments = pathname.split('/');
-    segments[1] = newLocale;
-    const newPath = segments.join('/');
+    const newPath = mapPathToLocale(pathname, currentLocale, newLocale);
     router.push(newPath);
   };
+
+  function mapPathToLocale(path: string, from: Locale, to: Locale): string {
+    try {
+      const parts = path.split('/'); // ['', locale, ...]
+      if (parts.length < 3) {
+        parts[1] = to;
+        return parts.join('/');
+      }
+      const section = parts[2];
+      const setLocale = (p: string[]) => { p[1] = to; return p.join('/'); };
+      const decode = (s: string) => {
+        try { return decodeURIComponent(s); } catch { return s; }
+      };
+      const encode = (s: string) => encodeURIComponent(s);
+
+      if (section === 'projects') {
+        if (parts[3] === 'categories' && parts.length >= 5) {
+          const slug = decode(parts[4]);
+          const found = mockProjectCategories.find(c => c.slugEn === slug || c.slugAr === slug);
+          if (found) {
+            parts[1] = to;
+            parts[4] = encode(to === 'en' ? found.slugEn : found.slugAr);
+            return parts.join('/');
+          }
+        } else if (parts.length >= 4) {
+          const slug = decode(parts[3]);
+          const found = mockProjects.find(p => p.slugEn === slug || p.slugAr === slug);
+          if (found) {
+            // availability check
+            const available = to === 'en' ? (typeof (found as any).isEnglish === 'boolean' ? (found as any).isEnglish : true)
+                                         : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
+            if (!available) {
+              parts[1] = to;
+              parts.splice(3); // go to /:locale/projects
+              return parts.join('/');
+            }
+            parts[1] = to;
+            parts[3] = encode(to === 'en' ? found.slugEn : found.slugAr);
+            return parts.join('/');
+          }
+        }
+      }
+
+      if (section === 'programs' && parts.length >= 4) {
+        const slug = decode(parts[3]);
+        const found = mockPrograms.find(p => p.slugEn === slug || p.slugAr === slug);
+        if (found) {
+          parts[1] = to;
+          parts[3] = encode(to === 'en' ? found.slugEn : found.slugAr);
+          return parts.join('/');
+        }
+      }
+
+      if (section === 'media' && parts.length >= 5) {
+        const mediaType = parts[3];
+        const slug = decode(parts[4]);
+        if (mediaType === 'videos') {
+          const found = mockVideos.find(v => v.slugEn === slug || v.slugAr === slug);
+          if (found) {
+            parts[1] = to;
+            parts[4] = encode(to === 'en' ? found.slugEn : found.slugAr);
+            return parts.join('/');
+          }
+        } else if (mediaType === 'images') {
+          const found = mockPhotos.find(i => i.slugEn === slug || i.slugAr === slug);
+          if (found) {
+            // If photo has language availability flags in future, respect them. Otherwise assume both.
+            parts[1] = to;
+            parts[4] = encode(to === 'en' ? found.slugEn : found.slugAr);
+            return parts.join('/');
+          }
+        } else if (mediaType === 'success-stories') {
+          const found = mockStories.find(s => s.slugEn === slug || s.slugAr === slug);
+          if (found) {
+            const available = to === 'en' ? (typeof (found as any).isEnglish === 'boolean' ? (found as any).isEnglish : true)
+                                         : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
+            if (!available) {
+              parts[1] = to;
+              parts.splice(4); // /:locale/media/success-stories
+              return parts.join('/');
+            }
+            parts[1] = to;
+            parts[4] = encode(to === 'en' ? found.slugEn : found.slugAr);
+            return parts.join('/');
+          }
+        }
+      }
+
+      // Fallback: just swap locale segment
+      parts[1] = to;
+      return parts.join('/');
+    } catch {
+      const parts = path.split('/');
+      parts[1] = to;
+      return parts.join('/');
+    }
+  }
 
   if (!mounted) return null;
 
