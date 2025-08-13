@@ -1,8 +1,47 @@
+"use client";
+
+import { mockReports } from "@/data/mockReports";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { motion } from "framer-motion";
+
 export default function MediaReportsPage() {
+  const params = useParams<{ locale: string }>();
+  const locale = params?.locale || 'en';
+  const isEn = locale === 'en';
+
   return (
-    <div>
-      <h1>Media Reports</h1>
-      <p>Media reports page content</p>
+    <div className="flex flex-col gap-4 px-4 py-10 border-t border-b border-[var(--secondary)]">
+      <motion.h1 initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="text-2xl font-bold text-center">
+        {isEn ? 'Reports' : 'التقارير'}
+      </motion.h1>
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1, duration: 0.25 }} className="text-center text-muted-foreground max-w-2xl mx-auto">
+        {isEn ? 'Research, follow-ups, and program reports.' : 'أبحاث، متابعات، وتقارير البرامج.'}
+      </motion.p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6 w-full max-w-7xl mx-auto">
+        {mockReports.map((r, idx) => (
+          <motion.div key={r.slugEn} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * idx, duration: 0.25 }}>
+            <Link href={`/${locale}/media/reports/${isEn ? r.slugEn : r.slugAr}`} className="block group rounded-xl border overflow-hidden hover:shadow">
+              <div className="relative w-full h-40">
+                {r.featuredImageUrl ? (
+                  <Image src={r.featuredImageUrl} alt={isEn ? r.titleEn : r.titleAr} fill className="object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-muted" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <p className="absolute bottom-2 left-3 right-3 text-white font-semibold">{isEn ? r.titleEn : r.titleAr}</p>
+              </div>
+              <div className="p-4">
+                {r.descriptionEn && (
+                  <p className="text-sm text-muted-foreground line-clamp-2">{isEn ? r.descriptionEn : r.descriptionAr}</p>
+                )}
+              </div>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }
