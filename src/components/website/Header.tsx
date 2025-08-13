@@ -27,6 +27,8 @@ export default function Header() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [showHeader, setShowHeader] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const lastScrollY = useRef(0);
   const router = useRouter();
 
@@ -99,6 +101,22 @@ export default function Header() {
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
+  };
+
+  const openSearch = () => {
+    setSearchOpen(true);
+    setTimeout(() => {
+      const el = document.getElementById('global-search-input') as HTMLInputElement | null;
+      el?.focus();
+    }, 0);
+  };
+
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (!q) return setSearchOpen(false);
+    router.push(`/${currentLocale}/search-result?q=${encodeURIComponent(q)}`);
+    setSearchOpen(false);
   };
 
   const handleMouseEnter = (key: string) => {
@@ -368,7 +386,9 @@ export default function Header() {
             <button className="bg-[var(--brand-primary)] px-4 py-2 text-white rounded-md hidden md:block">
               {currentLocale === 'en' ? 'Donate' : 'تبرع'}
             </button>
-            <LucideSearch className="w-5 h-5 cursor-pointer hover:text-[var(--brand-primary)] hidden md:block" />
+            <button onClick={openSearch} className="hidden md:inline-flex p-2 rounded hover:bg-[var(--accent)]" aria-label="Search">
+              <LucideSearch className="w-5 h-5" />
+            </button>
             <button onClick={toggleTheme} className="p-2 rounded hover:bg-[var(--accent)] hidden md:block">
               {resolvedTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
@@ -413,7 +433,9 @@ export default function Header() {
                 <button className="bg-[var(--brand-primary)] px-4 py-2 text-white rounded-md">
                   {currentLocale === 'en' ? 'Donate' : 'تبرع'}
                 </button>
-                <LucideSearch className="w-5 h-5 cursor-pointer hover:text-[var(--brand-primary)]" />
+                <button onClick={openSearch} className="p-2 rounded hover:bg-[var(--accent)]" aria-label="Search">
+                  <LucideSearch className="w-5 h-5" />
+                </button>
                 <button onClick={toggleTheme} className="p-2 rounded hover:bg-[var(--accent)]">
                   {resolvedTheme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </button>
@@ -427,6 +449,48 @@ export default function Header() {
           )}
         </AnimatePresence>
       </div>
+      {/* Search Dialog */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-start justify-center pt-28 px-4"
+            onClick={() => setSearchOpen(false)}
+          >
+            <motion.div
+              initial={{ y: -10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -10, opacity: 0 }}
+              className="w-full max-w-2xl bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)] rounded-xl shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <form onSubmit={submitSearch} className="p-4">
+                <div className="flex items-center gap-2">
+                  <LucideSearch className="w-5 h-5 text-muted-foreground" />
+                  <input
+                    id="global-search-input"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={currentLocale === 'en' ? 'Search news, projects, media…' : 'ابحث في الأخبار والمشاريع والوسائط…'}
+                    className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+                  />
+                  <button type="button" onClick={() => setSearchOpen(false)} className="px-3 py-1 rounded-md hover:bg-[var(--accent)]">
+                    {currentLocale === 'en' ? 'Cancel' : 'إلغاء'}
+                  </button>
+                  <button type="submit" className="px-3 py-1 rounded-md bg-[var(--brand-primary)] text-white">
+                    {currentLocale === 'en' ? 'Search' : 'بحث'}
+                  </button>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {currentLocale === 'en' ? 'Tip: Use keywords like "water", "education", or a person/place name.' : 'نصيحة: استخدم كلمات مثل "مياه"، "تعليم" أو اسم شخص/مكان.'}
+                </p>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
