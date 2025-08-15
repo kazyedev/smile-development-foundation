@@ -32,13 +32,14 @@ import {
   Youtube,
   ExternalLink
 } from 'lucide-react';
+import { use } from 'react';
 
 interface AboutUsPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export default function AboutUsPage({ params }: AboutUsPageProps) {
-  const { locale } = params;
+  const { locale } = use(params);
   const isLocaleEnglish = locale === 'en';
 
   const content = {
@@ -990,7 +991,7 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
             viewport={{ once: true }}
             variants={fadeInUp}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className=" text-3xl md:text-4xl font-bold mb-4">
               {isLocaleEnglish ? "Our Journey" : "رحلتنا"}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -1018,7 +1019,7 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
                   {index % 2 === 0 && (
                     <Card className="p-6">
                       <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                        <div className="w-12 h-12 bg-brand-primary text-white rounded-full flex items-center justify-center font-bold">
                           {milestone.year}
                         </div>
                         <h3 className="text-xl font-bold">
@@ -1038,7 +1039,7 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
                   {index % 2 === 1 && (
                     <Card className="p-6">
                       <div className="flex items-center gap-4 mb-4">
-                        <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold">
+                        <div className="w-12 h-12 bg-brand-secondary text-primary rounded-full flex items-center justify-center font-bold">
                           {milestone.year}
                         </div>
                         <h3 className="text-xl font-bold">

@@ -20,7 +20,7 @@ export default function Footer({ locale }: { locale: string }) {
           </p>
           <Button 
             asChild
-            className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6 py-3 h-auto text-base"
+            className="bg-primary text-primary-foreground hover:bg-brand-primary/90 font-medium px-6 py-3 h-auto text-base"
           >
             <a href={`/${locale}/donate`}>{isLocaleEnglish ? "Donate Now" : "تبرع الآن"} →</a>
           </Button>
