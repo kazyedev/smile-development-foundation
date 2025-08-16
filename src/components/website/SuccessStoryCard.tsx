@@ -17,7 +17,6 @@ import { formatLargeNumber } from "@/utils/formatLargeNumber";
 
 export default function SuccessStoryCard({ story, locale }: { story: Story, locale: string }) {
   const isLocaleEnglish = locale === "en";
-  const isLocaleArabic = locale === "ar";
 
   return (
     <Card className="w-full h-full pt-0 overflow-hidden relative hover:shadow-lg transition-shadow duration-200 group">

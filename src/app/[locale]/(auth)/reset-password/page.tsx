@@ -53,8 +53,8 @@ export default function ResetPasswordPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t.unknownError);
       setMessage(t.success);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }

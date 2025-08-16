@@ -69,7 +69,7 @@ export default function DonatePage() {
               </div>
               <div>
                 <label className="block mb-1">{isEn ? 'Frequency' : 'التكرار'}</label>
-                <select value={frequency} onChange={(e) => setFrequency(e.target.value as any)} className="w-full rounded-md border bg-transparent px-3 py-2">
+                <select value={frequency} onChange={(e) => setFrequency(e.target.value as 'once' | 'monthly')} className="w-full rounded-md border bg-transparent px-3 py-2">
                   <option value="once">{isEn ? 'One-time' : 'مرة واحدة'}</option>
                   <option value="monthly">{isEn ? 'Monthly' : 'شهرياً'}</option>
                 </select>

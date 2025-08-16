@@ -1,13 +1,13 @@
 "use client";
 
 import { Video } from "@/types/video";
-import VideoCard from "../VideoCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState, useMemo } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { mockVideos } from "@/data/mockVideos";
-import { Play, Film, Camera, Users, Eye, Clock, Monitor } from "lucide-react";
+import { Play, Film, Camera, Eye } from "lucide-react";
+import Image from "next/image";
 
 // mockVideos imported from shared data
 
@@ -88,10 +88,12 @@ export default function VideosSection({ locale }: { locale: string }) {
                   />
                 ) : (
                   <>
-                    <img 
+                    <Image 
                       src={getThumbnailUrl(selectedVideo.url)}
                       alt={isEnglish ? selectedVideo.titleEn : selectedVideo.titleAr}
                       className="w-full h-full object-cover"
+                      width={selectedVideo.width}
+                      height={selectedVideo.height}
                     />
                     <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/20 transition-colors">
                       <button
@@ -163,10 +165,12 @@ export default function VideosSection({ locale }: { locale: string }) {
                 onClick={() => handleVideoSelect(video)}
               >
                 <div className="relative aspect-video rounded-xl overflow-hidden mb-4">
-                  <img 
+                  <Image 
                     src={getThumbnailUrl(video.url)}
                     alt={isEnglish ? video.titleEn : video.titleAr}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    width={video.width}
+                    height={video.height}
                   />
                   <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Play className="w-10 h-10 text-white" fill="white" />

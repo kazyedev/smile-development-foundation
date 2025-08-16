@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       });
       return NextResponse.json({ url: session.url });
     }
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Stripe error' }, { status: 500 });
   }
 }

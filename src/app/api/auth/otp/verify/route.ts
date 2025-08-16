@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
     return NextResponse.json({ ok: true });
-  } catch (e: any) {
+  } catch (e: unknown) {
     return NextResponse.json({ error: e?.message ?? "Unexpected error" }, { status: 500 });
   }
 }

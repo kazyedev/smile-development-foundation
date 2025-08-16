@@ -1,6 +1,6 @@
 // app/[locale]/page.tsx
-import HeroSection from "@/components/website/sections/HeroSection";
-import AboutSection from "@/components/website/sections/AboutSection";
+// import HeroSection from "@/components/website/sections/HeroSection";
+// import AboutSection from "@/components/website/sections/AboutSection";
 import ProjectsSection from "@/components/website/sections/ProjectsSection";
 import ActivitiesSection from "@/components/website/sections/ActivitiesSection";
 import SuccessStoriesSection from "@/components/website/sections/SuccessStoriesSection";

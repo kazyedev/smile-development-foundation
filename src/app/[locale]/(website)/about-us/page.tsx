@@ -10,7 +10,7 @@ import {
   Users, 
   Target, 
   Award, 
-  Calendar,
+
   MapPin,
   Mail,
   Phone,

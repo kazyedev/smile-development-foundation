@@ -4,7 +4,7 @@ import { mockProjectCategories } from "@/data/mockProjectCategories";
 import { mockProjects } from "@/data/mockProjects";
 import ProjectCard from "@/components/website/ProjectCard";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+// import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { use } from "react";
 

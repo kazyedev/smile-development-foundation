@@ -1,11 +1,11 @@
 import { mockPrograms } from "@/data/mockPrograms";
-import { Project } from "@/types/project";
-import { Story } from "@/types/successStory";
-import Image from "next/image";
-import Link from "next/link";
-import { MapPin, Target, CheckCircle, Users, HandCoins, Building2 } from "lucide-react";
-import CountUp from "@/components/website/programs/CountUp";
-import AutoCarousel from "@/components/website/programs/AutoCarousel";
+// import { Project } from "@/types/project";
+// import { Story } from "@/types/successStory";
+// import Image from "next/image";
+// import Link from "next/link";
+// import { MapPin, Target, CheckCircle, Users, HandCoins, Building2 } from "lucide-react";
+// import CountUp from "@/components/website/programs/CountUp";
+// import AutoCarousel from "@/components/website/programs/AutoCarousel";
 import ProgramDetailClient from "@/components/website/programs/ProgramDetailClient";
 import { mockProjects } from "@/data/mockProjects";
 import { mockStories } from "@/data/mockStories";

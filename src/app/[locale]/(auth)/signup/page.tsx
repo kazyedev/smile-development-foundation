@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -90,7 +90,7 @@ export default function SignupPage() {
       // Supabase already sent OTP on sign up; start countdown immediately
       setOtpStatus("sent");
       startCooldown(60);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -133,7 +133,7 @@ export default function SignupPage() {
       setOtpStatus("sent");
       startCooldown(60);
       // dev code removed
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message);
     } finally {
       setOtpLoading(false);
@@ -161,7 +161,7 @@ export default function SignupPage() {
       if (!res.ok) throw new Error(data.error || t.incorrectCode);
       setOtpStatus("verified");
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message);
       return false;
     } finally {
@@ -274,8 +274,8 @@ export default function SignupPage() {
                     setPhase("done");
                     router.push(`/${locale}`);
                     router.refresh();
-                  } catch (err: any) {
-                    setError(err.message);
+                  } catch (err: unknown) {
+                    setError(err instanceof Error ? err.message : 'Unknown error');
                   }
                 }
               }}

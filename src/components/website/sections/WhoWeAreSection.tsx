@@ -1,5 +1,5 @@
 "use client"
-import { ArrowDown, ArrowUp, CircleQuestionMark, UserStar, Eye, MessageCircle, Target, Shield, FileText, ExternalLink } from "lucide-react";
+import { ArrowDown, CircleQuestionMark, UserStar, Eye, MessageCircle, Target, Shield, FileText } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -57,6 +57,7 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                 return <LucideIcon className={className} />;
             }
         } catch (e) {
+            console.error(e);
             return <CircleQuestionMark className={className} />;
         }
         return <CircleQuestionMark className={className} />;

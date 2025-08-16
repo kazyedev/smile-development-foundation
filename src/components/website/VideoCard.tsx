@@ -11,21 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Video } from "@/types/video";
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Eye, MapPin, HardDrive } from "lucide-react";
+import { Play, Eye, MapPin } from "lucide-react";
 import { formatLargeNumber } from "@/utils/formatLargeNumber";
 
 export default function VideoCard({ video, locale, onPlay, condensed = false }: { video: Video, locale: string, onPlay?: () => void, condensed?: boolean }) {
   const isLocaleEnglish = locale === "en";
   const hideMetaClass = condensed ? 'md:hidden' : '';
   
-  const formatFileSize = (bytes: number) => {
-    const mb = bytes / (1024 * 1024);
-    if (isLocaleEnglish) {
-      return `${mb.toFixed(0)} MB`;
-    } else {
-      return `${mb.toFixed(0)} ميجابايت`;
-    }
-  };
 
   const formatDuration = (width: number, height: number) => {
     // This is a mock duration calculation based on video dimensions
@@ -41,7 +33,7 @@ export default function VideoCard({ video, locale, onPlay, condensed = false }: 
   // Generate a placeholder thumbnail image
   const getThumbnailUrl = (videoUrl: string) => {
     // In real implementation, you'd use actual video thumbnails
-    return `https://img.youtube.com/vi/${video.url.split('=')[1]}/0.jpg`;
+    return `https://img.youtube.com/vi/${videoUrl.split('=')[1]}/0.jpg`;
   };
 
   return (

@@ -90,8 +90,8 @@ export default function LoginPage() {
       }
       router.push(`/${locale}/cms`);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setLoading(false);
     }

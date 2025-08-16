@@ -1,3 +1,5 @@
+'use client';
+
 import { mockNewsCategories } from "@/data/mockNewsCategories";
 import { mockNews } from "@/data/mockNews";
 import Image from "next/image";

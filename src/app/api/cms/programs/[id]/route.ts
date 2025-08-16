@@ -30,7 +30,7 @@ export async function PATCH(req: Request, { params }: Params) {
   const payload = await req.json().catch(() => ({}));
   // Prevent ID overwrite from client
   if (payload && typeof payload === "object") {
-    delete (payload as any).id;
+    delete (payload as Record<string, unknown>).id;
   }
 
   const supabase = await supabaseServer();

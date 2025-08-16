@@ -2,7 +2,7 @@
 
 import { Users, Heart, MapPin, Award, Droplet, GraduationCap, Stethoscope, TreePine, TrendingUp, BarChart3, PieChart } from "lucide-react";
 import { LucideIcon } from "lucide-react";
-import { formatLargeNumber } from "@/utils/formatLargeNumber";
+// import { formatLargeNumber } from "@/utils/formatLargeNumber";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 

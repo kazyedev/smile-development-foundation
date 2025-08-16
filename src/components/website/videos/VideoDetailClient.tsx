@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { MapPin, Tags } from "lucide-react";
-import Link from "next/link";
+// import Link from "next/link";
 import VideoCard from "@/components/website/VideoCard";
 import { Video } from "@/types/video";
 

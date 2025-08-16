@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Heart, Star, Quote, MapPin, User, Play, ArrowRight, Sparkles, Award, Users } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const mockSuccessStories: Story[] = [
   {
@@ -164,7 +165,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
               className="relative"
             >
               <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl group">
-                <img 
+                <Image 
                   src={currentStory.featuredImageUrl}
                   alt={isEnglish ? currentStory.titleEn : currentStory.titleAr}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -228,7 +229,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
               
               {/* Story Content */}
               <blockquote className="text-lg leading-relaxed text-muted-foreground mb-8 italic border-l-4 border-brand-primary pl-6">
-                "{isEnglish ? currentStory.contentEn : currentStory.contentAr}"
+                &quot;{isEnglish ? currentStory.contentEn : currentStory.contentAr}&quot;
               </blockquote>
               
               {/* Tags */}
@@ -264,10 +265,12 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
                 className={`group relative ${activeStory === index ? 'ring-2 ring-brand-primary' : ''}`}
               >
                 <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg">
-                  <img 
+                  <Image 
                     src={story.featuredImageUrl}
                     alt={isEnglish ? story.personNameEn : story.personNameAr}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    width={100}
+                    height={100}
                   />
                   {activeStory === index && (
                     <div className="absolute inset-0 bg-brand-primary/20 flex items-center justify-center">

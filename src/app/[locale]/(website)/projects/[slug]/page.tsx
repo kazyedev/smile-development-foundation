@@ -1,8 +1,6 @@
 import { mockProjects } from "@/data/mockProjects";
 import Image from "next/image";
-import { MapPin, Target, ListChecks, Layers3, Boxes, Users, Video, BookOpen, Tags } from "lucide-react";
-import { motion } from "framer-motion";
-import Link from "next/link";
+import {  Target } from "lucide-react";
 
 export default function ProjectDetailPage({ params: { slug, locale } }: { params: { slug: string; locale: string } }) {
   const decoded = decodeURIComponent(slug);
