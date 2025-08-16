@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 export const metadata: Metadata = {
-  title: 'Smile Foundation',
+  title: 'Ibtisama Foundation',
   description: 'Official website',
 };
 

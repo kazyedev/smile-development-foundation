@@ -2,6 +2,7 @@ import { Project } from "@/types/project";
 import ProjectCard from "../ProjectCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { ArrowRight, Target, Users, Lightbulb } from "lucide-react";
 const mockProjects: Project[] = [
   {
     id: 1,
@@ -184,30 +185,104 @@ const mockProjects: Project[] = [
 
 
 export default function ProjectsSection({ locale }: { locale: string }) {
+  const isEnglish = locale === "en";
+  
   return (
-    <div className="flex flex-col gap-4 px-4 py-10 border-t border-b border-[var(--secondary)] bg-brand-primary/10">
-      <h1 className="text-2xl font-bold text-center">
-        {locale === "en" ? "Our Projects" : "مشاريعنا"}
-      </h1>
-      <p className="text-center text-muted-foreground max-w-2xl mx-auto">
-        {locale === "en" 
-          ? "Discover our impactful projects that are making a real difference in communities across the region through sustainable development and innovative solutions."
-          : "اكتشف مشاريعنا المؤثرة التي تحدث فرقًا حقيقيًا في المجتمعات عبر المنطقة من خلال التنمية المستدامة والحلول المبتكرة."
-        }
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto gap-4 justify-center items-center mt-6">
-        {mockProjects.slice(0, 3).map((project) => (
-          <ProjectCard key={project.id} project={project} locale={locale} />
-        ))}
+    <section className="relative overflow-hidden bg-gradient-to-br from-background via-brand-primary/5 to-brand-secondary/10 dark:from-background dark:via-brand-primary/10 dark:to-brand-secondary/5">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 opacity-30 dark:opacity-20">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-brand-primary/20 rounded-full blur-3xl transform -translate-x-32 -translate-y-32"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-secondary/20 rounded-full blur-3xl transform translate-x-48 translate-y-48"></div>
       </div>
       
-      <div className="flex justify-center mt-8">
-        <Link href={`/${locale}/projects`}>
-          <Button variant="outline" size="lg">
-            {locale === "en" ? "View All Projects" : "عرض جميع المشاريع"}
-          </Button>
-        </Link>
+      <div className="relative container mx-auto px-4 py-16 lg:py-24">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary/10 dark:bg-brand-primary/20 text-brand-primary dark:text-brand-primary rounded-full text-sm font-medium mb-6">
+            <Target className="w-4 h-4" />
+            {isEnglish ? "Impact Projects" : "مشاريع التأثير"}
+          </div>
+          
+          <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent mb-6">
+            {isEnglish ? "Our Projects" : "مشاريعنا"}
+          </h2>
+          
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            {isEnglish 
+              ? "Discover our impactful projects that are making a real difference in communities across the region through sustainable development and innovative solutions."
+              : "اكتشف مشاريعنا المؤثرة التي تحدث فرقًا حقيقيًا في المجتمعات عبر المنطقة من خلال التنمية المستدامة والحلول المبتكرة."
+            }
+          </p>
+        </div>
+
+        {/* Stats Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="text-center group">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-primary/10 dark:bg-brand-primary/20 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+              <Target className="w-8 h-8 text-brand-primary" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-2">50+</div>
+            <div className="text-sm text-muted-foreground">
+              {isEnglish ? "Active Projects" : "مشروع نشط"}
+            </div>
+          </div>
+          
+          <div className="text-center group">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-secondary/10 dark:bg-brand-secondary/20 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+              <Users className="w-8 h-8 text-brand-secondary" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-2">10K+</div>
+            <div className="text-sm text-muted-foreground">
+              {isEnglish ? "Lives Impacted" : "حياة تأثرت"}
+            </div>
+          </div>
+          
+          <div className="text-center group">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 dark:from-brand-primary/20 dark:to-brand-secondary/20 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
+              <Lightbulb className="w-8 h-8 text-brand-primary" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-2">15</div>
+            <div className="text-sm text-muted-foreground">
+              {isEnglish ? "Communities Served" : "مجتمع خدم"}
+            </div>
+          </div>
+        </div>
+
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          {mockProjects.slice(0, 3).map((project, index) => (
+            <div 
+              key={project.id} 
+              className="group"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <ProjectCard project={project} locale={locale} />
+            </div>
+          ))}
+        </div>
+        
+        {/* Call to Action */}
+        <div className="text-center">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-4">
+            <Link href={`/${locale}/projects`}>
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-brand-primary to-brand-primary/90 hover:from-brand-primary/90 hover:to-brand-primary text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+              >
+                {isEnglish ? "View All Projects" : "عرض جميع المشاريع"}
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+            
+            <Link href={`/${locale}/contact`}>
+              <Button variant="outline" size="lg" className="group">
+                {isEnglish ? "Start a Project" : "ابدأ مشروعًا"}
+                <Target className="w-4 h-4 ml-2 group-hover:scale-110 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

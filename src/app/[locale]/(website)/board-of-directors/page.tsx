@@ -21,13 +21,15 @@ import {
   Gavel,
   Eye
 } from 'lucide-react';
+import { use } from 'react';
 
 interface BoardOfDirectorsPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export default function BoardOfDirectorsPage({ params }: BoardOfDirectorsPageProps) {
-  const { locale } = params;
+  const { locale } = use(params);
+  
   const isLocaleEnglish = locale === 'en';
 
   const content = {
@@ -260,12 +262,12 @@ export default function BoardOfDirectorsPage({ params }: BoardOfDirectorsPagePro
         en: "For board-related inquiries, governance matters, or partnership opportunities, please contact our board secretariat.",
         ar: "للاستفسارات المتعلقة بالمجلس أو مسائل الحوكمة أو فرص الشراكة، يرجى الاتصال بأمانة مجلس الإدارة."
       },
-      email: "board@smiledev.org",
+      email: "board@Ibtisamadev.org",
       secretary: {
         name: { en: "Ms. Layla Ahmad", ar: "الآنسة ليلى أحمد" },
         title: { en: "Board Secretary", ar: "أمين سر المجلس" },
         phone: "+967 1 234 5690",
-        email: "secretary@smiledev.org"
+        email: "secretary@Ibtisamadev.org"
       }
     }
   };

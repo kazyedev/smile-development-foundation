@@ -8,6 +8,6 @@ export function generateMetadata(title: string, description?: string): Metadata 
 }
 
 export const defaultMetadata: Metadata = {
-  title: 'Smile Foundation',
+  title: 'Ibtisama Foundation',
   description: 'Foundation website',
 };

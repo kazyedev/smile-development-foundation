@@ -7,13 +7,20 @@ import SuccessStoriesSection from "@/components/website/sections/SuccessStoriesS
 import VideosSection from "@/components/website/sections/VideosSection";
 import StaticSection from "@/components/website/sections/StaticSection";
 import NewsSection from "@/components/website/sections/NewsSection";
+import PrimaryCarousel from "@/components/website/carousels/PrimaryCarousel";
+import { mockPrimaryCarouselCards } from "@/data/mockPrimaryCarouselCards";
+import WhoWeAreSection from "@/components/website/sections/WhoWeAreSection";
+
+import { mockWhoWeAreSection } from "@/data/mockWhoWeAreSection";
 
 export default async function HomePage({ params }: { params: { locale: string } }) {
   const { locale } = await params;
   return (
     <main className="flex flex-col gap-4 ">
-      <HeroSection />
-      <AboutSection locale={locale} />
+      <PrimaryCarousel locale={locale} cards={mockPrimaryCarouselCards} />
+      {/* <HeroSection /> */}
+      {/* <AboutSection locale={locale} /> */}
+      <WhoWeAreSection {...mockWhoWeAreSection} locale={locale} />
       <ProjectsSection locale={locale} />
       <ActivitiesSection locale={locale} />
       <SuccessStoriesSection locale={locale} />

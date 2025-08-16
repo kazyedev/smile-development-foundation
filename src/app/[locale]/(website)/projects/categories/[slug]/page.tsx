@@ -6,10 +6,14 @@ import ProjectCard from "@/components/website/ProjectCard";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
+import { use } from "react";
 
-export default function ProjectCategoryDetailPage({ params: { slug } }: { params: { slug: string } }) {
-  const params = useParams<{ locale: string; slug: string }>();
-  const locale = params?.locale || 'en';
+interface ProjectCategoryDetailPageProps {
+  params: Promise<{ locale: string; slug: string }>;
+}
+
+export default function ProjectCategoryDetailPage({ params }: ProjectCategoryDetailPageProps) {
+  const { locale, slug } = use(params);
   const isEn = locale === 'en';
   const decoded = decodeURIComponent(slug);
 

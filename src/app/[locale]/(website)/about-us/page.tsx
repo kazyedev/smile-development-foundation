@@ -45,7 +45,7 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
   const content = {
     hero: {
       title: {
-        en: "About Smile Development Foundation",
+        en: "About Ibtisama Development Foundation",
         ar: "عن مؤسسة الابتسامة للتنمية"
       },
       subtitle: {
@@ -63,14 +63,14 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
         ar: "قصتنا"
       },
       content: {
-        en: "The Smile Development Foundation was born from a vision to address the growing challenges facing Yemen's most vulnerable communities. Founded by a group of dedicated professionals and volunteers, we recognized the urgent need for sustainable solutions to health and education crises affecting thousands of families. Our journey began with a simple belief: every person deserves access to basic healthcare and quality education, regardless of their circumstances.",
+        en: "The Ibtisama Development Foundation was born from a vision to address the growing challenges facing Yemen's most vulnerable communities. Founded by a group of dedicated professionals and volunteers, we recognized the urgent need for sustainable solutions to health and education crises affecting thousands of families. Our journey began with a simple belief: every person deserves access to basic healthcare and quality education, regardless of their circumstances.",
         ar: "وُلدت مؤسسة الابتسامة للتنمية من رؤية لمعالجة التحديات المتزايدة التي تواجه أكثر المجتمعات اليمنية ضعفاً. تأسست من قبل مجموعة من المتخصصين والمتطوعين المتفانين، أدركنا الحاجة الملحة لحلول مستدامة لأزمات الصحة والتعليم التي تؤثر على آلاف العائلات. بدأت رحلتنا بإيمان بسيط: كل شخص يستحق الوصول إلى الرعاية الصحية الأساسية والتعليم الجيد، بغض النظر عن ظروفه."
       }
     },
     overview: {
       title: { en: "About the Organization", ar: "عن المنظمة" },
       content: {
-        en: "Smile Development Foundation is a Yemeni non-profit charitable organization dedicated to creating sustainable positive change in communities across Yemen. We focus on delivering comprehensive health and education programs that address the most pressing needs of vulnerable populations.",
+        en: "Ibtisama Development Foundation is a Yemeni non-profit charitable organization dedicated to creating sustainable positive change in communities across Yemen. We focus on delivering comprehensive health and education programs that address the most pressing needs of vulnerable populations.",
         ar: "مؤسسة الابتسامة للتنمية هي منظمة خيرية يمنية غير ربحية مكرسة لخلق تغيير إيجابي مستدام في المجتمعات عبر اليمن. نركز على تقديم برامج صحية وتعليمية شاملة تلبي أهم احتياجات الفئات الضعيفة."
       }
     },
@@ -339,19 +339,19 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
         email: {
           title: { en: "Email Addresses", ar: "عناوين البريد الإلكتروني" },
           items: [
-            { label: { en: "General Inquiries", ar: "الاستفسارات العامة" }, value: "info@smiledev.org" },
-            { label: { en: "Partnerships", ar: "الشراكات" }, value: "partnerships@smiledev.org" },
-            { label: { en: "Volunteers", ar: "المتطوعون" }, value: "volunteers@smiledev.org" },
-            { label: { en: "Press & Media", ar: "الصحافة والإعلام" }, value: "media@smiledev.org" }
+            { label: { en: "General Inquiries", ar: "الاستفسارات العامة" }, value: "info@Ibtisamadev.org" },
+            { label: { en: "Partnerships", ar: "الشراكات" }, value: "partnerships@Ibtisamadev.org" },
+            { label: { en: "Volunteers", ar: "المتطوعون" }, value: "volunteers@Ibtisamadev.org" },
+            { label: { en: "Press & Media", ar: "الصحافة والإعلام" }, value: "media@Ibtisamadev.org" }
           ]
         },
         social: {
           title: { en: "Social Media", ar: "وسائل التواصل الاجتماعي" },
           items: [
-            { platform: "Facebook", icon: Facebook, url: "https://facebook.com/smiledevfoundation", handle: "@SmileDevFoundation" },
-            { platform: "Twitter", icon: Twitter, url: "https://twitter.com/smiledevfdn", handle: "@SmileDevFdn" },
-            { platform: "Instagram", icon: Instagram, url: "https://instagram.com/smiledevfoundation", handle: "@SmileDevFoundation" },
-            { platform: "YouTube", icon: Youtube, url: "https://youtube.com/@smiledevfoundation", handle: "@SmileDevFoundation" }
+            { platform: "Facebook", icon: Facebook, url: "https://facebook.com/Ibtisamadevfoundation", handle: "@IbtisamaDevFoundation" },
+            { platform: "Twitter", icon: Twitter, url: "https://twitter.com/Ibtisamadevfdn", handle: "@IbtisamaDevFdn" },
+            { platform: "Instagram", icon: Instagram, url: "https://instagram.com/Ibtisamadevfoundation", handle: "@IbtisamaDevFoundation" },
+            { platform: "YouTube", icon: Youtube, url: "https://youtube.com/@Ibtisamadevfoundation", handle: "@IbtisamaDevFoundation" }
           ]
         },
         address: {
@@ -396,7 +396,7 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
         year: 2020,
         title: { en: "Foundation Established", ar: "تأسيس المؤسسة" },
         description: { 
-          en: "Smile Development Foundation officially launched with initial focus on emergency medical aid.",
+          en: "Ibtisama Development Foundation officially launched with initial focus on emergency medical aid.",
           ar: "انطلقت مؤسسة الابتسامة للتنمية رسمياً مع التركيز الأولي على المساعدات الطبية الطارئة."
         }
       },
