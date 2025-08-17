@@ -264,7 +264,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
                 onClick={() => handleStoryClick(index)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`group relative ${activeStory === index ? 'ring-2 ring-brand-primary' : ''}`}
+                className={`group relative ${activeStory === index ? 'ring-2 ring-brand-primary rounded-lg' : ''}`}
               >
                 <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-lg">
                   <Image 

@@ -2,7 +2,7 @@
 
 import { mockProjects } from "@/data/mockProjects";
 import Image from "next/image";
-import { Target, Users, Calendar, Eye, ArrowLeft, Share2, Bookmark, Download, CheckCircle, DollarSign, Gift } from "lucide-react";
+import { Target, Users, Calendar, Eye, ArrowLeft, Share2, Bookmark, Download, CheckCircle, DollarSign, Gift, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -47,17 +47,17 @@ export default function ProjectDetailPage({ params: { slug, locale } }: { params
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           
           {/* Navigation */}
-          <div className="absolute top-6 left-6 z-10">
+          <div className={`absolute ${isEn ? 'top-10 left-6' : 'top-10 right-6'} z-10`}>
             <Button asChild variant="secondary" size="sm" className="bg-black/20 backdrop-blur-sm border-white/20 text-white hover:bg-black/30">
               <Link href={`/${locale}/projects`}>
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                {isEn ? <ArrowLeft className="w-4 h-4 mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />}
                 {isEn ? 'Back to Projects' : 'العودة للمشاريع'}
               </Link>
             </Button>
           </div>
 
           {/* Action Buttons */}
-          <div className="absolute top-6 right-6 z-10 flex gap-2">
+          <div className={`absolute ${isEn ? 'top-10 right-6' : 'top-10 left-6'} z-10 flex gap-2`}>
             <Button variant="secondary" size="sm" className="bg-black/20 backdrop-blur-sm border-white/20 text-white hover:bg-black/30">
               <Share2 className="w-4 h-4" />
             </Button>
