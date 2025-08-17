@@ -169,6 +169,8 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
                   src={currentStory.featuredImageUrl}
                   alt={isEnglish ? currentStory.titleEn : currentStory.titleAr}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  width={100}
+                  height={100}
                 />
                 
                 {/* Gradient Overlay */}

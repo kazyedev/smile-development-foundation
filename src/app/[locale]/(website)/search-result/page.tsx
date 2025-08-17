@@ -11,6 +11,12 @@ import { mockPhotos } from "@/data/mockPhotos";
 import { mockVideos } from "@/data/mockVideos";
 import { mockPublications } from "@/data/mockPublications";
 import { mockReports } from "@/data/mockReports";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Ibtisama Foundation',
+  description: 'Official website',
+};
 
 type IndexedItem = {
   type: string;

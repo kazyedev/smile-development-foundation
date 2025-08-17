@@ -177,7 +177,7 @@ export default function StaticSection({ locale }: { locale: string }) {
                     
                     {/* Counter */}
                     <div className="relative text-4xl lg:text-5xl font-bold mb-3 bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
-                      {count.toLocaleString()}
+                      {count}
                     </div>
                     
                     {/* Title */}

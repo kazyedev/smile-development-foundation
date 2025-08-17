@@ -11,7 +11,7 @@ export const mockPrimaryCarouselCards: PrimaryCarouselCard[] = [
     locationEn: 'Switzerland Alps',
     locationAr: 'جبال الألب السويسرية',
     imageUrl:
-      'https://cdn.pixabay.com/photo/2023/10/27/09/24/mountains-8344601_1280.jpg',
+      '/assets/hero-1.jpg',
     linkTextEn: 'Discover Location',
     linkTextAr: 'اكتشف الموقع',
     linkUrlEn: '/destinations/saint-antönien',
@@ -31,7 +31,7 @@ export const mockPrimaryCarouselCards: PrimaryCarouselCard[] = [
     locationEn: 'Japan Alps',
     locationAr: 'جبال الألب اليابانية',
     imageUrl:
-      'https://cdn.pixabay.com/photo/2017/01/19/23/46/church-1993645_1280.jpg',
+      '/assets/hero-2.jpg',
     linkTextEn: 'Explore Now',
     linkTextAr: 'استكشف الآن',
     linkUrlEn: '/destinations/nagano',
@@ -51,7 +51,7 @@ export const mockPrimaryCarouselCards: PrimaryCarouselCard[] = [
     locationEn: 'Casablanca - Morocco',
     locationAr: 'الدار البيضاء - المغرب',
     imageUrl:
-      'https://cdn.pixabay.com/photo/2018/09/03/23/56/sea-3652697_1280.jpg',
+      '/assets/hero-3.jpg',
     linkTextEn: 'Book a Trip',
     linkTextAr: 'احجز رحلة',
     linkUrlEn: '/destinations/merzouga',
@@ -71,7 +71,7 @@ export const mockPrimaryCarouselCards: PrimaryCarouselCard[] = [
     locationEn: 'Sierra Nevada - USA',
     locationAr: 'سييرا نيفادا - الولايات المتحدة',
     imageUrl:
-      'https://cdn.pixabay.com/photo/2016/06/20/03/15/pier-1467984_1280.jpg',
+      '/assets/mockimage.jpg',
     linkTextEn: 'Plan Visit',
     linkTextAr: 'خطط للزيارة',
     linkUrlEn: '/destinations/yosemite',
