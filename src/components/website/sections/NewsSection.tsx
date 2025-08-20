@@ -1,6 +1,6 @@
 "use client";
 
-import { News } from "@/types/News";
+import { News } from "@/types/news";
 import NewsCard from "../NewsCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
