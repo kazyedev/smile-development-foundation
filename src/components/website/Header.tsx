@@ -322,7 +322,7 @@ export default function Header() {
                   </div>
                   <div className="flex flex-col">
                     <h1 className="font-bold text-xl bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] bg-clip-text text-transparent group-hover:scale-105 transition-transform">
-                      {currentLocale === 'en' ? 'Smile Foundation' : 'مؤسسة ابتسامة التنموية'}
+                      {currentLocale === 'en' ? 'Ibtisama Foundation' : 'مؤسسة ابتسامة التنموية'}
                     </h1>
                     <div className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
                       <Sparkles className="w-3 h-3 text-[var(--brand-secondary)]" />
@@ -552,7 +552,7 @@ export default function Header() {
                   </div>
                   <div>
                     <h2 className="font-bold text-lg bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] bg-clip-text text-transparent">
-                      {currentLocale === 'en' ? 'Smile Foundation' : 'مؤسسة ابتسامة التنموية'}
+                      {currentLocale === 'en' ? 'Ibtisama Foundation' : 'مؤسسة ابتسامة التنموية'}
                     </h2>
                     <p className="text-xs text-[var(--muted-foreground)] flex items-center gap-1">
                       <Shield className="w-3 h-3" />
