@@ -150,7 +150,7 @@ export const mockStories: Story[] = [
     personNameAr: "الدكتور عمر محمود",
     personAge: 36,
     personLocationEn: "Sinai Peninsula",
-    personLocationAr: "شبه جزيرة سيناء",
+    personLocationAr: "شبوة",
     cityEn: "Arish",
     cityAr: "العريش",
     otherImagesUrl: [

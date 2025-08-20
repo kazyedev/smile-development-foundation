@@ -68,7 +68,7 @@ export const mockVideos: Video[] = [
     height: 1080,
     url: "https://www.youtube.com/watch?v=haFo_EWNrcU",
     locationEn: "Sinai Peninsula",
-    locationAr: "شبه جزيرة سيناء",
+    locationAr: "شبوة",
     isPublic: true,
     slugEn: "medical-mission-serving-remote-communities",
     slugAr: "المهمة-الطبية-خدمة-المجتمعات-النائية",
