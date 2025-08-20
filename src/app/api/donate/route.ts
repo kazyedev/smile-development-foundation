@@ -7,7 +7,7 @@ const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: '2025-07-30
 export async function POST(req: Request) {
   try {
     if (!stripe) return NextResponse.json({ error: 'Stripe not configured' }, { status: 500 });
-    const { amount, currency = 'egp', frequency = 'once', name, email, note } = await req.json();
+    const { amount, currency = 'YER', frequency = 'once', name, email, note } = await req.json();
     if (!amount || amount <= 0) return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
 
     const unitAmount = Math.round(Number(amount) * 100);

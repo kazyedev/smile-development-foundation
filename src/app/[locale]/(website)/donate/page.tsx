@@ -36,7 +36,7 @@ export default function DonatePage() {
       const res = await fetch('/api/donate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: Number(amount), currency: 'egp', frequency, name, email, note }),
+        body: JSON.stringify({ amount: Number(amount), currency: 'YER', frequency, name, email, note }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error('Stripe');
@@ -85,19 +85,19 @@ export default function DonatePage() {
     {
       icon: Droplets,
       title: isEn ? "Clean Water" : "مياه نظيفة",
-      description: isEn ? "50 EGP provides clean water for a family for 1 week" : "50 ج.م توفر مياه نظيفة لعائلة لمدة أسبوع",
+      description: isEn ? "50 YER provides clean water for a family for 1 week" : "50 ج.م توفر مياه نظيفة لعائلة لمدة أسبوع",
       color: "text-blue-600 dark:text-blue-400"
     },
     {
       icon: GraduationCap,
       title: isEn ? "Education" : "التعليم",
-      description: isEn ? "200 EGP equips a student with learning materials for a year" : "200 ج.م تجهز طالباً بمواد تعليمية لسنة",
+      description: isEn ? "200 YER equips a student with learning materials for a year" : "200 ج.م تجهز طالباً بمواد تعليمية لسنة",
       color: "text-green-600 dark:text-green-400"
     },
     {
       icon: Stethoscope,
       title: isEn ? "Healthcare" : "الرعاية الصحية",
-      description: isEn ? "150 EGP funds a health outreach visit" : "150 ج.م تموّل زيارة توعوية صحية",
+      description: isEn ? "150 YER funds a health outreach visit" : "150 ج.م تموّل زيارة توعوية صحية",
       color: "text-red-600 dark:text-red-400"
     }
   ];
@@ -133,15 +133,15 @@ export default function DonatePage() {
       quote: isEn 
         ? "Seeing my monthly donation help provide clean water to families gives me immense satisfaction."
         : "رؤية تبرعي الشهري يساعد في توفير المياه النظيفة للعائلات يعطيني رضا هائل.",
-      amount: "200 EGP/month"
+      amount: "200 YER/month"
     },
     {
       name: isEn ? "Fatima Ali" : "فاطمة علي",
-      location: isEn ? "Alexandria, Yemen" : "الإسكندرية، اليمن",
+      location: isEn ? "Aden, Yemen" : "الإسكندرية، اليمن",
       quote: isEn 
         ? "I love how transparent they are with their spending. My donations are making a real difference."
         : "أحب مدى شفافيتهم في الإنفاق. تبرعاتي تحدث فرقاً حقيقياً.",
-      amount: "500 EGP"
+      amount: "500 YER"
     }
   ];
 
@@ -247,7 +247,7 @@ export default function DonatePage() {
                               : 'border-border hover:border-emerald-300 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10'
                           }`}
                         >
-                          <div className="font-bold text-lg">{value} {isEn ? 'EGP' : 'ج.م'}</div>
+                          <div className="font-bold text-lg">{value} {isEn ? 'YER' : 'ج.م'}</div>
                           <div className="text-xs text-muted-foreground mt-1">
                             {value >= 500 ? (isEn ? "High Impact" : "تأثير عالي") : 
                              value >= 200 ? (isEn ? "Good Impact" : "تأثير جيد") : 
@@ -267,7 +267,7 @@ export default function DonatePage() {
                         placeholder={isEn ? "Custom amount" : "مبلغ مخصص"}
                         className="h-12 text-lg"
                       />
-                      <span className="text-muted-foreground font-medium">{isEn ? 'EGP' : 'ج.م'}</span>
+                      <span className="text-muted-foreground font-medium">{isEn ? 'YER' : 'ج.م'}</span>
                     </div>
                   </div>
 

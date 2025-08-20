@@ -56,7 +56,7 @@ export default function WorkWithUsPage() {
       locationAr: "مأرب، اليمن",
       type: "full-time",
       experience: "mid",
-      salary: { min: 15000, max: 25000, currency: "EGP" },
+      salary: { min: 15000, max: 25000, currency: "YER" },
       descriptionEn: "Lead and manage development projects from conception to completion, ensuring timely delivery and quality outcomes for our community initiatives.",
       descriptionAr: "قيادة وإدارة مشاريع التنمية من المفهوم إلى الانتهاء، مما يضمن التسليم في الوقت المناسب ونتائج عالية الجودة لمبادراتنا المجتمعية.",
       responsibilitiesEn: [
@@ -108,7 +108,7 @@ export default function WorkWithUsPage() {
       locationAr: "عن بُعد",
       type: "full-time",
       experience: "entry",
-      salary: { min: 8000, max: 12000, currency: "EGP" },
+      salary: { min: 8000, max: 12000, currency: "YER" },
       descriptionEn: "Manage our social media presence and create engaging content to promote our mission and connect with our community.",
       descriptionAr: "إدارة حضورنا على وسائل التواصل الاجتماعي وإنشاء محتوى جذاب للترويج لمهمتنا والتواصل مع مجتمعنا.",
       responsibilitiesEn: [
@@ -160,7 +160,7 @@ export default function WorkWithUsPage() {
       locationAr: "مأرب، اليمن",
       type: "full-time",
       experience: "mid",
-      salary: { min: 12000, max: 18000, currency: "EGP" },
+      salary: { min: 12000, max: 18000, currency: "YER" },
       descriptionEn: "Coordinate and support program implementation activities, working closely with beneficiaries and partner organizations.",
       descriptionAr: "تنسيق ودعم أنشطة تنفيذ البرامج، والعمل بشكل وثيق مع المستفيدين والمنظمات الشريكة.",
       responsibilitiesEn: [
@@ -212,7 +212,7 @@ export default function WorkWithUsPage() {
       locationAr: "مأرب، اليمن",
       type: "internship",
       experience: "entry",
-      salary: { min: 3000, max: 5000, currency: "EGP" },
+      salary: { min: 3000, max: 5000, currency: "YER" },
       descriptionEn: "Support the finance team with daily operations, reporting, and analysis while gaining valuable experience in non-profit financial management.",
       descriptionAr: "دعم فريق المالية في العمليات اليومية والتقارير والتحليل مع اكتساب خبرة قيمة في الإدارة المالية للمنظمات غير الربحية.",
       responsibilitiesEn: [
