@@ -69,6 +69,7 @@ export default function Header() {
     media: [
       { label: 'Images', labelAr: 'الصور', href: `/${currentLocale}/media/images` },
       { label: 'Videos', labelAr: 'الفيديوهات', href: `/${currentLocale}/media/videos` },
+      { label: 'Activities', labelAr: 'الأنشطة', href: `/${currentLocale}/activities` },
       { label: 'Publications', labelAr: 'النشرات', href: `/${currentLocale}/media/publications` },
       { label: 'Reports', labelAr: 'التقارير', href: `/${currentLocale}/media/reports` },
       { label: 'Success Stories', labelAr: 'القصص الناجحة', href: `/${currentLocale}/media/success-stories` },
@@ -316,7 +317,7 @@ export default function Header() {
                 <Link href={`/${currentLocale}`} className="flex items-center gap-4 group">
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] rounded-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                    <Image src="/assets/logo.png" alt="Logo" width={44} height={44} className="relative z-10 rounded-full" />
+                    <Image src="/assets/logo.svg" alt="Logo" width={44} height={44} className="relative z-10 rounded-full" />
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--brand-secondary)] rounded-full animate-pulse"></div>
                   </div>
                   <div className="flex flex-col">
@@ -546,7 +547,7 @@ export default function Header() {
               <div className="p-6 border-b border-[var(--border)]/30">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <Image src="/assets/logo.png" alt="Logo" width={40} height={40} className="rounded-full" />
+                    <Image src="/assets/logo.svg" alt="Logo" width={40} height={40} className="rounded-full" />
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--brand-secondary)] rounded-full animate-pulse"></div>
                   </div>
                   <div>

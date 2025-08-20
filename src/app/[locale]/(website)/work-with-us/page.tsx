@@ -52,8 +52,8 @@ export default function WorkWithUsPage() {
       titleAr: "مدير مشروع",
       departmentEn: "Operations",
       departmentAr: "العمليات",
-      locationEn: "Cairo, Egypt",
-      locationAr: "القاهرة، مصر",
+      locationEn: "Mareb, Yemen",
+      locationAr: "مأرب، اليمن",
       type: "full-time",
       experience: "mid",
       salary: { min: 15000, max: 25000, currency: "EGP" },
@@ -156,8 +156,8 @@ export default function WorkWithUsPage() {
       titleAr: "منسق برنامج",
       departmentEn: "Programs",
       departmentAr: "البرامج",
-      locationEn: "Cairo, Egypt",
-      locationAr: "القاهرة، مصر",
+      locationEn: "Mareb, Yemen",
+      locationAr: "مأرب، اليمن",
       type: "full-time",
       experience: "mid",
       salary: { min: 12000, max: 18000, currency: "EGP" },
@@ -208,8 +208,8 @@ export default function WorkWithUsPage() {
       titleAr: "متدرب مالية",
       departmentEn: "Finance",
       departmentAr: "المالية",
-      locationEn: "Cairo, Egypt",
-      locationAr: "القاهرة، مصر",
+      locationEn: "Mareb, Yemen",
+      locationAr: "مأرب، اليمن",
       type: "internship",
       experience: "entry",
       salary: { min: 3000, max: 5000, currency: "EGP" },
@@ -343,7 +343,7 @@ export default function WorkWithUsPage() {
                     <label className="block text-sm font-medium mb-2">
                       {isEn ? "Phone Number" : "رقم الهاتف"} *
                     </label>
-                    <Input placeholder="+20 1X XXX XXXX" className="h-12" required />
+                    <Input placeholder="+967 7X XXX XXXX" className="h-12" required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">

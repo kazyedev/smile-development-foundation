@@ -56,14 +56,14 @@ export default function ContactUsPage() {
       icon: Phone,
       title: isEn ? "Call Us" : "اتصل بنا",
       description: isEn ? "Speak directly with our team" : "تحدث مباشرة مع فريقنا",
-      value: "+20 123 456 7890",
+      value: "+967 123 456 7890",
       color: "text-green-600 dark:text-green-400"
     },
     {
       icon: MapPin,
       title: isEn ? "Visit Us" : "زرنا",
       description: isEn ? "Come to our office" : "تعال إلى مكتبنا",
-      value: isEn ? "Cairo, Egypt" : "القاهرة، مصر",
+      value: isEn ? "Mareb, Yemen" : "مأرب، اليمن",
       color: "text-purple-600 dark:text-purple-400"
     },
     {
@@ -198,7 +198,7 @@ export default function ContactUsPage() {
                       <Input
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        placeholder={isEn ? "+20 1X XXX XXXX" : "+20 1X XXX XXXX"}
+                        placeholder={isEn ? "+967 7X XXX XXXX" : "+967 7X XXX XXXX"}
                         className="h-12"
                       />
                     </div>
@@ -289,9 +289,9 @@ export default function ContactUsPage() {
                     <div>
                       <h4 className="font-semibold mb-1">{isEn ? "Address" : "العنوان"}</h4>
                       <p className="text-sm text-muted-foreground">
-                        {isEn ? "123 Foundation Street, Heliopolis" : "١٢٣ شارع المؤسسة، مصر الجديدة"}
+                        {isEn ? "123 Foundation Street, Heliopolis" : "١٢٣ شارع المؤسسة، اليمن الجديدة"}
                         <br />
-                        {isEn ? "Cairo, Egypt 11341" : "القاهرة، مصر ١١٣٤١"}
+                        {isEn ? "Mareb, Yemen 11341" : "مأرب، اليمن ١١٣٤١"}
                       </p>
                     </div>
                   </div>
@@ -313,8 +313,8 @@ export default function ContactUsPage() {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1">{isEn ? "Phone" : "الهاتف"}</h4>
-                      <p className="text-sm text-muted-foreground">+20 123 456 7890</p>
-                      <p className="text-sm text-muted-foreground">+20 123 456 7891 (Fax)</p>
+                      <p className="text-sm text-muted-foreground">+967 123 456 7890</p>
+                      <p className="text-sm text-muted-foreground">+967 123 456 7891 (Fax)</p>
                     </div>
                   </div>
 
@@ -375,7 +375,7 @@ export default function ContactUsPage() {
                       {isEn ? "Interactive Map" : "خريطة تفاعلية"}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {isEn ? "Cairo, Egypt" : "القاهرة، مصر"}
+                      {isEn ? "Mareb, Yemen" : "مأرب، اليمن"}
                     </p>
                   </div>
                 </div>

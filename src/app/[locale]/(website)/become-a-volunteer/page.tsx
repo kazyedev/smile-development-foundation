@@ -369,7 +369,7 @@ export default function BecomeAVolunteerPage() {
                   <Input
                     value={formData.phone}
                     onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    placeholder="+20 1X XXX XXXX"
+                    placeholder="+967 7X XXX XXXX"
                     className="h-12"
                     required
                   />

@@ -129,7 +129,7 @@ export default function DonatePage() {
   const testimonials = [
     {
       name: isEn ? "Ahmed Hassan" : "أحمد حسن",
-      location: isEn ? "Cairo, Egypt" : "القاهرة، مصر",
+      location: isEn ? "Mareb, Yemen" : "مأرب، اليمن",
       quote: isEn 
         ? "Seeing my monthly donation help provide clean water to families gives me immense satisfaction."
         : "رؤية تبرعي الشهري يساعد في توفير المياه النظيفة للعائلات يعطيني رضا هائل.",
@@ -137,7 +137,7 @@ export default function DonatePage() {
     },
     {
       name: isEn ? "Fatima Ali" : "فاطمة علي",
-      location: isEn ? "Alexandria, Egypt" : "الإسكندرية، مصر",
+      location: isEn ? "Alexandria, Yemen" : "الإسكندرية، اليمن",
       quote: isEn 
         ? "I love how transparent they are with their spending. My donations are making a real difference."
         : "أحب مدى شفافيتهم في الإنفاق. تبرعاتي تحدث فرقاً حقيقياً.",

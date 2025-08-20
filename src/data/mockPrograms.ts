@@ -18,8 +18,8 @@ export const mockPrograms: Program[] = [
     ],
     icon: "Droplet",
     color: "#3B82F6",
-    implementationLocationEn: "Upper Egypt Villages",
-    implementationLocationAr: "قرى صعيد مصر",
+    implementationLocationEn: "Upper Yemen Villages",
+    implementationLocationAr: "قرى مجمع اليمن",
     fundingProviders: [
       { nameEn: "UNICEF", nameAr: "اليونيسف", imageUrl: "/vercel.svg" },
       { nameEn: "Global Water Fund", nameAr: "صندوق المياه العالمي", imageUrl: "/vercel.svg" },
@@ -73,8 +73,8 @@ export const mockPrograms: Program[] = [
     ],
     icon: "Laptop",
     color: "#10B981",
-    implementationLocationEn: "Cairo and Giza",
-    implementationLocationAr: "القاهرة والجيزة",
+    implementationLocationEn: "Mareb and Giza",
+    implementationLocationAr: "مأرب والجيزة",
     fundingProviders: [
       { nameEn: "Tech4All", nameAr: "التكنولوجيا للجميع", imageUrl: "/vercel.svg" },
       { nameEn: "Digital Future Fund", nameAr: "صندوق المستقبل الرقمي", imageUrl: "/vercel.svg" },

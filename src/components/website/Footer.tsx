@@ -163,11 +163,11 @@ export default function Footer({ locale }: { locale: string }) {
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <MapPin className="w-5 h-5 text-brand-primary flex-shrink-0" />
-                  <span>{isEnglish ? "Cairo, Egypt" : "القاهرة، مصر"}</span>
+                  <span>{isEnglish ? "Mareb, Yemen" : "مأرب، اليمن"}</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Phone className="w-5 h-5 text-brand-primary flex-shrink-0" />
-                  <span>+20 123 456 7890</span>
+                  <span>+967 123 456 7890</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Mail className="w-5 h-5 text-brand-primary flex-shrink-0" />

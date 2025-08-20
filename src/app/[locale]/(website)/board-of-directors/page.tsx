@@ -96,8 +96,8 @@ export default function BoardOfDirectorsPage({ params }: BoardOfDirectorsPagePro
         expertise: { en: "Healthcare Leadership", ar: "قيادة الرعاية الصحية" },
         experience: { en: "25+ years", ar: "25+ سنة" },
         education: {
-          en: "MD from Cairo University, MBA from American University",
-          ar: "دكتوراه في الطب من جامعة القاهرة، ماجستير إدارة الأعمال من الجامعة الأمريكية"
+          en: "MD from Mareb University, MBA from American University",
+          ar: "دكتوراه في الطب من جامعة مأرب، ماجستير إدارة الأعمال من الجامعة الأمريكية"
         },
         bio: {
           en: "Dr. Al-Rashid brings over 25 years of healthcare leadership experience, having served as Chief Medical Officer at several regional hospitals. His vision for accessible healthcare drives our medical programs forward.",

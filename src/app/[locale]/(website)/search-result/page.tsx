@@ -13,10 +13,10 @@ import { mockPublications } from "@/data/mockPublications";
 import { mockReports } from "@/data/mockReports";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: 'Ibtisama Foundation',
-  description: 'Official website',
-};
+// export const metadata: Metadata = {
+//   title: 'Ibtisama Foundation',
+//   description: 'Official website',
+// };
 
 type IndexedItem = {
   type: string;

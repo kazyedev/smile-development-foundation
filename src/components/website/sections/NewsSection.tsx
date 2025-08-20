@@ -15,17 +15,17 @@ const mockNews: News[] = [
     isArabic: true,
     includeInSitemapEn: true,
     includeInSitemapAr: true,
-    titleEn: "Foundation Launches New Clean Water Initiative in Rural Egypt",
-    titleAr: "المؤسسة تطلق مبادرة جديدة للمياه النظيفة في ريف مصر",
+    titleEn: "Foundation Launches New Clean Water Initiative in Rural Yemen",
+    titleAr: "المؤسسة تطلق مبادرة جديدة للمياه النظيفة في ريف اليمن",
     featuredImageUrl: "/assets/hero-1.jpg",
     otherImagesUrl: ["/assets/hero-2.jpg"],
-    contentEn: "We are proud to announce the launch of our latest clean water initiative that will bring safe drinking water to over 10,000 residents in rural communities across Upper Egypt. This comprehensive program includes the installation of new water treatment facilities, community education workshops, and sustainable maintenance training for local residents.",
-    contentAr: "نحن فخورون بالإعلان عن إطلاق مبادرتنا الأحدث للمياه النظيفة التي ستجلب مياه الشرب الآمنة لأكثر من 10,000 نسمة في المجتمعات الريفية عبر صعيد مصر. يشمل هذا البرنامج الشامل تركيب مرافق معالجة المياه الجديدة وورش التوعية المجتمعية وتدريب الصيانة المستدامة للسكان المحليين.",
+    contentEn: "We are proud to announce the launch of our latest clean water initiative that will bring safe drinking water to over 10,000 residents in rural communities across Upper Yemen. This comprehensive program includes the installation of new water treatment facilities, community education workshops, and sustainable maintenance training for local residents.",
+    contentAr: "نحن فخورون بالإعلان عن إطلاق مبادرتنا الأحدث للمياه النظيفة التي ستجلب مياه الشرب الآمنة لأكثر من 10,000 نسمة في المجتمعات الريفية عبر مجمع اليمن. يشمل هذا البرنامج الشامل تركيب مرافق معالجة المياه الجديدة وورش التوعية المجتمعية وتدريب الصيانة المستدامة للسكان المحليين.",
     categoryId: 1,
-    slugEn: "foundation-launches-clean-water-initiative-rural-egypt",
-    slugAr: "المؤسسة-تطلق-مبادرة-المياه-النظيفة-ريف-مصر",
-    keywordsEn: ["clean water", "rural development", "community health", "Upper Egypt"],
-    keywordsAr: ["مياه نظيفة", "تنمية ريفية", "صحة مجتمعية", "صعيد مصر"],
+    slugEn: "foundation-launches-clean-water-initiative-rural-Yemen",
+    slugAr: "المؤسسة-تطلق-مبادرة-المياه-النظيفة-ريف-اليمن",
+    keywordsEn: ["clean water", "rural development", "community health", "Upper Yemen"],
+    keywordsAr: ["مياه نظيفة", "تنمية ريفية", "صحة مجتمعية", "مجمع اليمن"],
     tagsEn: ["Water", "Health"],
     tagsAr: ["مياه", "صحة"],
     readTime: 8,
@@ -168,8 +168,8 @@ export default function NewsSection({ locale }: { locale: string }) {
                   className="whitespace-nowrap text-sm"
                 >
                   {isEnglish 
-                    ? "Foundation launches new clean water initiative in rural Egypt • Youth Leadership Program graduates 150 future leaders • Medical mission provides free healthcare to 3,000 patients"
-                    : "المؤسسة تطلق مبادرة جديدة للمياه النظيفة في ريف مصر • برنامج القيادة الشبابية يخرج 150 قائدًا مستقبليًا • البعثة الطبية تقدم رعاية صحية مجانية لـ 3,000 مريض"
+                    ? "Foundation launches new clean water initiative in rural Yemen • Youth Leadership Program graduates 150 future leaders • Medical mission provides free healthcare to 3,000 patients"
+                    : "المؤسسة تطلق مبادرة جديدة للمياه النظيفة في ريف اليمن • برنامج القيادة الشبابية يخرج 150 قائدًا مستقبليًا • البعثة الطبية تقدم رعاية صحية مجانية لـ 3,000 مريض"
                   }
                 </motion.div>
               </div>
