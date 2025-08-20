@@ -129,7 +129,7 @@ export default function DonatePage() {
   const testimonials = [
     {
       name: isEn ? "Ahmed Hassan" : "أحمد حسن",
-      location: isEn ? "Mareb, Yemen" : "مأرب، اليمن",
+      location: isEn ? "Marib, Yemen" : "مأرب، اليمن",
       quote: isEn 
         ? "Seeing my monthly donation help provide clean water to families gives me immense satisfaction."
         : "رؤية تبرعي الشهري يساعد في توفير المياه النظيفة للعائلات يعطيني رضا هائل.",

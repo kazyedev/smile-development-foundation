@@ -171,7 +171,7 @@ export default function Footer({ locale }: { locale: string }) {
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <MapPin className="w-5 h-5 text-brand-primary flex-shrink-0" />
-                  <span>{isEnglish ? "Mareb, Yemen" : "مأرب، اليمن"}</span>
+                  <span>{isEnglish ? "Marib, Yemen" : "مأرب، اليمن"}</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Phone className="w-5 h-5 text-brand-primary flex-shrink-0" />
@@ -190,7 +190,7 @@ export default function Footer({ locale }: { locale: string }) {
 
             {/* Quick Links Grid */}
             <div className="lg:col-span-3">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {/* About */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
@@ -203,7 +203,7 @@ export default function Footer({ locale }: { locale: string }) {
                       { href: "/about-us", en: "About Us", ar: "عن المؤسسة" },
                       { href: "/board-of-directors", en: "Board of Directors", ar: "مجلس الإدارة" },
                       { href: "/team-members", en: "Team Members", ar: "فريق العمل" },
-                      { href: "/faqs", en: "FAQs", ar: "الأسئلة الشائعة" },
+                      { href: "/our-story", en: "Our Story", ar: "قصتنا" },
                     ].map((link) => (
                       <a 
                         key={link.href}
@@ -271,6 +271,33 @@ export default function Footer({ locale }: { locale: string }) {
                     ))}
                   </nav>
                 </motion.div>
+
+                {/* Legal & Support */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{ duration: 0.6, delay: 0.8 }}
+                >
+                  <h4 className="font-bold text-foreground mb-6 text-lg">{isEnglish ? "Legal & Support" : "القانونية والدعم"}</h4>
+                  <nav className="space-y-4">
+                    {[
+                      { href: "/privacy-policy", en: "Privacy Policy", ar: "سياسة الخصوصية" },
+                      { href: "/terms-of-service", en: "Terms of Service", ar: "شروط الخدمة" },
+                      { href: "/faqs", en: "FAQs", ar: "الأسئلة الشائعة" },
+                      { href: "/contact-us", en: "Support", ar: "الدعم" },
+                    ].map((link) => (
+                      <a 
+                        key={link.href}
+                        href={`/${locale}${link.href}`} 
+                        className="block text-muted-foreground hover:text-brand-primary transition-colors duration-300 group"
+                      >
+                        <span className="group-hover:translate-x-1 transition-transform duration-300 inline-block">
+                          {isEnglish ? link.en : link.ar}
+                        </span>
+                      </a>
+                    ))}
+                  </nav>
+                </motion.div>
               </div>
             </div>
           </div>
@@ -285,7 +312,7 @@ export default function Footer({ locale }: { locale: string }) {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
               className="flex flex-col lg:flex-row items-center gap-6 text-muted-foreground text-sm"
             >
               <div className="flex items-center gap-2">
@@ -307,7 +334,7 @@ export default function Footer({ locale }: { locale: string }) {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.9 }}
+              transition={{ duration: 0.6, delay: 1.0 }}
               className="flex items-center gap-4"
             >
               {[

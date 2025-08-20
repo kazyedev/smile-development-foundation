@@ -63,7 +63,7 @@ export default function ContactUsPage() {
       icon: MapPin,
       title: isEn ? "Visit Us" : "زرنا",
       description: isEn ? "Come to our office" : "تعال إلى مكتبنا",
-      value: isEn ? "Mareb, Yemen" : "مأرب، اليمن",
+      value: isEn ? "Marib, Yemen" : "مأرب، اليمن",
       color: "text-purple-600 dark:text-purple-400"
     },
     {
@@ -291,7 +291,7 @@ export default function ContactUsPage() {
                       <p className="text-sm text-muted-foreground">
                         {isEn ? "123 Foundation Street, Heliopolis" : "١٢٣ شارع المؤسسة، اليمن الجديدة"}
                         <br />
-                        {isEn ? "Mareb, Yemen 11341" : "مأرب، اليمن ١١٣٤١"}
+                        {isEn ? "Marib, Yemen 11341" : "مأرب، اليمن ١١٣٤١"}
                       </p>
                     </div>
                   </div>
@@ -375,7 +375,7 @@ export default function ContactUsPage() {
                       {isEn ? "Interactive Map" : "خريطة تفاعلية"}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {isEn ? "Mareb, Yemen" : "مأرب، اليمن"}
+                      {isEn ? "Marib, Yemen" : "مأرب، اليمن"}
                     </p>
                   </div>
                 </div>

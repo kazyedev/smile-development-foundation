@@ -430,8 +430,8 @@ export const aboutUsContent: AboutUsContent = {
       },
       address: {
         title: { en: "Physical Address", ar: "العنوان الفعلي" },
-        street: { en: "123 Development Street", ar: "شارع التنمية 123" },
-        city: { en: "Sana'a, Yemen", ar: "صنعاء، اليمن" },
+        street: { en: "123 Development Street", ar: "شارع الأربعين 123" },
+        city: { en: "Sana'a, Yemen", ar: "مأرب، اليمن" },
         coordinates: { lat: 15.369445, lng: 44.191007 }
       }
     }

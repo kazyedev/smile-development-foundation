@@ -43,7 +43,7 @@ export const mockPhotos: Photo[] = [
     height: 1000,
     url: "/assets/mockimage.jpg",
     alt: "Digital lab opening",
-    locationEn: "Mareb Community Center",
+    locationEn: "Marib Community Center",
     locationAr: "مركز المجتمع بمأرب",
     takenAt: new Date("2024-06-22T14:20:00Z"),
     photographer: "F. Ali",

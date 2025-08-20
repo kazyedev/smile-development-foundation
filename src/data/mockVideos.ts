@@ -40,7 +40,7 @@ export const mockVideos: Video[] = [
     width: 1920,
     height: 1080,
     url: "https://www.youtube.com/watch?v=haFo_EWNrcU",
-    locationEn: "Mareb Community Center",
+    locationEn: "Marib Community Center",
     locationAr: "مركز المجتمع بمأرب",
     isPublic: true,
     slugEn: "youth-empowerment-workshop-highlights",

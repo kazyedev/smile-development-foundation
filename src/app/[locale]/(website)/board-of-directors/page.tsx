@@ -96,7 +96,7 @@ export default function BoardOfDirectorsPage({ params }: BoardOfDirectorsPagePro
         expertise: { en: "Healthcare Leadership", ar: "قيادة الرعاية الصحية" },
         experience: { en: "25+ years", ar: "25+ سنة" },
         education: {
-          en: "MD from Mareb University, MBA from American University",
+          en: "MD from Marib University, MBA from American University",
           ar: "دكتوراه في الطب من جامعة مأرب، ماجستير إدارة الأعمال من الجامعة الأمريكية"
         },
         bio: {

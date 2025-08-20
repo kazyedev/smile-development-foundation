@@ -73,7 +73,7 @@ export const mockPrograms: Program[] = [
     ],
     icon: "Laptop",
     color: "#10B981",
-    implementationLocationEn: "Mareb and Giza",
+    implementationLocationEn: "Marib and Giza",
     implementationLocationAr: "مأرب والجيزة",
     fundingProviders: [
       { nameEn: "Tech4All", nameAr: "التكنولوجيا للجميع", imageUrl: "/vercel.svg" },

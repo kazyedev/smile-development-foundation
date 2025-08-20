@@ -49,9 +49,9 @@ export const mockStories: Story[] = [
     personNameAr: "فاطمة علي",
     personAge: 21,
     personLocationEn: "Sana'a",
-    personLocationAr: "صنعاء",
+    personLocationAr: "مأرب",
     cityEn: "Sana'a",
-    cityAr: "صنعاء",
+    cityAr: "مأرب",
     otherImagesUrl: [
       "/assets/hero-1.jpg",
     ],
@@ -184,9 +184,9 @@ export const mockStories: Story[] = [
     personNameEn: "Nour Hassan",
     personNameAr: "نور حسن",
     personAge: 19,
-    personLocationEn: "Mareb",
+    personLocationEn: "Marib",
     personLocationAr: "مأرب",
-    cityEn: "Mareb",
+    cityEn: "Marib",
     cityAr: "مأرب",
     otherImagesUrl: [
       "/assets/hero-1.jpg",
