@@ -35,7 +35,7 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
     const content = {
         title: {
             en: "A Yemeni Non-Profit Charitable Organization",
-            ar: "منظمة خيرية يمنية غير ربحية"
+            ar: "مؤسسة خيرية يمنية غير ربحية"
         },
         description: {
             en: "A Yemeni non-profit charitable organization established to contribute to alleviating the suffering of many Yemenis due to economic and social deterioration. We have chosen to strive earnestly and effectively to build and nurture the Yemeni people in health and educational fields. We have committed ourselves to creating sustainable positive change in our communities through innovative programs and dedicated service.",

@@ -142,10 +142,10 @@ export const aboutUsContent: AboutUsContent = {
     }
   },
   overview: {
-    title: { en: "About the Organization", ar: "عن المنظمة" },
+    title: { en: "About the Organization", ar: "عن المؤسسة" },
     content: {
       en: "Ibtisama Development Foundation is a Yemeni non-profit charitable organization dedicated to creating sustainable positive change in communities across Yemen. We focus on delivering comprehensive health and education programs that address the most pressing needs of vulnerable populations.",
-      ar: "مؤسسة الابتسامة للتنمية هي منظمة خيرية يمنية غير ربحية مكرسة لخلق تغيير إيجابي مستدام في المجتمعات عبر اليمن. نركز على تقديم برامج صحية وتعليمية شاملة تلبي أهم احتياجات الفئات الضعيفة."
+      ar: "مؤسسة الابتسامة للتنمية هي مؤسسة خيرية يمنية غير ربحية مكرسة لخلق تغيير إيجابي مستدام في المجتمعات عبر اليمن. نركز على تقديم برامج صحية وتعليمية شاملة تلبي أهم احتياجات الفئات الضعيفة."
     }
   },
   mission: {

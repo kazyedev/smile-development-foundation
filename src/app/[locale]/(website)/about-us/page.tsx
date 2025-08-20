@@ -9,6 +9,8 @@ import {
   GoalsSection,
   PrinciplesSection,
   PoliciesSection,
+  PartnersSection,
+  SupportersSection
 } from '@/components/website/sections/about-us';
 
 interface AboutUsPageProps {
@@ -63,7 +65,17 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
         isLocaleEnglish={isLocaleEnglish}
       />
 
+      {/* Partners Section */}
+      <PartnersSection 
+        partners={aboutUsContent.partners}
+        isLocaleEnglish={isLocaleEnglish}
+      />
 
+      {/* Supporters Section */}
+      <SupportersSection 
+        supporters={aboutUsContent.supporters}
+        isLocaleEnglish={isLocaleEnglish}
+      />
     </div>
   );
 }
