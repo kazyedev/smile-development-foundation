@@ -243,16 +243,16 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
                   >
                     #{tag}
                   </span>
-                ))}
-              </div>
-              
+        ))}
+      </div>
+      
               {/* Read More Button */}
               <Link href={`/${locale}/media/success-stories/${isEnglish ? currentStory.slugEn : currentStory.slugAr}`}>
                 <Button className="group bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90 text-white">
                   {isEnglish ? "Read Full Story" : "قراءة القصة كاملة"}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
+          </Button>
+        </Link>
             </motion.div>
           </div>
 
@@ -321,8 +321,8 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
               <div className="text-3xl font-bold text-foreground mb-2">25</div>
               <div className="text-sm text-muted-foreground">
                 {isEnglish ? "Communities Reached" : "مجتمع وصلنا إليه"}
-              </div>
-            </div>
+      </div>
+    </div>
           </motion.div>
         </div>
 

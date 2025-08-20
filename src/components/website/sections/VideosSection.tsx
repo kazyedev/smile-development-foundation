@@ -60,15 +60,15 @@ export default function VideosSection({ locale }: { locale: string }) {
           </div>
           
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-            {isEnglish ? "Video Gallery" : "معرض الفيديو"}
+        {isEnglish ? "Video Gallery" : "معرض الفيديو"}
           </h2>
           
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            {isEnglish 
-              ? "Watch inspiring stories and behind-the-scenes moments from our projects and community initiatives that showcase the real impact of our work."
-              : "شاهد القصص الملهمة واللحظات من وراء الكواليس لمشاريعنا ومبادراتنا المجتمعية التي تُظهر التأثير الحقيقي لعملنا."
-            }
-          </p>
+        {isEnglish 
+          ? "Watch inspiring stories and behind-the-scenes moments from our projects and community initiatives that showcase the real impact of our work."
+          : "شاهد القصص الملهمة واللحظات من وراء الكواليس لمشاريعنا ومبادراتنا المجتمعية التي تُظهر التأثير الحقيقي لعملنا."
+        }
+      </p>
         </div>
 
         {/* Main Cinema Screen */}
@@ -78,14 +78,14 @@ export default function VideosSection({ locale }: { locale: string }) {
             <div className="bg-gradient-to-b from-gray-800 to-gray-900 dark:from-gray-900 dark:to-black p-8 rounded-3xl shadow-2xl">
               <div className="relative aspect-video bg-black rounded-2xl overflow-hidden group">
                 {isPlaying ? (
-                  <iframe
-                    className="w-full h-full"
+                      <iframe
+                        className="w-full h-full"
                     src={`https://www.youtube.com/embed/${selectedVideo.url.split('=')[1]}?autoplay=1`}
                     title={isEnglish ? selectedVideo.titleEn : selectedVideo.titleAr}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    allowFullScreen
-                  />
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                      />
                 ) : (
                   <>
                     <Image 
@@ -216,8 +216,8 @@ export default function VideosSection({ locale }: { locale: string }) {
             <div className="text-sm text-muted-foreground">
               {isEnglish ? "Total Views" : "إجمالي المشاهدات"}
             </div>
-          </div>
-          
+      </div>
+      
           <div className="text-center group">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 dark:from-brand-primary/20 dark:to-brand-secondary/20 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
               <Clock className="w-8 h-8 text-brand-primary" />
@@ -231,17 +231,17 @@ export default function VideosSection({ locale }: { locale: string }) {
          */}
         {/* Call to Action */}
         <div className="text-center">
-          <Link href={`/${locale}/media/videos`}>
+        <Link href={`/${locale}/media/videos`}>
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-brand-primary to-brand-primary/90 hover:from-brand-primary/90 hover:to-brand-primary text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
             >
               <Film className="w-4 h-4 mr-2" />
-              {isEnglish ? "View All Videos" : "عرض جميع الفيديوهات"}
-            </Button>
-          </Link>
-        </div>
+            {isEnglish ? "View All Videos" : "عرض جميع الفيديوهات"}
+          </Button>
+        </Link>
       </div>
+    </div>
     </section>
   );
 }

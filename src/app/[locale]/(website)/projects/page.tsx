@@ -60,7 +60,7 @@ export default function ProjectsPage() {
             
             <h1 className="text-4xl lg:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
-                {isEn ? "Projects" : "المشاريع"}
+        {isEn ? "Projects" : "المشاريع"}
               </span>
             </h1>
             
@@ -212,7 +212,7 @@ export default function ProjectsPage() {
                   className={viewMode === "list" ? "w-full" : ""}
                 >
                   {viewMode === "grid" ? (
-                    <ProjectCard project={project} locale={locale} />
+            <ProjectCard project={project} locale={locale} />
                   ) : (
                     <div className="bg-background border border-border rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
                       <div className="flex flex-col lg:flex-row gap-6">
@@ -260,9 +260,9 @@ export default function ProjectsPage() {
                       </div>
                     </div>
                   )}
-                </motion.div>
-              ))}
-            </div>
+          </motion.div>
+        ))}
+      </div>
           )}
         </div>
       </section>

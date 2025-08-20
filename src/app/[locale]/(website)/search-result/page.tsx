@@ -271,7 +271,7 @@ export default function SearchResultPage() {
         </section>
 
         {/* Search Interface */}
-        {!q ? (
+      {!q ? (
           <section className="pb-20 px-8">
             <div className="container mx-auto max-w-2xl">
               <motion.div
@@ -320,7 +320,7 @@ export default function SearchResultPage() {
               </motion.div>
             </div>
           </section>
-        ) : results.length === 0 ? (
+      ) : results.length === 0 ? (
           <section className="pb-20 px-8">
             <div className="container mx-auto max-w-2xl">
               <motion.div
@@ -410,15 +410,15 @@ export default function SearchResultPage() {
                           {isEn ? 'Content Types' : 'أنواع المحتوى'}
                         </h4>
                         <div className="space-y-3">
-                          {[
-                            { key: 'news', labelEn: 'News', labelAr: 'الأخبار' },
-                            { key: 'story', labelEn: 'Success Stories', labelAr: 'قصص النجاح' },
-                            { key: 'project', labelEn: 'Projects', labelAr: 'المشاريع' },
+                {[
+                  { key: 'news', labelEn: 'News', labelAr: 'الأخبار' },
+                  { key: 'story', labelEn: 'Success Stories', labelAr: 'قصص النجاح' },
+                  { key: 'project', labelEn: 'Projects', labelAr: 'المشاريع' },
                             { key: 'activity', labelEn: 'Activities', labelAr: 'الأنشطة' },
-                            { key: 'image', labelEn: 'Images', labelAr: 'الصور' },
-                            { key: 'video', labelEn: 'Videos', labelAr: 'الفيديوهات' },
-                            { key: 'publication', labelEn: 'Publications', labelAr: 'النشرات' },
-                            { key: 'report', labelEn: 'Reports', labelAr: 'التقارير' },
+                  { key: 'image', labelEn: 'Images', labelAr: 'الصور' },
+                  { key: 'video', labelEn: 'Videos', labelAr: 'الفيديوهات' },
+                  { key: 'publication', labelEn: 'Publications', labelAr: 'النشرات' },
+                  { key: 'report', labelEn: 'Reports', labelAr: 'التقارير' },
                           ].map(({ key, labelEn, labelAr }) => {
                             const Icon = getTypeIcon(key);
                             const count = typeStats[key] || 0;
@@ -429,12 +429,12 @@ export default function SearchResultPage() {
                                 className="flex items-center justify-between p-3 rounded-xl border border-[var(--border)]/30 hover:border-[var(--brand-primary)]/30 cursor-pointer transition-all group"
                               >
                                 <div className="flex items-center gap-3">
-                                  <input
-                                    type="checkbox"
-                                    checked={activeTypes.includes(key)}
-                                    onChange={(e) => {
-                                      setActiveTypes(prev => e.target.checked ? Array.from(new Set([...prev, key])) : prev.filter(t => t !== key));
-                                    }}
+                    <input
+                      type="checkbox"
+                      checked={activeTypes.includes(key)}
+                      onChange={(e) => {
+                        setActiveTypes(prev => e.target.checked ? Array.from(new Set([...prev, key])) : prev.filter(t => t !== key));
+                      }}
                                     className="rounded border-[var(--border)] text-[var(--brand-primary)] focus:ring-[var(--brand-primary)]"
                                   />
                                   <Icon className="w-4 h-4 text-[var(--brand-primary)]" />
@@ -501,8 +501,8 @@ export default function SearchResultPage() {
                                         <Icon className="w-3 h-3 inline mr-1" />
                                         {result.type}
                                       </span>
-                                    </div>
-                                  </div>
+              </div>
+            </div>
                                 )}
                                 
                                 <div className={viewMode === 'grid' ? 'p-4' : 'p-4 flex items-center gap-4'}>
@@ -525,7 +525,7 @@ export default function SearchResultPage() {
                                           <Icon className="w-3 h-3 inline mr-1" />
                                           {result.type}
                                         </span>
-                                      </div>
+                  </div>
                                     )}
                                     
                                     {viewMode === 'list' && (
@@ -537,7 +537,7 @@ export default function SearchResultPage() {
                                         <span className="text-xs text-[var(--muted-foreground)]">
                                           {isEn ? 'Match score:' : 'درجة التطابق:'} {result.score}
                                         </span>
-                                      </div>
+                </div>
                                     )}
                                     
                                     <h3 className={`font-bold text-[var(--foreground)] group-hover:text-[var(--brand-primary)] transition-colors ${
@@ -552,8 +552,8 @@ export default function SearchResultPage() {
                                           <TrendingUp className="w-3 h-3" />
                                           {isEn ? 'Score:' : 'النقاط:'} {result.score}
                                         </span>
-                                      </div>
-                                    )}
+        </div>
+      )}
                                   </div>
                                 </div>
                               </Card>
