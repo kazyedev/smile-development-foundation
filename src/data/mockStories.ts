@@ -111,7 +111,7 @@ export const mockStories: Story[] = [
     isArabic: true,
     titleEn: "",
     titleAr: "ثورة سلمى في الزراعة العضوية",
-    featuredImageUrl: "/assets/hero-4.jpg",
+    featuredImageUrl: "/assets/hero-3.jpg",
     video: "",
     programId: 3,
     personNameEn: "Salma Youssef",
