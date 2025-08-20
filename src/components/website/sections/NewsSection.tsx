@@ -157,7 +157,7 @@ export default function NewsSection({ locale }: { locale: string }) {
 
       <div className="container mx-auto px-4 relative">
         {/* Breaking News Ticker */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
           transition={{ duration: 0.6 }}
@@ -186,7 +186,7 @@ export default function NewsSection({ locale }: { locale: string }) {
               </div>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Header */}
         <motion.div 

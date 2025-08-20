@@ -202,7 +202,7 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
                             allowFullScreen
                             className="w-full h-64 md:h-80" 
                             frameBorder="0" 
-                            src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                            src="https://www.youtube.com/embed/haFo_EWNrcU?si=o8DvaHRp3lhIxsVf" 
                             title="YouTube video player"
                         />
                     </motion.div>

@@ -12,7 +12,7 @@ export const mockVideos: Video[] = [
     size: 524288000, // 500MB
     width: 1920,
     height: 1080,
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    url: "https://www.youtube.com/watch?v=haFo_EWNrcU",
     locationEn: "Upper Yemen Villages",
     locationAr: "قرى مجمع اليمن",
     isPublic: true,
@@ -39,7 +39,7 @@ export const mockVideos: Video[] = [
     size: 314572800, // 300MB
     width: 1920,
     height: 1080,
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    url: "https://www.youtube.com/watch?v=haFo_EWNrcU",
     locationEn: "Mareb Community Center",
     locationAr: "مركز المجتمع بمأرب",
     isPublic: true,
@@ -66,7 +66,7 @@ export const mockVideos: Video[] = [
     size: 419430400, // 400MB
     width: 1920,
     height: 1080,
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    url: "https://www.youtube.com/watch?v=haFo_EWNrcU",
     locationEn: "Sinai Peninsula",
     locationAr: "شبه جزيرة سيناء",
     isPublic: true,

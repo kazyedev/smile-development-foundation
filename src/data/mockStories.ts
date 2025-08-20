@@ -13,7 +13,7 @@ export const mockStories: Story[] = [
     personNameAr: "أحمد حسن",
     personAge: 28,
     personLocationEn: "Al-Minya Governorate",
-    personLocationAr: "محافظة المنيا",
+    personLocationAr: "محافظة مأرب",
     cityEn: "Mallawi",
     cityAr: "ملوي",
     otherImagesUrl: [

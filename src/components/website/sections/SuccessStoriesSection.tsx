@@ -21,7 +21,7 @@ const mockSuccessStories: Story[] = [
     personNameAr: "أحمد حسن",
     personAge: 28,
     personLocationEn: "Al-Minya Governorate",
-    personLocationAr: "محافظة المنيا",
+    personLocationAr: "محافظة مأرب",
     cityEn: "Mallawi",
     cityAr: "ملوي",
     otherImagesUrl: ["/assets/hero-2.jpg", "/assets/hero-3.jpg"],
