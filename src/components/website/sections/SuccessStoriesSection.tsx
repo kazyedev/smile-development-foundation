@@ -5,8 +5,8 @@ import SuccessStoryCard from "../SuccessStoryCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Heart, Star, Quote, MapPin, User, Play, ArrowRight, Sparkles, Award, Users } from "lucide-react";
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import Image from "next/image";
 
 const mockSuccessStories: Story[] = [
@@ -104,6 +104,9 @@ const mockSuccessStories: Story[] = [
 
 export default function SuccessStoriesSection({ locale }: { locale: string }) {
   const [activeStory, setActiveStory] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
   const isEnglish = locale === "en";
 
   const handleStoryClick = (index: number) => {
@@ -112,8 +115,13 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
 
   const currentStory = mockSuccessStories[activeStory];
 
+  // Set animation flag when component comes into view
+  if (isInView && !hasAnimated) {
+    setHasAnimated(true);
+  }
+
   return (
-    <section className="relative py-20 bg-gradient-to-br from-amber-50/50 via-orange-50/30 to-red-50/20 dark:from-amber-950/20 dark:via-orange-950/10 dark:to-red-950/5 overflow-hidden">
+    <section ref={sectionRef} className="relative py-20 bg-gradient-to-br from-amber-50/50 via-orange-50/30 to-red-50/20 dark:from-amber-950/20 dark:via-orange-950/10 dark:to-red-950/5 overflow-hidden">
       {/* Inspirational Background Elements */}
       <div className="absolute inset-0 opacity-30 dark:opacity-20">
         {/* Floating Hearts */}
@@ -133,7 +141,12 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
       
       <div className="container mx-auto px-4 relative">
         {/* Header */}
-        <div className="text-center mb-16">
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-700 dark:text-amber-300 rounded-full text-sm font-medium mb-6">
             <Heart className="w-4 h-4" fill="currentColor" />
             {isEnglish ? "Inspiring Stories" : "قصص ملهمة"}
@@ -151,7 +164,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
               : "اكتشف قصص التحول والتأثير من أعضاء مجتمعنا الذين غيرت حياتهم من خلال برامجنا والمبادرات."
             }
           </p>
-        </div>
+        </motion.div>
 
         {/* Main Story Display */}
         <div className="max-w-7xl mx-auto">
@@ -290,8 +303,8 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
           {/* Impact Statistics */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
           >
             <div className="text-center group">
@@ -329,7 +342,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
         {/* Call to Action */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ delay: 0.8, duration: 0.6 }}
           className="text-center"
         >

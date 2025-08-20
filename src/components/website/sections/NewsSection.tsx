@@ -5,8 +5,8 @@ import NewsCard from "../NewsCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Newspaper, Clock, Eye, Calendar, ArrowRight, Zap, TrendingUp } from "lucide-react";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 const mockNews: News[] = [
   {
@@ -94,12 +94,20 @@ const mockNews: News[] = [
 
 export default function NewsSection({ locale }: { locale: string }) {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
   const isEnglish = locale === "en";
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Set animation flag when component comes into view
+  if (isInView && !hasAnimated) {
+    setHasAnimated(true);
+  }
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString(isEnglish ? 'en-US' : 'ar-EG', { 
@@ -139,7 +147,7 @@ export default function NewsSection({ locale }: { locale: string }) {
   const sideNews = mockNews.slice(1);
 
   return (
-    <section className="relative py-20 bg-gradient-to-b from-background to-muted/20 dark:to-muted/10">
+    <section ref={sectionRef} className="relative py-20 bg-gradient-to-b from-background to-muted/20 dark:to-muted/10">
       {/* Newspaper Pattern Background */}
       <div className="absolute inset-0 opacity-5 dark:opacity-3">
         <div className="absolute inset-0" style={{
@@ -151,7 +159,7 @@ export default function NewsSection({ locale }: { locale: string }) {
         {/* Breaking News Ticker */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
@@ -181,7 +189,12 @@ export default function NewsSection({ locale }: { locale: string }) {
         </motion.div>
 
         {/* Header */}
-        <div className="text-center mb-12">
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 30 }}
+          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 dark:from-brand-primary/20 dark:to-brand-secondary/20 text-brand-primary rounded-full text-sm font-medium mb-6">
             <Newspaper className="w-4 h-4" />
             {isEnglish ? "Press Room" : "غرفة الصحافة"}
@@ -211,7 +224,7 @@ export default function NewsSection({ locale }: { locale: string }) {
               : "ابق على اطلاع بأحدث مبادراتنا وقصص النجاح وأخبار التأثير المجتمعي التي تُظهر العمل المستمر لمؤسستنا."
             }
           </p>
-        </div>
+        </motion.div>
 
         {/* Main News Layout */}
         <div className="max-w-7xl mx-auto">
@@ -219,8 +232,8 @@ export default function NewsSection({ locale }: { locale: string }) {
             {/* Featured Article */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
               className="lg:col-span-2"
             >
               <div className="group relative overflow-hidden rounded-2xl bg-background shadow-xl hover:shadow-2xl transition-all duration-500">
@@ -279,8 +292,8 @@ export default function NewsSection({ locale }: { locale: string }) {
                 <motion.div
                   key={news.id}
                   initial={{ opacity: 0, x: 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
+                  transition={{ delay: 0.6 + (index * 0.1), duration: 0.6 }}
                   className="group"
                 >
                   <Link href={`/${locale}/news/${isEnglish ? news.slugEn : news.slugAr}`}>
@@ -327,7 +340,7 @@ export default function NewsSection({ locale }: { locale: string }) {
         {/* Call to Action */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ delay: 0.8, duration: 0.6 }}
           className="text-center"
         >

@@ -3,8 +3,8 @@
 import { Users, Heart, MapPin, Award, Droplet, GraduationCap, Stethoscope, TreePine, TrendingUp, BarChart3, PieChart } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 // import { formatLargeNumber } from "@/utils/formatLargeNumber";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 interface Statistic {
   icon: string;
@@ -110,10 +110,18 @@ function useCountAnimation(end: number, duration: number = 2000) {
 }
 
 export default function StaticSection({ locale }: { locale: string }) {
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
   const isEnglish = locale === "en";
 
+  // Set animation flag when component comes into view
+  if (isInView && !hasAnimated) {
+    setHasAnimated(true);
+  }
+
   return (
-    <section className="relative py-20 bg-gradient-to-br from-background via-brand-primary/3 to-brand-secondary/5 dark:from-background dark:via-brand-primary/5 dark:to-brand-secondary/8 overflow-hidden">
+    <section ref={sectionRef} className="relative py-20 bg-gradient-to-br from-background via-brand-primary/3 to-brand-secondary/5 dark:from-background dark:via-brand-primary/5 dark:to-brand-secondary/8 overflow-hidden">
       {/* Background Grid Pattern */}
       <div className="absolute inset-0 opacity-20 dark:opacity-10">
         <div className="absolute inset-0" style={{
@@ -129,7 +137,12 @@ export default function StaticSection({ locale }: { locale: string }) {
       
       <div className="container mx-auto px-4 relative">
         {/* Header */}
-        <div className="text-center mb-16">
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 dark:from-brand-primary/20 dark:to-brand-secondary/20 text-brand-primary rounded-full text-sm font-medium mb-6">
             <BarChart3 className="w-4 h-4" />
             {isEnglish ? "Impact Dashboard" : "لوحة التأثير"}
@@ -147,7 +160,7 @@ export default function StaticSection({ locale }: { locale: string }) {
               : "هذه الأرقام تمثل الحياة الحقيقية التي تم لمسها والمجتمعات التي تم تحويلها من خلال عملنا المتفاني ودعمكم السخي."
             }
           </p>
-        </div>
+        </motion.div>
 
         {/* Main Statistics Dashboard */}
         <div className="max-w-7xl mx-auto">
@@ -161,8 +174,8 @@ export default function StaticSection({ locale }: { locale: string }) {
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  onViewportEnter={() => setIsVisible(true)}
+                  animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  onViewportEnter={() => hasAnimated && setIsVisible(true)}
                   transition={{ delay: index * 0.2, duration: 0.6 }}
                   className="group"
                 >
@@ -194,7 +207,7 @@ export default function StaticSection({ locale }: { locale: string }) {
                     <div className="relative mt-4 h-2 bg-brand-primary/10 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
-                        whileInView={{ width: `${Math.min((stat.value / Math.max(...mockStatistics.map(s => s.value))) * 100, 100)}%` }}
+                        animate={hasAnimated ? { width: `${Math.min((stat.value / Math.max(...mockStatistics.map(s => s.value))) * 100, 100)}%` } : { width: 0 }}
                         transition={{ delay: index * 0.2 + 0.5, duration: 1 }}
                         className="h-full bg-gradient-to-r from-brand-primary to-brand-secondary rounded-full"
                       />
@@ -208,7 +221,7 @@ export default function StaticSection({ locale }: { locale: string }) {
           {/* Secondary Stats Grid */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ delay: 0.8, duration: 0.6 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
@@ -220,8 +233,8 @@ export default function StaticSection({ locale }: { locale: string }) {
                 <motion.div
                   key={index + 3}
                   initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  onViewportEnter={() => setIsVisible(true)}
+                  animate={hasAnimated ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+                  onViewportEnter={() => hasAnimated && setIsVisible(true)}
                   transition={{ delay: index * 0.1, duration: 0.4 }}
                   className="group"
                 >
@@ -258,7 +271,7 @@ export default function StaticSection({ locale }: { locale: string }) {
         {/* Bottom Summary */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ delay: 1.2, duration: 0.6 }}
           className="mt-16 text-center"
         >

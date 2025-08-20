@@ -85,19 +85,19 @@ export default function DonatePage() {
     {
       icon: Droplets,
       title: isEn ? "Clean Water" : "مياه نظيفة",
-      description: isEn ? "50 YER provides clean water for a family for 1 week" : "50 ج.م توفر مياه نظيفة لعائلة لمدة أسبوع",
+      description: isEn ? "50 YER provides clean water for a family for 1 week" : "50 ر.ي توفر مياه نظيفة لعائلة لمدة أسبوع",
       color: "text-blue-600 dark:text-blue-400"
     },
     {
       icon: GraduationCap,
       title: isEn ? "Education" : "التعليم",
-      description: isEn ? "200 YER equips a student with learning materials for a year" : "200 ج.م تجهز طالباً بمواد تعليمية لسنة",
+      description: isEn ? "200 YER equips a student with learning materials for a year" : "200 ر.ي تجهز طالباً بمواد تعليمية لسنة",
       color: "text-green-600 dark:text-green-400"
     },
     {
       icon: Stethoscope,
       title: isEn ? "Healthcare" : "الرعاية الصحية",
-      description: isEn ? "150 YER funds a health outreach visit" : "150 ج.م تموّل زيارة توعوية صحية",
+      description: isEn ? "150 YER funds a health outreach visit" : "150 ر.ي تموّل زيارة توعوية صحية",
       color: "text-red-600 dark:text-red-400"
     }
   ];
@@ -247,7 +247,7 @@ export default function DonatePage() {
                               : 'border-border hover:border-emerald-300 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10'
                           }`}
                         >
-                          <div className="font-bold text-lg">{value} {isEn ? 'YER' : 'ج.م'}</div>
+                          <div className="font-bold text-lg">{value} {isEn ? 'YER' : 'ر.ي'}</div>
                           <div className="text-xs text-muted-foreground mt-1">
                             {value >= 500 ? (isEn ? "High Impact" : "تأثير عالي") : 
                              value >= 200 ? (isEn ? "Good Impact" : "تأثير جيد") : 
@@ -267,7 +267,7 @@ export default function DonatePage() {
                         placeholder={isEn ? "Custom amount" : "مبلغ مخصص"}
                         className="h-12 text-lg"
                       />
-                      <span className="text-muted-foreground font-medium">{isEn ? 'YER' : 'ج.م'}</span>
+                      <span className="text-muted-foreground font-medium">{isEn ? 'YER' : 'ر.ي'}</span>
                     </div>
                   </div>
 

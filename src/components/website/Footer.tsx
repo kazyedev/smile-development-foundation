@@ -3,13 +3,21 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heart, Mail, MapPin, Phone, Globe, ArrowRight, Send, Shield, Users } from "lucide-react";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, useInView } from "framer-motion";
+import { useState, useRef } from "react";
 
 export default function Footer({ locale }: { locale: string }) {
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const footerRef = useRef(null);
+  const isInView = useInView(footerRef, { once: true, amount: 0.1 });
   const isEnglish = locale === "en";
+
+  // Set animation flag when component comes into view
+  if (isInView && !hasAnimated) {
+    setHasAnimated(true);
+  }
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +29,7 @@ export default function Footer({ locale }: { locale: string }) {
   };
 
   return (
-    <footer className="relative bg-gradient-to-b from-background to-muted/30 dark:to-muted/10 overflow-hidden">
+    <footer ref={footerRef} className="relative bg-gradient-to-b from-background to-muted/30 dark:to-muted/10 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5 dark:opacity-3">
         <div className="absolute inset-0" style={{
@@ -34,7 +42,7 @@ export default function Footer({ locale }: { locale: string }) {
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
@@ -88,7 +96,7 @@ export default function Footer({ locale }: { locale: string }) {
           {/* Newsletter Section */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="bg-gradient-to-r from-brand-primary/5 to-brand-secondary/5 dark:from-brand-primary/10 dark:to-brand-secondary/10 rounded-3xl p-8 lg:p-12 border border-brand-primary/20 backdrop-blur-sm"
           >
@@ -145,8 +153,8 @@ export default function Footer({ locale }: { locale: string }) {
             {/* Foundation Info */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
               className="lg:col-span-2"
             >
               <h3 className="text-2xl font-bold text-foreground mb-6">
@@ -186,8 +194,8 @@ export default function Footer({ locale }: { locale: string }) {
                 {/* About */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
+                  animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
                 >
                   <h4 className="font-bold text-foreground mb-6 text-lg">{isEnglish ? "About" : "عن المؤسسة"}</h4>
                   <nav className="space-y-4">
@@ -213,8 +221,8 @@ export default function Footer({ locale }: { locale: string }) {
                 {/* Initiatives */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
+                  animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
                 >
                   <h4 className="font-bold text-foreground mb-6 text-lg">{isEnglish ? "Initiatives" : "المبادرات"}</h4>
                   <nav className="space-y-4">
@@ -240,8 +248,8 @@ export default function Footer({ locale }: { locale: string }) {
                 {/* Get Involved */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
+                  animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{ duration: 0.6, delay: 0.7 }}
                 >
                   <h4 className="font-bold text-foreground mb-6 text-lg">{isEnglish ? "Get Involved" : "المشاركة"}</h4>
                   <nav className="space-y-4">
@@ -274,7 +282,12 @@ export default function Footer({ locale }: { locale: string }) {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             {/* Copyright & Legal */}
-            <div className="flex flex-col lg:flex-row items-center gap-6 text-muted-foreground text-sm">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="flex flex-col lg:flex-row items-center gap-6 text-muted-foreground text-sm"
+            >
               <div className="flex items-center gap-2">
                 <Heart className="w-4 h-4 text-brand-primary" fill="currentColor" />
                 <span>© 2025 Ibtisama Development Foundation.</span>
@@ -288,10 +301,15 @@ export default function Footer({ locale }: { locale: string }) {
                   {isEnglish ? "Terms of Service" : "الشروط والأحكام"}
                 </a>
               </div>
-            </div>
+            </motion.div>
             
             {/* Social Media */}
-            <div className="flex items-center gap-4">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+              className="flex items-center gap-4"
+            >
               {[
                 { name: "Facebook", icon: "M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" },
                 { name: "Twitter", icon: "M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" },
@@ -309,7 +327,7 @@ export default function Footer({ locale }: { locale: string }) {
                   </svg>
                 </a>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
