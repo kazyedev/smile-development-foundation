@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { aboutUsContent } from '@/data/aboutUsData';
-import {
+import { 
   HeroSection,
   OverviewSection,
   ValuesSection,
@@ -41,7 +41,7 @@ export default function AboutUsPage({ params }: AboutUsPageProps) {
         isLocaleEnglish={isLocaleEnglish}
       />
 
-      {/* Values Section */}
+          {/* Values Section */}
       <ValuesSection 
         values={aboutUsContent.values}
         isLocaleEnglish={isLocaleEnglish}
