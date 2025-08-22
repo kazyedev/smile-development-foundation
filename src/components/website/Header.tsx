@@ -63,9 +63,9 @@ export default function Header() {
       { label: 'Team Members', labelAr: 'فريق العمل', href: `/${currentLocale}/team-members` },
     ],
     projects: [
-      { label: 'All Projects', labelAr: 'جميع المشاريع', href: `/${currentLocale}/projects` },
       { label: 'Programs', labelAr: 'البرامج', href: `/${currentLocale}/programs` },
-      { label: 'Categories', labelAr: 'الفئات', href: `/${currentLocale}/projects/categories` },
+      { label: 'All Projects', labelAr: 'جميع المشاريع', href: `/${currentLocale}/projects` },
+      { label: 'Categories', labelAr: 'فئات المشاريع', href: `/${currentLocale}/projects/categories` },
     ],
     media: [
       { label: 'Images', labelAr: 'الصور', href: `/${currentLocale}/media/images` },
@@ -100,6 +100,19 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileOpen]);
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
@@ -491,31 +504,7 @@ export default function Header() {
                   onClick={() => setMobileOpen(!mobileOpen)}
                   aria-label="Toggle mobile menu"
                 >
-                  <div className="relative w-6 h-6">
-                    <AnimatePresence mode="wait">
-                      {mobileOpen ? (
-                        <motion.div
-                          key="close"
-                          initial={{ rotate: -90, opacity: 0 }}
-                          animate={{ rotate: 0, opacity: 1 }}
-                          exit={{ rotate: 90, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <X className="w-6 h-6 text-[var(--brand-primary)]" />
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          key="menu"
-                          initial={{ rotate: 90, opacity: 0 }}
-                          animate={{ rotate: 0, opacity: 1 }}
-                          exit={{ rotate: -90, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <Menu className="w-6 h-6" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                  <Menu className="w-6 h-6" />
                 </button>
               </motion.div>
             </div>
@@ -532,7 +521,7 @@ export default function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60]"
               onClick={() => setMobileOpen(false)}
             />
             
@@ -542,24 +531,35 @@ export default function Header() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: currentLocale === 'ar' ? 400 : -400, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`fixed top-0 ${currentLocale === 'ar' ? 'right-0' : 'left-0'} h-screen w-80 bg-[var(--background)]/95 backdrop-blur-xl border-${currentLocale === 'ar' ? 'l' : 'r'} border-[var(--border)]/50 shadow-2xl z-50 overflow-y-auto`}
+              className={`fixed top-0 ${currentLocale === 'ar' ? 'right-0' : 'left-0'} h-screen w-80 bg-[var(--background)]/95 backdrop-blur-xl border-${currentLocale === 'ar' ? 'l' : 'r'} border-[var(--border)]/50 shadow-2xl z-[70] overflow-y-auto`}
             >
               {/* Mobile Header */}
               <div className="p-6 border-b border-[var(--border)]/30">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <Image src="/assets/logo.svg" alt="Logo" width={40} height={40} className="rounded-full" />
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--brand-secondary)] rounded-full animate-pulse"></div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <Image src="/assets/logo.svg" alt="Logo" width={40} height={40} className="rounded-full" />
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--brand-secondary)] rounded-full animate-pulse"></div>
+                    </div>
+                    <div>
+                      <h2 className="font-bold text-lg bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] bg-clip-text text-transparent">
+                        {currentLocale === 'en' ? 'Ibtisama Foundation' : 'مؤسسة ابتسامة التنموية'}
+                      </h2>
+                      <p className="text-xs text-[var(--muted-foreground)] flex items-center gap-1">
+                        <Shield className="w-3 h-3" />
+                        {currentLocale === 'en' ? 'Trusted by communities' : 'موثوق من المجتمعات'}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="font-bold text-lg bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] bg-clip-text text-transparent">
-                      {currentLocale === 'en' ? 'Ibtisama Foundation' : 'مؤسسة ابتسامة التنموية'}
-                    </h2>
-                    <p className="text-xs text-[var(--muted-foreground)] flex items-center gap-1">
-                      <Shield className="w-3 h-3" />
-                      {currentLocale === 'en' ? 'Trusted by communities' : 'موثوق من المجتمعات'}
-                    </p>
-                  </div>
+                  
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setMobileOpen(false)}
+                    className="p-2 rounded-xl hover:bg-[var(--accent)] transition-all"
+                    aria-label="Close mobile menu"
+                  >
+                    <X className="w-6 h-6 text-[var(--brand-primary)]" />
+                  </button>
                 </div>
               </div>
 

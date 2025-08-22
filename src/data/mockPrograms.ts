@@ -3,333 +3,174 @@ import { Program } from "@/types/program";
 export const mockPrograms: Program[] = [
   {
     id: 1,
-    titleEn: "Clean Water Initiative",
-    titleAr: "مبادرة المياه النظيفة",
-    descriptionEn: "Providing access to clean water in rural communities.",
-    descriptionAr: "توفير المياه النظيفة في المناطق الريفية.",
-    aboutEn: "This program focuses on building wells, educating communities on water safety, and ensuring sustainable water access.",
-    aboutAr: "يركز هذا البرنامج على بناء الآبار وتثقيف المجتمعات حول سلامة المياه وضمان الوصول المستدام للمياه.",
-    goalsEn: ["Install 50 wells", "Educate locals on water safety", "Monitor water quality"],
-    goalsAr: ["تركيب 50 بئرًا", "توعية السكان بسلامة المياه", "مراقبة جودة المياه"],
-    statics: [
-      { titleEn: "Wells Installed", titleAr: "عدد الآبار المنفذة", value: 32 },
-      { titleEn: "Villages Served", titleAr: "القرى المخدومة", value: 18 },
-      { titleEn: "Water Tests", titleAr: "اختبارات المياه", value: 120 },
+    titleEn: "Sustainable Community Development Initiative",
+    titleAr: "مبادرة التنمية المجتمعية المستدامة",
+    descriptionEn: "A comprehensive program focused on creating lasting positive change through education, healthcare, economic empowerment, and environmental sustainability.",
+    descriptionAr: "برنامج شامل يركز على خلق تغيير إيجابي دائم من خلال التعليم والرعاية الصحية والتمكين الاقتصادي والاستدامة البيئية.",
+    aboutEn: "Our Sustainable Community Development Initiative is a holistic approach to community transformation that addresses the interconnected challenges of poverty, education gaps, healthcare access, and environmental degradation. Through strategic partnerships, community engagement, and evidence-based interventions, we work to create self-sustaining communities that can thrive independently. The program integrates multiple sectors including education, healthcare, economic development, and environmental conservation to ensure comprehensive and lasting impact.",
+    aboutAr: "مبادرة التنمية المجتمعية المستدامة هي نهج شامل لتحويل المجتمع يتعامل مع التحديات المترابطة للفقر والفجوات التعليمية والوصول إلى الرعاية الصحية وتدهور البيئة. من خلال الشراكات الاستراتيجية والمشاركة المجتمعية والتدخلات القائمة على الأدلة، نعمل على خلق مجتمعات مستدامة ذاتياً يمكنها الازدهار بشكل مستقل. يدمج البرنامج قطاعات متعددة تشمل التعليم والرعاية الصحية والتنمية الاقتصادية والحفاظ على البيئة لضمان تأثير شامل ودائم.",
+    goalsEn: [
+      "Establish 15 community learning centers serving over 5,000 students annually",
+      "Provide comprehensive healthcare services to 10,000+ community members",
+      "Create 500 sustainable employment opportunities through skill development",
+      "Implement environmental conservation projects benefiting 20+ communities",
+      "Build capacity for 200+ local leaders and community organizers"
     ],
-    icon: "Droplet",
+    goalsAr: [
+      "إنشاء 15 مركز تعليمي مجتمعي يخدم أكثر من 5000 طالب سنوياً",
+      "توفير خدمات رعاية صحية شاملة لأكثر من 10000 عضو في المجتمع",
+      "خلق 500 فرصة عمل مستدامة من خلال تطوير المهارات",
+      "تنفيذ مشاريع الحفاظ على البيئة لصالح أكثر من 20 مجتمعاً",
+      "بناء قدرات أكثر من 200 قائد محلي ومنظم مجتمعي"
+    ],
+    statics: [
+      { titleEn: "Learning Centers Established", titleAr: "المراكز التعليمية المنشأة", value: 12 },
+      { titleEn: "Students Enrolled", titleAr: "الطلاب المسجلون", value: 4200 },
+      { titleEn: "Healthcare Beneficiaries", titleAr: "مستفيدو الرعاية الصحية", value: 8500 },
+      { titleEn: "Jobs Created", titleAr: "الوظائف المنشأة", value: 320 },
+      { titleEn: "Communities Served", titleAr: "المجتمعات المخدومة", value: 18 },
+      { titleEn: "Environmental Projects", titleAr: "المشاريع البيئية", value: 15 }
+    ],
+    icon: "Globe",
     color: "#3B82F6",
-    implementationLocationEn: "Upper Yemen Villages",
-    implementationLocationAr: "قرى مجمع اليمن",
+    implementationLocationEn: "Multiple Governorates: Aden, Marib, Hadramout, and Taiz",
+    implementationLocationAr: "محافظات متعددة: عدن ومأرب وحضرموت وتعز",
     fundingProviders: [
-      { nameEn: "UNICEF", nameAr: "اليونيسف", imageUrl: "/vercel.svg" },
-      { nameEn: "Global Water Fund", nameAr: "صندوق المياه العالمي", imageUrl: "/vercel.svg" },
-      { nameEn: "Charity Water", nameAr: "جمعية المياه الخيرية", imageUrl: "/vercel.svg" },
+      { 
+        nameEn: "United Nations Development Programme (UNDP)", 
+        nameAr: "برنامج الأمم المتحدة الإنمائي", 
+        imageUrl: "/assets/partners/undp-logo.png" 
+      },
+      { 
+        nameEn: "World Bank Group", 
+        nameAr: "مجموعة البنك الدولي", 
+        imageUrl: "/assets/partners/world-bank-logo.png" 
+      },
+      { 
+        nameEn: "European Union Humanitarian Aid", 
+        nameAr: "المساعدات الإنسانية للاتحاد الأوروبي", 
+        imageUrl: "/assets/partners/eu-aid-logo.png" 
+      },
+      { 
+        nameEn: "USAID Development Programs", 
+        nameAr: "برامج التنمية الأمريكية", 
+        imageUrl: "/assets/partners/usaid-logo.png" 
+      },
+      { 
+        nameEn: "Gulf Cooperation Council Fund", 
+        nameAr: "صندوق مجلس التعاون الخليجي", 
+        imageUrl: "/assets/partners/gcc-fund-logo.png" 
+      }
     ],
     donors: [
-      { nameEn: "Global Aid", nameAr: "المعونة العالمية", imageUrl: "/vercel.svg" },
-      { nameEn: "Kind Hearts", nameAr: "قلوب طيبة", imageUrl: "/vercel.svg" },
-      { nameEn: "Aqua Life", nameAr: "حياة المياه", imageUrl: "/vercel.svg" },
+      { 
+        nameEn: "Global Community Foundation", 
+        nameAr: "مؤسسة المجتمع العالمي", 
+        imageUrl: "/assets/donors/gcf-logo.png" 
+      },
+      { 
+        nameEn: "Humanitarian Aid Network", 
+        nameAr: "شبكة المساعدات الإنسانية", 
+        imageUrl: "/assets/donors/han-logo.png" 
+      },
+      { 
+        nameEn: "Sustainable Future Fund", 
+        nameAr: "صندوق المستقبل المستدام", 
+        imageUrl: "/assets/donors/sff-logo.png" 
+      },
+      { 
+        nameEn: "Community Builders Alliance", 
+        nameAr: "تحالف بناة المجتمع", 
+        imageUrl: "/assets/donors/cba-logo.png" 
+      },
+      { 
+        nameEn: "Hope for Tomorrow Initiative", 
+        nameAr: "مبادرة الأمل للغد", 
+        imageUrl: "/assets/donors/hfti-logo.png" 
+      }
     ],
     partners: [
-      { nameEn: "Local Councils", nameAr: "المجالس المحلية", imageUrl: "/vercel.svg" },
-      { nameEn: "Ministry of Water", nameAr: "وزارة المياه", imageUrl: "/vercel.svg" },
-      { nameEn: "Village Leaders", nameAr: "قادة القرى", imageUrl: "/vercel.svg" },
+      { 
+        nameEn: "Ministry of Social Affairs and Labor", 
+        nameAr: "وزارة الشؤون الاجتماعية والعمل", 
+        imageUrl: "/assets/partners/msal-logo.png" 
+      },
+      { 
+        nameEn: "Ministry of Education and Higher Education", 
+        nameAr: "وزارة التربية والتعليم والتعليم العالي", 
+        imageUrl: "/assets/partners/mehe-logo.png" 
+      },
+      { 
+        nameEn: "Ministry of Public Health and Population", 
+        nameAr: "وزارة الصحة العامة والسكان", 
+        imageUrl: "/assets/partners/mphp-logo.png" 
+      },
+      { 
+        nameEn: "Local Development Councils Network", 
+        nameAr: "شبكة مجالس التنمية المحلية", 
+        imageUrl: "/assets/partners/ldcn-logo.png" 
+      },
+      { 
+        nameEn: "Community-Based Organizations Federation", 
+        nameAr: "اتحاد المنظمات المجتمعية", 
+        imageUrl: "/assets/partners/cbof-logo.png" 
+      }
     ],
-    featuredImageUrl:"/assets/mockimage.jpg",
+    featuredImageUrl: "/assets/mockimage.jpg",
     slides: [
-      { titleEn: "Join the mission", titleAr: "انضم إلى المهمة", imageUrl: "/vercel.svg" },
-      { titleEn: "Clean water saves lives", titleAr: "المياه النظيفة تنقذ الأرواح", imageUrl: "/vercel.svg" },
-      { titleEn: "Community impact", titleAr: "تأثير المجتمع", imageUrl: "/vercel.svg" },
+      { 
+        titleEn: "Building Brighter Futures Together", 
+        titleAr: "بناء مستقبل أكثر إشراقاً معاً", 
+        imageUrl: "/assets/mockimage.jpg" 
+      },
+      { 
+        titleEn: "Empowering Communities Through Education", 
+        titleAr: "تمكين المجتمعات من خلال التعليم", 
+        imageUrl: "/assets/mockimage.jpg" 
+      },
+      { 
+        titleEn: "Sustainable Healthcare for All", 
+        titleAr: "رعاية صحية مستدامة للجميع", 
+        imageUrl: "/assets/mockimage.jpg" 
+      },
+      { 
+        titleEn: "Economic Empowerment & Job Creation", 
+        titleAr: "التمكين الاقتصادي وخلق الوظائف", 
+        imageUrl: "/assets/mockimage.jpg" 
+      },
+      { 
+        titleEn: "Environmental Conservation & Sustainability", 
+        titleAr: "الحفاظ على البيئة والاستدامة", 
+        imageUrl: "/assets/mockimage.jpg" 
+      }
     ],
-    slugEn: "clean-water-initiative",
-    slugAr: "مبادرة-المياه-النظيفة",
-    keywordsEn: ["water", "health", "rural"],
-    keywordsAr: ["ماء", "صحة", "ريف"],
-    tagsEn: ["Clean Water", "NGO"],
-    tagsAr: ["مياه نظيفة", "منظمة"],
+    slugEn: "sustainable-community-development-initiative",
+    slugAr: "مبادرة-التنمية-المجتمعية-المستدامة",
+    keywordsEn: [
+      "community development", "sustainability", "education", "healthcare", 
+      "economic empowerment", "environmental conservation", "capacity building",
+      "social impact", "sustainable development", "community engagement"
+    ],
+    keywordsAr: [
+      "التنمية المجتمعية", "الاستدامة", "التعليم", "الرعاية الصحية",
+      "التمكين الاقتصادي", "الحفاظ على البيئة", "بناء القدرات",
+      "التأثير الاجتماعي", "التنمية المستدامة", "المشاركة المجتمعية"
+    ],
+    tagsEn: [
+      "Community Development", "Sustainability", "Education", "Healthcare",
+      "Economic Development", "Environmental Conservation", "Capacity Building"
+    ],
+    tagsAr: [
+      "التنمية المجتمعية", "الاستدامة", "التعليم", "الرعاية الصحية",
+      "التنمية الاقتصادية", "الحفاظ على البيئة", "بناء القدرات"
+    ],
     includeInSitemapEn: true,
     includeInSitemapAr: true,
-    pageViews: 123,
+    pageViews: 2847,
     createdBy: "system",
     isPublished: true,
-    publishedAt: new Date("2024-05-20"),
-    createdAt: new Date("2024-04-15"),
-    updatedAt: new Date("2024-05-01"),
-  },
-  {
-    id: 2,
-    titleEn: "Digital Learning Centers",
-    titleAr: "مراكز التعلم الرقمي",
-    descriptionEn: "Equipping youth with digital skills for the future.",
-    descriptionAr: "تمكين الشباب من المهارات الرقمية للمستقبل.",
-    aboutEn: "We build and equip learning centers to provide access to computing resources and digital literacy training.",
-    aboutAr: "نقوم ببناء وتجهيز مراكز التعلم لتوفير الوصول إلى موارد الحوسبة والتدريب على محو الأمية الرقمية.",
-    goalsEn: ["Train 1,000 students", "Build 5 centers", "Provide 500 devices"],
-    goalsAr: ["تدريب 1000 طالب", "بناء 5 مراكز", "توفير 500 جهاز"],
-    statics: [
-      { titleEn: "Students Trained", titleAr: "الطلاب المدربون", value: 760 },
-      { titleEn: "Centers Built", titleAr: "المراكز المنشأة", value: 3 },
-      { titleEn: "Devices Provided", titleAr: "الأجهزة الموزعة", value: 320 },
-    ],
-    icon: "Laptop",
-    color: "#10B981",
-    implementationLocationEn: "Marib and Giza",
-    implementationLocationAr: "مأرب وشبوة",
-    fundingProviders: [
-      { nameEn: "Tech4All", nameAr: "التكنولوجيا للجميع", imageUrl: "/vercel.svg" },
-      { nameEn: "Digital Future Fund", nameAr: "صندوق المستقبل الرقمي", imageUrl: "/vercel.svg" },
-      { nameEn: "Smart Learn", nameAr: "التعلم الذكي", imageUrl: "/vercel.svg" },
-    ],
-    donors: [
-      { nameEn: "Innovators Club", nameAr: "نادي المبتكرين", imageUrl: "/vercel.svg" },
-      { nameEn: "Learning for Life", nameAr: "التعلم للحياة", imageUrl: "/vercel.svg" },
-      { nameEn: "Tech Aid", nameAr: "المساعدة التقنية", imageUrl: "/vercel.svg" },
-    ],
-    partners: [
-      { nameEn: "Ministry of Education", nameAr: "وزارة التربية والتعليم", imageUrl: "/vercel.svg" },
-      { nameEn: "EdTech Partners", nameAr: "شركاء التكنولوجيا التعليمية", imageUrl: "/vercel.svg" },
-      { nameEn: "Local NGOs", nameAr: "المنظمات المحلية", imageUrl: "/vercel.svg" },
-    ],
-    featuredImageUrl:"/assets/mockimage.jpg",
-    slides: [
-      { titleEn: "Empowering youth", titleAr: "تمكين الشباب", imageUrl: "/vercel.svg" },
-      { titleEn: "Digital skills for all", titleAr: "المهارات الرقمية للجميع", imageUrl: "/vercel.svg" },
-      { titleEn: "Learning made easy", titleAr: "التعلم أصبح سهلاً", imageUrl: "/vercel.svg" },
-    ],
-    slugEn: "digital-learning-centers",
-    slugAr: "مراكز-التعلم-الرقمي",
-    keywordsEn: ["education", "digital", "youth"],
-    keywordsAr: ["تعليم", "رقمي", "شباب"],
-    tagsEn: ["Education", "Tech"],
-    tagsAr: ["تعليم", "تكنولوجيا"],
-    includeInSitemapEn: true,
-    includeInSitemapAr: true,
-    pageViews: 85,
-    createdBy: "system",
-    isPublished: true,
-    publishedAt: new Date("2024-06-10"),
-    createdAt: new Date("2024-05-01"),
-    updatedAt: new Date("2024-06-01"),
-  },
-  {
-    id: 3,
-    titleEn: "Green Energy for All",
-    titleAr: "الطاقة الخضراء للجميع",
-    descriptionEn: "Promoting renewable energy solutions in underserved areas.",
-    descriptionAr: "تعزيز حلول الطاقة المتجددة في المناطق المحرومة.",
-    aboutEn: "This program installs solar panels, trains locals in renewable technology maintenance, and reduces carbon emissions.",
-    aboutAr: "يقوم هذا البرنامج بتركيب الألواح الشمسية وتدريب السكان المحليين على صيانة التكنولوجيا المتجددة وتقليل انبعاثات الكربون.",
-    goalsEn: ["Install 200 solar panels", "Train 50 technicians", "Reduce emissions by 30%"],
-    goalsAr: ["تركيب 200 لوحة شمسية", "تدريب 50 فني", "تقليل الانبعاثات بنسبة 30%"],
-    statics: [
-      { titleEn: "Solar Panels Installed", titleAr: "الألواح الشمسية المركبة", value: 150 },
-      { titleEn: "Technicians Trained", titleAr: "الفنيون المدربون", value: 40 },
-      { titleEn: "Emission Reduction", titleAr: "خفض الانبعاثات", value: 25 },
-    ],
-    icon: "Sun",
-    color: "#F59E0B",
-    implementationLocationEn: "Red Sea Governorate",
-    implementationLocationAr: "محافظةعدن",
-    fundingProviders: [
-      { nameEn: "SolarAid", nameAr: "المساعدة الشمسية", imageUrl: "/vercel.svg" },
-      { nameEn: "Green Future Fund", nameAr: "صندوق المستقبل الأخضر", imageUrl: "/vercel.svg" },
-      { nameEn: "EcoPower", nameAr: "القوة البيئية", imageUrl: "/vercel.svg" },
-    ],
-    donors: [
-      { nameEn: "Sunshine Donors", nameAr: "متبرعو الشمس", imageUrl: "/vercel.svg" },
-      { nameEn: "Climate Action Group", nameAr: "مجموعة العمل المناخي", imageUrl: "/vercel.svg" },
-      { nameEn: "Eco Hearts", nameAr: "القلوب البيئية", imageUrl: "/vercel.svg" },
-    ],
-    partners: [
-      { nameEn: "Ministry of Energy", nameAr: "وزارة الطاقة", imageUrl: "/vercel.svg" },
-      { nameEn: "SolarTech Partners", nameAr: "شركاء التقنية الشمسية", imageUrl: "/vercel.svg" },
-      { nameEn: "Environmental NGOs", nameAr: "المنظمات البيئية", imageUrl: "/vercel.svg" },
-    ],
-    featuredImageUrl:"/assets/mockimage.jpg",
-    slides: [
-      { titleEn: "Harness the sun", titleAr: "استفد من الشمس", imageUrl: "/vercel.svg" },
-      { titleEn: "Empowering communities", titleAr: "تمكين المجتمعات", imageUrl: "/vercel.svg" },
-      { titleEn: "Green future ahead", titleAr: "مستقبل أخضر ينتظرنا", imageUrl: "/vercel.svg" },
-    ],
-    slugEn: "green-energy-for-all",
-    slugAr: "الطاقة-الخضراء-للجميع",
-    keywordsEn: ["renewable", "solar", "energy"],
-    keywordsAr: ["متجددة", "شمسية", "طاقة"],
-    tagsEn: ["Green Energy", "Sustainability"],
-    tagsAr: ["طاقة خضراء", "استدامة"],
-    includeInSitemapEn: true,
-    includeInSitemapAr: true,
-    pageViews: 142,
-    createdBy: "system",
-    isPublished: true,
-    publishedAt: new Date("2024-07-15"),
-    createdAt: new Date("2024-06-01"),
-    updatedAt: new Date("2024-06-20"),
-  },
-  {
-    id: 4,
-    titleEn: "Community Health Outreach",
-    titleAr: "التوعية الصحية المجتمعية",
-    descriptionEn: "Improving health awareness and providing basic medical services.",
-    descriptionAr: "تحسين الوعي الصحي وتوفير الخدمات الطبية الأساسية.",
-    aboutEn: "This program organizes medical camps, health workshops, and distributes free medicine in rural areas.",
-    aboutAr: "يقوم هذا البرنامج بتنظيم مخيمات طبية وورش عمل صحية وتوزيع الأدوية المجانية في المناطق الريفية.",
-    goalsEn: ["Conduct 20 medical camps", "Train 100 health volunteers", "Distribute 5,000 health kits"],
-    goalsAr: ["إقامة 20 مخيم طبي", "تدريب 100 متطوع صحي", "توزيع 5000 حقيبة صحية"],
-    statics: [
-      { titleEn: "Camps Conducted", titleAr: "المخيمات المقامة", value: 12 },
-      { titleEn: "Volunteers Trained", titleAr: "المتطوعون المدربون", value: 80 },
-      { titleEn: "Kits Distributed", titleAr: "الحقائب الموزعة", value: 3000 },
-    ],
-    icon: "HeartPulse",
-    color: "#EF4444",
-    implementationLocationEn: "Assiut and Sohag",
-    implementationLocationAr: "أسيوط وسوهاج",
-    fundingProviders: [
-      { nameEn: "Health for All", nameAr: "الصحة للجميع", imageUrl: "/vercel.svg" },
-      { nameEn: "Global Health Fund", nameAr: "صندوق الصحة العالمي", imageUrl: "/vercel.svg" },
-      { nameEn: "Care First", nameAr: "الرعاية أولاً", imageUrl: "/vercel.svg" },
-    ],
-    donors: [
-      { nameEn: "MedicAid", nameAr: "المساعدة الطبية", imageUrl: "/vercel.svg" },
-      { nameEn: "Wellness Givers", nameAr: "مانحو الصحة", imageUrl: "/vercel.svg" },
-      { nameEn: "First Aid Friends", nameAr: "أصدقاء الإسعافات الأولية", imageUrl: "/vercel.svg" },
-    ],
-    partners: [
-      { nameEn: "Ministry of Health", nameAr: "وزارة الصحة", imageUrl: "/vercel.svg" },
-      { nameEn: "Local Clinics Network", nameAr: "شبكة العيادات المحلية", imageUrl: "/vercel.svg" },
-      { nameEn: "Medical University", nameAr: "الجامعة الطبية", imageUrl: "/vercel.svg" },
-    ],
-    featuredImageUrl:"/assets/mockimage.jpg",
-    slides: [
-      { titleEn: "Bringing care closer", titleAr: "تقديم الرعاية بالقرب منك", imageUrl: "/vercel.svg" },
-      { titleEn: "Health is wealth", titleAr: "الصحة ثروة", imageUrl: "/vercel.svg" },
-      { titleEn: "Community wellness", titleAr: "رفاهية المجتمع", imageUrl: "/vercel.svg" },
-    ],
-    slugEn: "community-health-outreach",
-    slugAr: "التوعية-الصحية-المجتمعية",
-    keywordsEn: ["health", "medical", "awareness"],
-    keywordsAr: ["صحة", "طبي", "توعية"],
-    tagsEn: ["Health", "NGO"],
-    tagsAr: ["صحة", "منظمة"],
-    includeInSitemapEn: true,
-    includeInSitemapAr: true,
-    pageViews: 98,
-    createdBy: "system",
-    isPublished: true,
-    publishedAt: new Date("2024-08-01"),
-    createdAt: new Date("2024-07-01"),
-    updatedAt: new Date("2024-07-15"),
-  },
-  {
-    id: 5,
-    titleEn: "Women Empowerment Program",
-    titleAr: "برنامج تمكين المرأة",
-    descriptionEn: "Supporting women through education, skills, and entrepreneurship.",
-    descriptionAr: "دعم النساء من خلال التعليم والمهارات وريادة الأعمال.",
-    aboutEn: "This initiative provides training, microloans, and mentorship to women aiming for self-reliance.",
-    aboutAr: "تقدم هذه المبادرة التدريب والقروض الصغيرة والإرشاد للنساء الساعيات للاعتماد على أنفسهن.",
-    goalsEn: ["Train 500 women", "Provide 100 microloans", "Launch 50 women-led businesses"],
-    goalsAr: ["تدريب 500 امرأة", "تقديم 100 قرض صغير", "إطلاق 50 مشروع تقوده النساء"],
-    statics: [
-      { titleEn: "Women Trained", titleAr: "النساء المدربات", value: 320 },
-      { titleEn: "Loans Provided", titleAr: "القروض المقدمة", value: 65 },
-      { titleEn: "Businesses Launched", titleAr: "المشاريع المنشأة", value: 28 },
-    ],
-    icon: "Users",
-    color: "#8B5CF6",
-    implementationLocationEn: "Aden",
-    implementationLocationAr: "الإسكندرية",
-    fundingProviders: [
-      { nameEn: "Empower Fund", nameAr: "صندوق التمكين", imageUrl: "/vercel.svg" },
-      { nameEn: "She Leads", nameAr: "هي تقود", imageUrl: "/vercel.svg" },
-      { nameEn: "Women in Action", nameAr: "النساء في العمل", imageUrl: "/vercel.svg" },
-    ],
-    donors: [
-      { nameEn: "Her Future", nameAr: "مستقبلها", imageUrl: "/vercel.svg" },
-      { nameEn: "Equal Rights Group", nameAr: "مجموعة الحقوق المتساوية", imageUrl: "/vercel.svg" },
-      { nameEn: "Bright Steps", nameAr: "خطوات مشرقة", imageUrl: "/vercel.svg" },
-    ],
-    partners: [
-      { nameEn: "Chamber of Commerce", nameAr: "غرفة التجارة", imageUrl: "/vercel.svg" },
-      { nameEn: "Local NGOs", nameAr: "المنظمات المحلية", imageUrl: "/vercel.svg" },
-      { nameEn: "Business Incubators", nameAr: "حاضنات الأعمال", imageUrl: "/vercel.svg" },
-    ],
-    featuredImageUrl:"/assets/mockimage.jpg",
-    slides: [
-      { titleEn: "Empower her", titleAr: "مكنها", imageUrl: "/vercel.svg" },
-      { titleEn: "Skills for success", titleAr: "مهارات للنجاح", imageUrl: "/vercel.svg" },
-      { titleEn: "Breaking barriers", titleAr: "كسر الحواجز", imageUrl: "/vercel.svg" },
-    ],
-    slugEn: "women-empowerment-program",
-    slugAr: "برنامج-تمكين-المرأة",
-    keywordsEn: ["women", "empowerment", "entrepreneurship"],
-    keywordsAr: ["نساء", "تمكين", "ريادة الأعمال"],
-    tagsEn: ["Women", "Equality"],
-    tagsAr: ["نساء", "مساواة"],
-    includeInSitemapEn: true,
-    includeInSitemapAr: true,
-    pageViews: 76,
-    createdBy: "system",
-    isPublished: true,
-    publishedAt: new Date("2024-09-10"),
-    createdAt: new Date("2024-08-01"),
-    updatedAt: new Date("2024-08-15"),
-  },
-  {
-    id: 6,
-    titleEn: "Youth Sports Development",
-    titleAr: "تطوير الرياضة للشباب",
-    descriptionEn: "Fostering teamwork, discipline, and health through sports.",
-    descriptionAr: "تعزيز العمل الجماعي والانضباط والصحة من خلال الرياضة.",
-    aboutEn: "This program builds sports facilities, trains coaches, and organizes youth leagues.",
-    aboutAr: "يقوم هذا البرنامج ببناء مرافق رياضية وتدريب المدربين وتنظيم بطولات شبابية.",
-    goalsEn: ["Build 10 sports facilities", "Train 50 coaches", "Organize 100 matches"],
-    goalsAr: ["بناء 10 مرافق رياضية", "تدريب 50 مدرب", "تنظيم 100 مباراة"],
-    statics: [
-      { titleEn: "Facilities Built", titleAr: "المرافق المنشأة", value: 7 },
-      { titleEn: "Coaches Trained", titleAr: "المدربون المدربون", value: 35 },
-      { titleEn: "Matches Organized", titleAr: "المباريات المنظمة", value: 60 },
-    ],
-    icon: "Trophy",
-    color: "#22C55E",
-    implementationLocationEn: "Luxor and Qena",
-    implementationLocationAr: "الأقصر وقنا",
-    fundingProviders: [
-      { nameEn: "Sports For All", nameAr: "الرياضة للجميع", imageUrl: "/vercel.svg" },
-      { nameEn: "Healthy Youth Fund", nameAr: "صندوق الشباب الصحي", imageUrl: "/vercel.svg" },
-      { nameEn: "Play4Change", nameAr: "العب من أجل التغيير", imageUrl: "/vercel.svg" },
-    ],
-    donors: [
-      { nameEn: "Active Life", nameAr: "الحياة النشطة", imageUrl: "/vercel.svg" },
-      { nameEn: "Team Spirit Donors", nameAr: "متبرعو روح الفريق", imageUrl: "/vercel.svg" },
-      { nameEn: "Goal Makers", nameAr: "صانعو الأهداف", imageUrl: "/vercel.svg" },
-    ],
-    partners: [
-      { nameEn: "Local Sports Clubs", nameAr: "الأندية الرياضية المحلية", imageUrl: "/vercel.svg" },
-      { nameEn: "Ministry of Youth", nameAr: "وزارة الشباب", imageUrl: "/vercel.svg" },
-      { nameEn: "School Associations", nameAr: "جمعيات المدارس", imageUrl: "/vercel.svg" },
-    ],
-    featuredImageUrl:"/assets/mockimage.jpg",
-    slides: [
-      { titleEn: "Play together", titleAr: "العبوا معًا", imageUrl: "/vercel.svg" },
-      { titleEn: "Health through sport", titleAr: "الصحة من خلال الرياضة", imageUrl: "/vercel.svg" },
-      { titleEn: "Building champions", titleAr: "بناء الأبطال", imageUrl: "/vercel.svg" },
-    ],
-    slugEn: "youth-sports-development",
-    slugAr: "تطوير-الرياضة-للشباب",
-    keywordsEn: ["sports", "youth", "health"],
-    keywordsAr: ["رياضة", "شباب", "صحة"],
-    tagsEn: ["Sports", "Youth"],
-    tagsAr: ["رياضة", "شباب"],
-    includeInSitemapEn: true,
-    includeInSitemapAr: true,
-    pageViews: 54,
-    createdBy: "system",
-    isPublished: true,
-    publishedAt: new Date("2024-10-05"),
-    createdAt: new Date("2024-09-01"),
-    updatedAt: new Date("2024-09-20"),
-  },
-
+    publishedAt: new Date("2024-01-15"),
+    createdAt: new Date("2023-12-01"),
+    updatedAt: new Date("2024-01-20"),
+  }
 ];
