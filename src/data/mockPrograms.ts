@@ -74,7 +74,7 @@ export const mockPrograms: Program[] = [
     icon: "Laptop",
     color: "#10B981",
     implementationLocationEn: "Marib and Giza",
-    implementationLocationAr: "مأرب والجيزة",
+    implementationLocationAr: "مأرب وشبوة",
     fundingProviders: [
       { nameEn: "Tech4All", nameAr: "التكنولوجيا للجميع", imageUrl: "/vercel.svg" },
       { nameEn: "Digital Future Fund", nameAr: "صندوق المستقبل الرقمي", imageUrl: "/vercel.svg" },
@@ -129,7 +129,7 @@ export const mockPrograms: Program[] = [
     icon: "Sun",
     color: "#F59E0B",
     implementationLocationEn: "Red Sea Governorate",
-    implementationLocationAr: "محافظة البحر الأحمر",
+    implementationLocationAr: "محافظةعدن",
     fundingProviders: [
       { nameEn: "SolarAid", nameAr: "المساعدة الشمسية", imageUrl: "/vercel.svg" },
       { nameEn: "Green Future Fund", nameAr: "صندوق المستقبل الأخضر", imageUrl: "/vercel.svg" },

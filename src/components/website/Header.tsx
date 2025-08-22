@@ -64,6 +64,7 @@ export default function Header() {
     ],
     projects: [
       { label: 'All Projects', labelAr: 'جميع المشاريع', href: `/${currentLocale}/projects` },
+      { label: 'Programs', labelAr: 'البرامج', href: `/${currentLocale}/programs` },
       { label: 'Categories', labelAr: 'الفئات', href: `/${currentLocale}/projects/categories` },
     ],
     media: [
@@ -72,7 +73,7 @@ export default function Header() {
       { label: 'Activities', labelAr: 'الأنشطة', href: `/${currentLocale}/activities` },
       { label: 'Publications', labelAr: 'النشرات', href: `/${currentLocale}/media/publications` },
       { label: 'Reports', labelAr: 'التقارير', href: `/${currentLocale}/media/reports` },
-      { label: 'Success Stories', labelAr: 'القصص الناجحة', href: `/${currentLocale}/media/success-stories` },
+      { label: 'Success Stories', labelAr: 'قصص النجاح', href: `/${currentLocale}/media/success-stories` },
     ],
     news: [
       { label: 'All News', labelAr: 'كل الأخبار', href: `/${currentLocale}/news` },
@@ -80,8 +81,8 @@ export default function Header() {
     ],
     contact: [
       { label: 'Contact Us', labelAr: 'تواصل معنا', href: `/${currentLocale}/contact-us` },
-      { label: 'Become a Volunteer', labelAr: 'أصبح متطوعا', href: `/${currentLocale}/become-a-volunteer` },
-      { label: 'Work with Us', labelAr: 'العمل معنا', href: `/${currentLocale}/work-with-us` },
+      { label: 'Become a Volunteer', labelAr: 'تطوع معنا', href: `/${currentLocale}/become-a-volunteer` },
+      { label: 'Work with Us', labelAr: ' الوظائف', href: `/${currentLocale}/work-with-us` },
     ],
   };
 
