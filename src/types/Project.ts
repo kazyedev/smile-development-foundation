@@ -13,11 +13,6 @@ interface Banner {
   imageUrl: string;
 }
 
-interface FinancialContribution {
-  nameEn: string;
-  nameAr: string;
-  percentage : number;
-}
 
 interface Deliverables {
   titleEn: string;
@@ -30,8 +25,7 @@ interface Deliverables {
 interface Resource {
   titleEn: string;
   titleAr: string;
-  icon: string;
-  iconImageUrl: string;
+  image: string;
 }
 
 export interface Project {
@@ -49,7 +43,21 @@ export interface Project {
    goalsAr: string[];
    videoUrl: string;
    statics: Static[];
-   financialContributions: FinancialContribution[];
+   fundingProviders: {
+    nameEn: string;
+    nameAr: string;
+    imageUrl: string;
+  }[];
+  donors: {
+    nameEn: string;
+    nameAr: string;
+    imageUrl: string;
+  }[];
+  partners: {
+    nameEn: string;
+    nameAr: string;
+    imageUrl: string;
+  }[];
    deliverables: Deliverables[];
    resources: Resource[];
    slugEn: string;

@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Mail, ArrowLeft, Shield, CheckCircle, AlertCircle, ArrowRight } from "lucide-react";
+import { useAuth } from "@/providers/auth-provider";
 
 export default function ResetPasswordPage() {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
+  const { resetPassword, isLoading: authLoading } = useAuth();
 
   const translations = {
     en: {
@@ -94,35 +96,36 @@ export default function ResetPasswordPage() {
     setLoading(true);
     setError(null);
     setMessage(null);
+    
     try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || t.unknownError);
-      setMessage(t.success);
+      const result = await resetPassword(email);
+      
+      if (result.success) {
+        setMessage(t.success);
+        setError(null);
+      } else {
+        setError(result.error || t.unknownError);
+        setMessage(null);
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unknown error');
+      setMessage(null);
     } finally {
       setLoading(false);
     }
   }
 
-  const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
-  };
-
-  const staggerChildren = {
-    animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
+  // Show loading state while auth is initializing
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">
@@ -130,11 +133,11 @@ export default function ResetPasswordPage() {
         {/* Left Side - Features */}
         <motion.div 
           className="hidden lg:block"
-          initial="initial"
-          animate="animate"
-          variants={staggerChildren}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
         >
-          <motion.div variants={fadeInUp} className="mb-8">
+          <div className="mb-8">
             <div className="w-16 h-16 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-2xl flex items-center justify-center mb-6">
               <Shield className="w-8 h-8 text-brand-primary" />
             </div>
@@ -144,24 +147,22 @@ export default function ResetPasswordPage() {
             <p className="text-xl text-muted-foreground leading-relaxed">
               {t.description}
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeInUp} className="space-y-4">
+          <div className="space-y-4">
             {t.features.map((feature, index) => (
               <motion.div
                 key={index}
-                className="flex items-center gap-3"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
+                className="flex items-center gap-3 text-muted-foreground"
               >
-                <div className="w-8 h-8 bg-brand-primary/20 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-4 h-4 text-brand-primary" />
-                </div>
-                <span className="text-muted-foreground">{feature}</span>
+                <div className="w-2 h-2 bg-brand-primary rounded-full"></div>
+                <span>{feature}</span>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </motion.div>
 
         {/* Right Side - Reset Form */}
@@ -169,127 +170,90 @@ export default function ResetPasswordPage() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex justify-center"
         >
-          <Card className="w-full max-w-md shadow-2xl border-0 bg-card/80 backdrop-blur-sm">
-            <CardHeader className="text-center pb-6">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-                className="w-16 h-16 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              >
-                <Shield className="w-8 h-8 text-brand-primary" />
-              </motion.div>
-              <CardTitle className="text-2xl font-bold">{t.subtitle}</CardTitle>
+          <Card className="border-0 shadow-2xl bg-background/80 backdrop-blur-sm">
+            <CardHeader className="text-center pb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Mail className="w-8 h-8 text-brand-primary" />
+              </div>
+              <CardTitle className="text-2xl font-bold mb-2">{t.subtitle}</CardTitle>
               <CardDescription className="text-muted-foreground">
                 {t.description}
               </CardDescription>
             </CardHeader>
             
-            <CardContent>
-              <form onSubmit={onSubmit} className="space-y-6">
-                {/* Email Field */}
+            <CardContent className="space-y-6">
+              <form onSubmit={onSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
+                  <label htmlFor="email" className="text-sm font-medium text-foreground">
                     {t.email}
                   </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={t.emailPlaceholder}
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      if (emailError) setEmailError(null);
-                    }}
-                    className={`transition-all duration-200 ${
-                      emailError ? 'border-destructive focus:border-destructive' : ''
-                    }`}
-                    required
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder={t.emailPlaceholder}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={`pl-10 ${emailError ? 'border-red-500' : ''}`}
+                      disabled={loading}
+                    />
+                  </div>
                   {emailError && (
-                    <motion.p 
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-sm text-destructive flex items-center gap-2"
-                    >
-                      <AlertCircle className="w-4 h-4" />
-                      {emailError}
-                    </motion.p>
+                    <p className="text-sm text-red-500">{emailError}</p>
                   )}
                 </div>
 
-                {/* Success Message */}
                 {message && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                      <div>
-                        <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                          {t.success}
-                        </p>
-                        <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-                          {t.successDescription}
-                        </p>
-                      </div>
+                  <div className="p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                      <CheckCircle className="w-4 h-4" />
+                      <p className="text-sm font-medium">{message}</p>
                     </div>
-                  </motion.div>
-                )}
-
-                {/* Error Message */}
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg"
-                  >
-                    <p className="text-sm text-destructive text-center flex items-center justify-center gap-2" role="alert">
-                      <AlertCircle className="w-4 h-4" />
-                      {error}
+                    <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+                      {t.successDescription}
                     </p>
-                  </motion.div>
+                  </div>
                 )}
 
-                {/* Submit Button */}
-                <Button 
-                  type="submit" 
-                  disabled={loading || !!message} 
-                  className="w-full bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90 text-white py-3 text-lg font-semibold transition-all duration-200 transform hover:scale-[1.02] disabled:transform-none"
+                {error && (
+                  <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+                      <AlertCircle className="w-4 h-4" />
+                      <p className="text-sm">{error}</p>
+                    </div>
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  disabled={loading}
                 >
                   {loading ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                    />
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 h-4 border-b-2 border-white"></div>
+                      {t.sending}
+                    </div>
                   ) : (
-                    <>
-                      {message ? t.success : t.send}
-                      {!message && <ArrowRight className="w-4 h-4 ml-2" />}
-                    </>
+                    <div className="flex items-center gap-2">
+                      {t.send}
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
                   )}
                 </Button>
-
-                {/* Back to Login */}
-                <div className="text-center pt-4">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => router.push(`/${locale}/login`)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    {t.backToLogin}
-                  </Button>
-                </div>
               </form>
+
+              <div className="text-center pt-4">
+                <a
+                  href={`/${locale}/login`}
+                  className="inline-flex items-center gap-2 text-sm text-brand-primary hover:text-brand-primary/80 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t.backToLogin}
+                </a>
+              </div>
             </CardContent>
           </Card>
         </motion.div>

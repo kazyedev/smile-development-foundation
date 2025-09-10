@@ -298,7 +298,7 @@ export default function MediaVideosPage() {
 
       {/* Call to Action */}
       <section className="py-16 px-6">
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -334,7 +334,7 @@ export default function MediaVideosPage() {
               </Button>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
       </section>
     </div>
   );

@@ -35,10 +35,10 @@ export const mockProjects: Project[] = [
             "تقليل الأمراض المنقولة بالمياه بنسبة 70٪ خلال عامين",
             "تدريب السكان المحليين على صيانة أنظمة التنقية",
           ],
-          videoUrl: "https://www.youtube.com/watch?v=example",
+          videoUrl: "https://www.youtube.com/watch?v=haFo_EWNrcU",
           statics: [
             {
-              icon: "fa-tint",
+              icon: "tint",
               titleEn: "Water Delivered",
               titleAr: "المياه الموزعة",
               value: 120000,
@@ -46,7 +46,7 @@ export const mockProjects: Project[] = [
               unitAr: "لتر",
             },
             {
-              icon: "fa-users",
+              icon: "users",
               titleEn: "Beneficiaries",
               titleAr: "المستفيدون",
               value: 5000,
@@ -54,10 +54,86 @@ export const mockProjects: Project[] = [
               unitAr: "شخص",
             },
           ],
-          financialContributions: [
-            { nameEn: "Government Grant", nameAr: "منحة حكومية", percentage: 40 },
-            { nameEn: "NGO Partners", nameAr: "شركاء المنظمات غير الحكومية", percentage: 35 },
-            { nameEn: "Public Donations", nameAr: "تبرعات عامة", percentage: 25 },
+          fundingProviders: [
+            { 
+              nameEn: "United Nations Development Programme (UNDP)", 
+              nameAr: "برنامج الأمم المتحدة الإنمائي", 
+              imageUrl: "/assets/mocklogo.png" 
+            },
+            { 
+              nameEn: "World Bank Group", 
+              nameAr: "مجموعة البنك الدولي", 
+              imageUrl: "/assets/mocklogo.png" 
+            },
+            { 
+              nameEn: "European Union Humanitarian Aid", 
+              nameAr: "المساعدات الإنسانية للاتحاد الأوروبي", 
+              imageUrl: "/assets/mocklogo.png" 
+            },
+            { 
+              nameEn: "USAID Development Programs", 
+              nameAr: "برامج التنمية الأمريكية", 
+              imageUrl: "/assets/mocklogo.png" 
+            },
+            { 
+              nameEn: "Gulf Cooperation Council Fund", 
+              nameAr: "صندوق مجلس التعاون الخليجي", 
+              imageUrl: "/assets/mocklogo.png" 
+            }
+          ],
+          donors: [
+            { 
+              nameEn: "Global Community Foundation", 
+              nameAr: "مؤسسة المجتمع العالمي", 
+              imageUrl: "/assets/donors/gcf-logo.png" 
+            },
+            { 
+              nameEn: "Humanitarian Aid Network", 
+              nameAr: "شبكة المساعدات الإنسانية", 
+              imageUrl: "/assets/donors/han-logo.png" 
+            },
+            { 
+              nameEn: "Sustainable Future Fund", 
+              nameAr: "صندوق المستقبل المستدام", 
+              imageUrl: "/assets/donors/sff-logo.png" 
+            },
+            { 
+              nameEn: "Community Builders Alliance", 
+              nameAr: "تحالف بناة المجتمع", 
+              imageUrl: "/assets/donors/cba-logo.png" 
+            },
+            { 
+              nameEn: "Hope for Tomorrow Initiative", 
+              nameAr: "مبادرة الأمل للغد", 
+              imageUrl: "/assets/donors/hfti-logo.png" 
+            }
+          ],
+          partners: [
+            { 
+              nameEn: "Ministry of Social Affairs and Labor", 
+              nameAr: "وزارة الشؤون الاجتماعية والعمل", 
+              imageUrl: "/assets/partners/msal-logo.png" 
+            },
+            { 
+              nameEn: "Ministry of Education and Higher Education", 
+              nameAr: "وزارة التربية والتعليم والتعليم العالي", 
+              imageUrl: "/assets/partners/mehe-logo.png" 
+            },
+            { 
+              nameEn: "Ministry of Public Health and Population", 
+              nameAr: "وزارة الصحة العامة والسكان", 
+              imageUrl: "/assets/partners/mphp-logo.png" 
+            },
+            { 
+              nameEn: "Local Development Councils Network", 
+              nameAr: "شبكة مجالس التنمية المحلية", 
+              imageUrl: "/assets/partners/ldcn-logo.png" 
+            },
+            { 
+              nameEn: "Community-Based Organizations Federation", 
+              nameAr: "اتحاد المنظمات المجتمعية", 
+              imageUrl: "/assets/partners/cbof-logo.png" 
+            }
           ],
           deliverables: [
             {
@@ -79,14 +155,12 @@ export const mockProjects: Project[] = [
             {
               titleEn: "Solar Purification Kit",
               titleAr: "عدة تنقية بالطاقة الشمسية",
-              icon: "fa-solar-panel",
-              iconImageUrl: "/assets/icons/solar-kit.png",
+              image: "/assets/mockicon.png",
             },
             {
               titleEn: "Water Testing Kit",
               titleAr: "عدة اختبار المياه",
-              icon: "fa-vial",
-              iconImageUrl: "/assets/icons/testing-kit.png",
+              image: "/assets/mockicon.png",
             },
           ],
           slugEn: "clean-water-for-all",
@@ -96,7 +170,7 @@ export const mockProjects: Project[] = [
           tagsEn: ["Water", "Health", "Environment"],
           tagsAr: ["المياه", "الصحة", "البيئة"],
           pageViews: 1240,
-          programId: 3,
+          programId: 1,
           categoryId: 1,
           activityIds: [12, 15],
           isPublished: true,
@@ -141,7 +215,7 @@ export const mockProjects: Project[] = [
           videoUrl: "https://vimeo.com/example",
           statics: [
             {
-              icon: "fa-lightbulb",
+              icon: "lightbulb",
               titleEn: "Solar Lights Installed",
               titleAr: "أضواء شمسية مثبتة",
               value: 200,
@@ -149,7 +223,7 @@ export const mockProjects: Project[] = [
               unitAr: "ضوء",
             },
             {
-              icon: "fa-school",
+              icon: "school",
               titleEn: "Schools Covered",
               titleAr: "مدارس مشمولة",
               value: 10,
@@ -157,11 +231,13 @@ export const mockProjects: Project[] = [
               unitAr: "مدرسة",
             },
           ],
-          financialContributions: [
-            { nameEn: "Educational Fund", nameAr: "صندوق التعليم", percentage: 50 },
-            { nameEn: "Corporate Sponsors", nameAr: "رعاة الشركات", percentage: 30 },
-            { nameEn: "Public Donations", nameAr: "تبرعات عامة", percentage: 20 },
+          fundingProviders: [
+            { nameEn: "Educational Fund", nameAr: "صندوق التعليم", imageUrl: "/assets/mocklogo.png" },
+            { nameEn: "Corporate Sponsors", nameAr: "رعاة الشركات", imageUrl: "/assets/mocklogo.png" },
+            { nameEn: "Public Donations", nameAr: "تبرعات عامة", imageUrl: "/assets/mocklogo.png" },
           ],
+          donors: [],
+          partners: [],
           deliverables: [
             {
               titleEn: "Classrooms Upgraded",
@@ -182,14 +258,12 @@ export const mockProjects: Project[] = [
             {
               titleEn: "Solar Lighting Kit",
               titleAr: "عدة إضاءة شمسية",
-              icon: "fa-sun",
-              iconImageUrl: "/assets/icons/solar-light.png",
+              image: "/assets/mockicon.png",
             },
             {
               titleEn: "Recycled Furniture",
               titleAr: "أثاث معاد التدوير",
-              icon: "fa-chair",
-              iconImageUrl: "/assets/icons/recycled-chair.png",
+              image: "/assets/mockicon.png",
             },
           ],
           slugEn: "green-classrooms",
@@ -199,7 +273,7 @@ export const mockProjects: Project[] = [
           tagsEn: ["Education", "Environment", "Sustainability"],
           tagsAr: ["التعليم", "البيئة", "الاستدامة"],
           pageViews: 980,
-          programId: 5,
+          programId: 3,
           categoryId: 2,
           activityIds: [7, 14],
           isPublished: true,
@@ -207,7 +281,198 @@ export const mockProjects: Project[] = [
           createdAt: new Date("2025-05-10T10:00:00Z"),
           updatedAt: new Date("2025-08-05T14:15:00Z"),
         },
-          
+
+          {
+            id: 9,
+            isEnglish: true,
+            isArabic: true,
+            titleEn: "Food Security for Families",
+            titleAr: "الأمن الغذائي للأسر",
+            descriptionEn:
+              "A program dedicated to distributing nutritious food baskets and supporting local farmers to ensure sustainable food supply.",
+            descriptionAr:
+              "برنامج مخصص لتوزيع سلال غذائية مغذية ودعم المزارعين المحليين لضمان إمدادات غذائية مستدامة.",
+            featuredImageUrl: "/assets/mockimage.jpg",
+            color: "#E76F51",
+            banners: [
+              { titleEn: "Food Basket Distribution", titleAr: "توزيع السلال الغذائية", imageUrl: "/assets/mockimage.jpg" },
+              { titleEn: "Local Farmers Support", titleAr: "دعم المزارعين المحليين", imageUrl: "/assets/mockimage.jpg" },
+            ],
+            goalsEn: [
+              "Provide 10,000 food baskets to families in need",
+              "Empower 200 local farmers through subsidies and training",
+              "Reduce malnutrition rates by 40% in target areas",
+            ],
+            goalsAr: [
+              "توفير 10000 سلة غذائية للأسر المحتاجة",
+              "تمكين 200 مزارع محلي من خلال الدعم والتدريب",
+              "تقليل معدلات سوء التغذية بنسبة 40٪ في المناطق المستهدفة",
+            ],
+            videoUrl: "https://www.youtube.com/watch?v=haFo_EWNrcU",
+            statics: [
+              { icon: "utensils", titleEn: "Meals Provided", titleAr: "الوجبات المقدمة", value: 50000, unitEn: "Meals", unitAr: "وجبة" },
+              { icon: "users", titleEn: "Families Supported", titleAr: "الأسر المدعومة", value: 2500, unitEn: "Families", unitAr: "أسرة" },
+            ],
+            fundingProviders: [
+              { nameEn: "World Food Programme", nameAr: "برنامج الأغذية العالمي", imageUrl: "/assets/mocklogo.png" },
+              { nameEn: "Red Crescent Society", nameAr: "جمعية الهلال الأحمر", imageUrl: "/assets/mocklogo.png" },
+            ],
+            donors: [
+              { nameEn: "Global Aid Foundation", nameAr: "مؤسسة المساعدة العالمية", imageUrl: "/assets/donors/gcf-logo.png" },
+              { nameEn: "Hope in Hunger Initiative", nameAr: "مبادرة الأمل في مواجهة الجوع", imageUrl: "/assets/donors/hfti-logo.png" },
+            ],
+            partners: [
+              { nameEn: "Ministry of Agriculture", nameAr: "وزارة الزراعة", imageUrl: "/assets/partners/msal-logo.png" },
+              { nameEn: "Local Farmers Union", nameAr: "اتحاد المزارعين المحليين", imageUrl: "/assets/partners/cbof-logo.png" },
+            ],
+            deliverables: [
+              { titleEn: "Food Baskets Delivered", titleAr: "السلال الغذائية الموزعة", value: "10000", unitEn: "Baskets", unitAr: "سلة" },
+            ],
+            resources: [
+              { titleEn: "Nutritional Guide", titleAr: "الدليل الغذائي", image: "/assets/mockicon.png" },
+            ],
+            slugEn: "food-security-for-families",
+            slugAr: "الأمن-الغذائي-للأسر",
+            keywordsEn: ["food", "nutrition", "farmers", "sustainability"],
+            keywordsAr: ["غذاء", "تغذية", "مزارعين", "استدامة"],
+            tagsEn: ["Food", "Nutrition", "Agriculture"],
+            tagsAr: ["الغذاء", "التغذية", "الزراعة"],
+            pageViews: 820,
+            programId: 2,
+            categoryId: 3,
+            activityIds: [20, 25],
+            isPublished: true,
+            publishedAt: new Date("2025-06-05T09:00:00Z"),
+            createdAt: new Date("2025-05-12T12:30:00Z"),
+            updatedAt: new Date("2025-08-10T11:00:00Z"),
+          },
+          {
+            id: 9,
+            isEnglish: true,
+            isArabic: true,
+            titleEn: "Animal Welfare Program",
+            titleAr: "برنامج رعاية الحيوانات",
+            descriptionEn:
+              "An initiative focused on protecting stray animals, providing shelters, and raising community awareness about animal rights.",
+            descriptionAr:
+              "مبادرة تركز على حماية الحيوانات الضالة، وتوفير الملاجئ، وزيادة وعي المجتمع بحقوق الحيوانات.",
+            featuredImageUrl: "/assets/mockimage.jpg",
+            color: "#264653",
+            banners: [
+              { titleEn: "Animal Shelter Construction", titleAr: "بناء ملاجئ للحيوانات", imageUrl: "/assets/mockimage.jpg" },
+              { titleEn: "Community Awareness Campaigns", titleAr: "حملات توعية المجتمع", imageUrl: "/assets/mockimage.jpg" },
+            ],
+            goalsEn: [
+              "Rescue and shelter 2,000 stray animals annually",
+              "Promote adoption campaigns to reduce strays by 50%",
+              "Educate 10,000 students about animal rights",
+            ],
+            goalsAr: [
+              "إنقاذ وإيواء 2000 حيوان ضال سنويًا",
+              "تعزيز حملات التبني لتقليل الحيوانات الضالة بنسبة 50٪",
+              "تثقيف 10000 طالب حول حقوق الحيوانات",
+            ],
+            videoUrl: "https://www.youtube.com/watch?v=haFo_EWNrcU",
+            statics: [
+              { icon: "paw", titleEn: "Animals Rescued", titleAr: "الحيوانات المنقذة", value: 1500, unitEn: "Animals", unitAr: "حيوان" },
+              { icon: "home", titleEn: "Shelters Built", titleAr: "الملاجئ المبنية", value: 5, unitEn: "Shelters", unitAr: "مأوى" },
+            ],
+            fundingProviders: [
+              { nameEn: "World Animal Protection", nameAr: "حماية الحيوان العالمية", imageUrl: "/assets/mocklogo.png" },
+              { nameEn: "Humane Society International", nameAr: "الجمعية الإنسانية الدولية", imageUrl: "/assets/mocklogo.png" },
+            ],
+            donors: [
+              { nameEn: "Paws for Hope Fund", nameAr: "صندوق أمل المخالب", imageUrl: "/assets/donors/sff-logo.png" },
+              { nameEn: "Animal Care Network", nameAr: "شبكة رعاية الحيوانات", imageUrl: "/assets/donors/han-logo.png" },
+            ],
+            partners: [
+              { nameEn: "Municipality Veterinary Department", nameAr: "إدارة الطب البيطري بالبلدية", imageUrl: "/assets/partners/mphp-logo.png" },
+            ],
+            deliverables: [
+              { titleEn: "Animal Shelters Built", titleAr: "الملاجئ المبنية", value: "5", unitEn: "Shelters", unitAr: "مأوى" },
+            ],
+            resources: [
+              { titleEn: "Adoption Guide", titleAr: "دليل التبني", image: "/assets/mockicon.png" },
+            ],
+            slugEn: "animal-welfare-program",
+            slugAr: "برنامج-رعاية-الحيوانات",
+            keywordsEn: ["animals", "shelters", "rescue", "rights"],
+            keywordsAr: ["حيوانات", "ملاجئ", "إنقاذ", "حقوق"],
+            tagsEn: ["Animals", "Rescue", "Awareness"],
+            tagsAr: ["الحيوانات", "الإنقاذ", "التوعية"],
+            pageViews: 640,
+            programId: 3,
+            categoryId: 4,
+            activityIds: [30, 35],
+            isPublished: true,
+            publishedAt: new Date("2025-07-01T09:00:00Z"),
+            createdAt: new Date("2025-06-15T10:15:00Z"),
+            updatedAt: new Date("2025-08-15T11:20:00Z"),
+          },
+          {
+            id: 10,
+            isEnglish: true,
+            isArabic: true,
+            titleEn: "Education for All",
+            titleAr: "التعليم للجميع",
+            descriptionEn:
+              "Providing free access to quality education materials and building schools in underserved communities.",
+            descriptionAr:
+              "توفير الوصول المجاني إلى مواد تعليمية عالية الجودة وبناء مدارس في المجتمعات المحرومة.",
+            featuredImageUrl: "/assets/mockimage.jpg",
+            color: "#F4A261",
+            banners: [
+              { titleEn: "New Schools", titleAr: "مدارس جديدة", imageUrl: "/assets/mockimage.jpg" },
+              { titleEn: "Digital Learning Kits", titleAr: "أدوات التعلم الرقمي", imageUrl: "/assets/mockimage.jpg" },
+            ],
+            goalsEn: [
+              "Build 20 schools in rural communities",
+              "Provide digital learning kits for 5,000 students",
+              "Train 300 teachers in modern teaching methods",
+            ],
+            goalsAr: [
+              "بناء 20 مدرسة في المجتمعات الريفية",
+              "توفير أدوات التعلم الرقمي لـ 5000 طالب",
+              "تدريب 300 معلم على طرق التدريس الحديثة",
+            ],
+            videoUrl: "https://www.youtube.com/watch?v=haFo_EWNrcU",
+            statics: [
+              { icon: "book", titleEn: "Students Enrolled", titleAr: "الطلاب المسجلون", value: 5000, unitEn: "Students", unitAr: "طالب" },
+              { icon: "school", titleEn: "Schools Built", titleAr: "المدارس المبنية", value: 12, unitEn: "Schools", unitAr: "مدرسة" },
+            ],
+            fundingProviders: [
+              { nameEn: "UNESCO", nameAr: "اليونسكو", imageUrl: "/assets/mocklogo.png" },
+              { nameEn: "Global Partnership for Education", nameAr: "الشراكة العالمية من أجل التعليم", imageUrl: "/assets/mocklogo.png" },
+            ],
+            donors: [
+              { nameEn: "Knowledge for All Foundation", nameAr: "مؤسسة المعرفة للجميع", imageUrl: "/assets/donors/cba-logo.png" },
+            ],
+            partners: [
+              { nameEn: "Ministry of Education", nameAr: "وزارة التربية والتعليم", imageUrl: "/assets/partners/mehe-logo.png" },
+            ],
+            deliverables: [
+              { titleEn: "Schools Constructed", titleAr: "المدارس المبنية", value: "20", unitEn: "Schools", unitAr: "مدرسة" },
+            ],
+            resources: [
+              { titleEn: "Digital Learning Kit", titleAr: "عدة التعلم الرقمي", image: "/assets/mockicon.png" },
+            ],
+            slugEn: "education-for-all",
+            slugAr: "التعليم-للجميع",
+            keywordsEn: ["education", "schools", "learning", "children"],
+            keywordsAr: ["تعليم", "مدارس", "تعلم", "أطفال"],
+            tagsEn: ["Education", "Schools", "Learning"],
+            tagsAr: ["التعليم", "المدارس", "التعلم"],
+            pageViews: 980,
+            programId: 4,
+            categoryId: 5,
+            activityIds: [40, 45],
+            isPublished: true,
+            publishedAt: new Date("2025-06-20T09:00:00Z"),
+            createdAt: new Date("2025-06-05T14:30:00Z"),
+            updatedAt: new Date("2025-08-18T11:50:00Z"),
+          },
+        
+
     {
         id: 1,
         isEnglish: true,
@@ -223,7 +488,9 @@ export const mockProjects: Project[] = [
         goalsAr: ["تركيب 50 بئرًا", "توعية السكان حول سلامة المياه"],
         videoUrl: "",
         statics: [],
-        financialContributions: [],
+        fundingProviders: [],
+        donors: [],
+        partners: [],
         deliverables: [],
         resources: [],
         slugEn: "clean-water-initiative",
@@ -256,7 +523,9 @@ export const mockProjects: Project[] = [
         goalsAr: ["تدريب 1000 طالب", "بناء 5 مراكز"],
         videoUrl: "",
         statics: [],
-        financialContributions: [],
+        fundingProviders: [],
+        donors: [],
+        partners: [],
         deliverables: [],
         resources: [],
         slugEn: "digital-learning-centers",
@@ -289,7 +558,9 @@ export const mockProjects: Project[] = [
         goalsAr: ["دعم 200 مزارع", "إدخال الممارسات العضوية"],
         videoUrl: "",
         statics: [],
-        financialContributions: [],
+        fundingProviders: [],
+        donors: [],
+        partners: [],
         deliverables: [],
         resources: [],
         slugEn: "green-agriculture-program",
@@ -322,7 +593,9 @@ export const mockProjects: Project[] = [
         goalsAr: ["إقامة 20 مخيم صحي", "توزيع أدوية مجانية"],
         videoUrl: "",
         statics: [],
-        financialContributions: [],
+        fundingProviders: [],
+        donors: [],
+        partners: [],
         deliverables: [],
         resources: [],
         slugEn: "community-health-outreach",
@@ -355,7 +628,9 @@ export const mockProjects: Project[] = [
         goalsAr: ["تمويل 50 شركة ناشئة", "تنظيم 10 ورش عمل"],
         videoUrl: "",
         statics: [],
-        financialContributions: [],
+        fundingProviders: [],
+        donors: [],
+        partners: [],
         deliverables: [],
         resources: [],
         slugEn: "youth-entrepreneurship-hub",
@@ -388,7 +663,9 @@ export const mockProjects: Project[] = [
         goalsAr: ["ترميم 5 مواقع تراثية", "استضافة مهرجانات ثقافية"],
         videoUrl: "",
         statics: [],
-        financialContributions: [],
+        fundingProviders: [],
+        donors: [],
+        partners: [],
         deliverables: [],
         resources: [],
         slugEn: "cultural-heritage-preservation",

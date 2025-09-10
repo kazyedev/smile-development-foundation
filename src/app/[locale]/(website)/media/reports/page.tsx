@@ -371,12 +371,12 @@ export default function MediaReportsPage() {
                   {isEn ? "Subscribe Updates" : "اشترك في التحديثات"}
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-950/30">
+              {/* <Button asChild variant="outline" size="lg" className="border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-950/30">
                 <Link href={`/${locale}/contact`}>
                   <BarChart3 className="w-4 h-4 mr-2" />
                   {isEn ? "Request Data" : "طلب بيانات"}
                 </Link>
-              </Button>
+              </Button> */}
             </div>
           </div>
         </motion.div>

@@ -80,7 +80,7 @@ export default function ActivityDetailPage({ params: { slug, locale } }: Activit
         </div>
 
         {/* Navigation */}
-        <div className={`absolute ${isEn ? 'top-10 left-6' : 'top-10 right-6'} z-10`}>
+        <div className={`absolute ${isEn ? 'top-12 left-6' : 'top-12 right-6'} z-10`}>
           <Button asChild variant="secondary" size="sm" className="bg-black/20 backdrop-blur-sm border-white/20 text-white hover:bg-black/30">
             <Link href={`/${locale}/activities`}>
               {isEn ? <ArrowLeft className="w-4 h-4 mr-2" /> : <ArrowRight className="w-4 h-4 mr-2" />}
@@ -90,13 +90,13 @@ export default function ActivityDetailPage({ params: { slug, locale } }: Activit
         </div>
 
         {/* Action Buttons */}
-        <div className={`absolute ${isEn ? 'top-10 right-6' : 'top-10 left-6'} z-10 flex gap-2`}>
+        <div className={`absolute ${isEn ? 'top-12 right-6' : 'top-12 left-6'} z-10 flex gap-2`}>
           <Button variant="secondary" size="sm" className="bg-black/20 backdrop-blur-sm border-white/20 text-white hover:bg-black/30">
             <Share2 className="w-4 h-4" />
           </Button>
-          <Button variant="secondary" size="sm" className="bg-black/20 backdrop-blur-sm border-white/20 text-white hover:bg-black/30">
+          {/* <Button variant="secondary" size="sm" className="bg-black/20 backdrop-blur-sm border-white/20 text-white hover:bg-black/30">
             <Bookmark className="w-4 h-4" />
-          </Button>
+          </Button> */}
         </div>
 
         {/* Content Overlay */}
@@ -354,10 +354,10 @@ export default function ActivityDetailPage({ params: { slug, locale } }: Activit
                         <Share2 className="w-4 h-4 mr-2" />
                         {isEn ? 'Share Activity' : 'مشاركة النشاط'}
                       </Button>
-                      <Button variant="outline" className="w-full">
+                      {/* <Button variant="outline" className="w-full">
                         <Download className="w-4 h-4 mr-2" />
                         {isEn ? 'Download Report' : 'تحميل التقرير'}
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </Card>

@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Shield, Users } from "lucide-react";
+import { useAuth } from "@/providers/auth-provider";
 
 export default function LoginPage() {
   const router = useRouter();
   const { locale } = useParams<{ locale: string }>();
+  const { login, isLoading: authLoading } = useAuth();
 
   const translations = {
     en: {
@@ -74,11 +76,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [blocked, setBlocked] = useState(false);
-  const [alreadyLogged, setAlreadyLogged] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [alreadyLogged, setAlreadyLogged] = useState(false);
 
   // If already authenticated, redirect to cms (will be guarded by layout)
   useEffect(() => {
@@ -86,13 +87,34 @@ export default function LoginPage() {
       try {
         const profRes = await fetch("/api/auth/profile", { cache: "no-store" });
         if (profRes.ok) {
-          setAlreadyLogged(true);
-          router.push(`/${locale}/cms`);
-          router.refresh();
+          const profileData = await profRes.json();
+          // Only redirect if user has admin role
+          if (profileData.profile && profileData.profile.role !== "default") {
+            setAlreadyLogged(true);
+            if (locale && typeof locale === 'string') {
+              router.push(`/${locale}/cms`);
+              router.refresh();
+            }
+          }
         }
       } catch {}
     })();
   }, [locale, router]);
+
+  // If user is already logged in and has admin role, redirect to CMS
+  if (alreadyLogged) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg animate-pulse"></div>
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Redirecting to CMS...</h2>
+          <p className="text-muted-foreground">You are already logged in</p>
+        </div>
+      </div>
+    );
+  }
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -131,26 +153,17 @@ export default function LoginPage() {
 
     setLoading(true);
     setError(null);
+    
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || t.unknownError);
-
-      // Fetch profile to check role before navigating
-      const profRes = await fetch("/api/auth/profile", { cache: "no-store" });
-      const prof = await profRes.json();
-      if (!profRes.ok) throw new Error(prof.error || t.unknownError);
-      if (!prof.profile || prof.profile.role === "default") {
-        setBlocked(true);
-        setError(t.notAuthorized);
-        return;
+      const result = await login(email, password);
+      
+      if (result.success) {
+        // Login successful, redirect to CMS
+        router.push(`/${locale}/cms`);
+        router.refresh();
+      } else {
+        setError(result.error || t.unknownError);
       }
-      router.push(`/${locale}/cms`);
-      router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -171,6 +184,18 @@ export default function LoginPage() {
       }
     }
   };
+
+  // Show loading state while auth is initializing
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">
@@ -198,15 +223,11 @@ export default function LoginPage() {
             {t.features.map((feature, index) => (
               <motion.div
                 key={index}
-                className="flex items-center gap-3"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
+                variants={fadeInUp}
+                className="flex items-center gap-3 text-muted-foreground"
               >
-                <div className="w-8 h-8 bg-brand-primary/20 rounded-full flex items-center justify-center">
-                  <Users className="w-4 h-4 text-brand-primary" />
-                </div>
-                <span className="text-muted-foreground">{feature}</span>
+                <div className="w-2 h-2 bg-brand-primary rounded-full"></div>
+                <span>{feature}</span>
               </motion.div>
             ))}
           </motion.div>
@@ -217,163 +238,115 @@ export default function LoginPage() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex justify-center"
         >
-          <Card className="w-full max-w-md shadow-2xl border-0 bg-card/80 backdrop-blur-sm">
-            <CardHeader className="text-center pb-6">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-                className="w-16 h-16 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              >
-                <Lock className="w-8 h-8 text-brand-primary" />
-              </motion.div>
-              <CardTitle className="text-2xl font-bold">{t.subtitle}</CardTitle>
+          <Card className="border-0 shadow-2xl bg-background/80 backdrop-blur-sm">
+            <CardHeader className="text-center pb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Users className="w-8 h-8 text-brand-primary" />
+              </div>
+              <CardTitle className="text-2xl font-bold mb-2">{t.subtitle}</CardTitle>
               <CardDescription className="text-muted-foreground">
                 {t.description}
               </CardDescription>
             </CardHeader>
             
-            <CardContent>
-              <form onSubmit={onSubmit} className="space-y-6">
+            <CardContent className="space-y-6">
+              <form onSubmit={onSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
+                  <label htmlFor="email" className="text-sm font-medium text-foreground">
                     {t.email}
                   </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={t.emailPlaceholder}
-                    autoComplete="email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      if (emailError) setEmailError(null);
-                    }}
-                    className={`transition-all duration-200 ${
-                      emailError ? 'border-destructive focus:border-destructive' : ''
-                    }`}
-                    required
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder={t.emailPlaceholder}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className={`pl-10 ${emailError ? 'border-red-500' : ''}`}
+                      disabled={loading}
+                    />
+                  </div>
                   {emailError && (
-                    <motion.p 
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-sm text-destructive"
-                    >
-                      {emailError}
-                    </motion.p>
+                    <p className="text-sm text-red-500">{emailError}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="password" className="text-sm font-medium flex items-center gap-2">
-                    <Lock className="w-4 h-4" />
+                  <label htmlFor="password" className="text-sm font-medium text-foreground">
                     {t.password}
                   </label>
                   <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder={t.passwordPlaceholder}
-                      autoComplete="current-password"
                       value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        if (passwordError) setPasswordError(null);
-                      }}
-                      className={`pr-10 transition-all duration-200 ${
-                        passwordError ? 'border-destructive focus:border-destructive' : ''
-                      }`}
-                      required
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={`pl-10 pr-10 ${passwordError ? 'border-red-500' : ''}`}
+                      disabled={loading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      disabled={loading}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                   {passwordError && (
-                    <motion.p 
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-sm text-destructive"
-                    >
-                      {passwordError}
-                    </motion.p>
+                    <p className="text-sm text-red-500">{passwordError}</p>
                   )}
                 </div>
 
                 {error && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg"
-                  >
-                    <p className="text-sm text-destructive text-center" role="alert">
-                      {error}
-                    </p>
-                  </motion.div>
-                )}
-
-                {!blocked && (
-                  <Button 
-                    type="submit" 
-                    disabled={loading} 
-                    className="w-full bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90 text-white py-3 text-lg font-semibold transition-all duration-200 transform hover:scale-[1.02]"
-                  >
-                    {loading ? (
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                      />
-                    ) : (
-                      <>
-                        {t.signIn}
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </>
-                    )}
-                  </Button>
-                )}
-
-                {blocked && (
-                  <Button 
-                    type="button" 
-                    className="w-full bg-muted hover:bg-muted/80 text-muted-foreground" 
-                    onClick={() => router.push(`/${locale}`)}
-                  >
-                    {t.backHome}
-                  </Button>
-                )}
-
-                <div className="space-y-4 pt-4">
-                  <div className="flex justify-center">
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/${locale}/reset-password`)}
-                      className="text-sm text-primary hover:text-primary/80 underline-offset-4 hover:underline transition-colors"
-                    >
-                      {t.forgotPassword}
-                    </button>
+                  <div className="p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
                   </div>
-                  
-                  <div className="text-center">
-                    <span className="text-sm text-muted-foreground">{t.createAccount} </span>
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/${locale}/signup`)}
-                      className="text-sm text-primary hover:text-primary/80 underline-offset-4 hover:underline transition-colors font-medium"
-                    >
-                      {t.signUp}
-                    </button>
-                  </div>
-                </div>
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      {t.signingIn}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      {t.signIn}
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  )}
+                </Button>
               </form>
+
+              <div className="text-center space-y-4">
+                <div>
+                  <a
+                    href={`/${locale}/reset-password`}
+                    className="text-sm text-brand-primary hover:text-brand-primary/80 transition-colors"
+                  >
+                    {t.forgotPassword}
+                  </a>
+                </div>
+                
+                <div className="text-sm text-muted-foreground">
+                  {t.createAccount}{" "}
+                  <a
+                    href={`/${locale}/signup`}
+                    className="text-brand-primary hover:text-brand-primary/80 font-medium transition-colors"
+                  >
+                    {t.signUp}
+                  </a>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </motion.div>

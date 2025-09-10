@@ -69,6 +69,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 className="max-w-4xl"
+                viewport={{once:true}}
               >
                 {/* Category Badge */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600/90 backdrop-blur-sm text-white rounded-full text-sm border border-white/30 mb-6">
@@ -109,6 +110,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="mb-12"
+            viewport={{once:true}}
           >
             {/* Article Body */}
             <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
@@ -179,14 +181,14 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                   <Share2 className="w-4 h-4 mr-2" />
                   {isEn ? "Share" : "مشاركة"}
                 </Button>
-                <Button variant="outline" size="lg" className="bg-green-50 border-green-200 hover:bg-green-100 text-green-600">
+                {/* <Button variant="outline" size="lg" className="bg-green-50 border-green-200 hover:bg-green-100 text-green-600">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   {isEn ? "Comment" : "تعليق"}
                 </Button>
                 <Button variant="outline" size="lg" className="bg-purple-50 border-purple-200 hover:bg-purple-100 text-purple-600">
                   <Bookmark className="w-4 h-4 mr-2" />
                   {isEn ? "Save" : "حفظ"}
-                </Button>
+                </Button> */}
               </div>
             </div>
           </motion.div>
@@ -201,6 +203,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              viewport={{once:true}}
             >
               <h2 className="text-3xl font-bold mb-8 text-center">
                 {isEn ? "Related News" : "أخبار ذات صلة"}
@@ -262,6 +265,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center"
+          viewport={{once:true}}
         >
           <div className="bg-gradient-to-r from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 rounded-3xl p-8 lg:p-12 border border-orange-200/50 dark:border-orange-800/30">
             <h2 className="text-3xl lg:text-4xl font-bold mb-6 bg-gradient-to-r from-orange-600 to-red-500 bg-clip-text text-transparent">

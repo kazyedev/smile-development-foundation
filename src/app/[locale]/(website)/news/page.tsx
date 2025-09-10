@@ -313,6 +313,7 @@ export default function NewsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1, duration: 0.5 }}
                   className={viewMode === "list" ? "w-full" : ""}
+                  viewport={{once:true}}
                 >
                   {viewMode === "grid" ? (
                     <Link href={`/${locale}/news/${isEn ? news.slugEn : news.slugAr}`}>
@@ -431,6 +432,7 @@ export default function NewsPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center"
+          viewport={{once:true}}
         >
           <div className="bg-gradient-to-r from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 rounded-3xl p-8 lg:p-12 border border-orange-200/50 dark:border-orange-800/30">
             <div className="flex items-center justify-center gap-2 mb-6">

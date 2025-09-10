@@ -78,6 +78,7 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 className="max-w-4xl"
+                viewport={{once:true}}
               >
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600/90 backdrop-blur-sm text-white rounded-full text-sm border border-white/30 mb-6">
                   <Newspaper className="w-4 h-4" />
@@ -118,6 +119,7 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="mb-8"
+              viewport={{once:true}}
             >
               <div className="flex items-center gap-3 mb-6">
                 <TrendingUp className="w-6 h-6 text-orange-600" />
@@ -180,6 +182,7 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col lg:flex-row gap-6 items-center justify-between"
+            viewport={{once:true}}
           >
             {/* Search */}
             <div className="relative flex-1 max-w-md">
@@ -220,6 +223,7 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
             className="mt-6 flex items-center justify-between text-sm text-muted-foreground"
+            viewport={{once:true}}
           >
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4" />
@@ -242,6 +246,7 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-16"
+              viewport={{once:true}}
             >
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-muted-foreground" />
@@ -269,6 +274,7 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1, duration: 0.5 }}
                   className={viewMode === "list" ? "w-full" : ""}
+                  viewport={{once:true}}
                 >
                   {viewMode === "grid" ? (
                     <Link href={`/${locale}/news/${isEn ? news.slugEn : news.slugAr}`}>
@@ -372,6 +378,7 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center"
+          viewport={{once:true}}
         >
           <div className="bg-gradient-to-r from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 rounded-3xl p-8 lg:p-12 border border-orange-200/50 dark:border-orange-800/30">
             <h2 className="text-3xl lg:text-4xl font-bold mb-6 bg-gradient-to-r from-orange-600 to-red-500 bg-clip-text text-transparent">

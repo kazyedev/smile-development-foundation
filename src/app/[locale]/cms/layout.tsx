@@ -31,8 +31,9 @@ export default async function CmsLayout({
   }
 
   return (
+    <div >
     <SidebarProvider>
-      <Sidebar />
+      <Sidebar userProfile={profile} locale={params.locale} />
       <SidebarInset>
         <DashboardHeader />
         <div className="p-4 md:p-6 lg:p-8">
@@ -40,5 +41,6 @@ export default async function CmsLayout({
         </div>
       </SidebarInset>
     </SidebarProvider>
+    </div>
   );
 }

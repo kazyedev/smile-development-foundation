@@ -39,27 +39,27 @@ export const mockPrograms: Program[] = [
       { 
         nameEn: "United Nations Development Programme (UNDP)", 
         nameAr: "برنامج الأمم المتحدة الإنمائي", 
-        imageUrl: "/assets/partners/undp-logo.png" 
+        imageUrl: "/assets/mocklogo.png" 
       },
       { 
         nameEn: "World Bank Group", 
         nameAr: "مجموعة البنك الدولي", 
-        imageUrl: "/assets/partners/world-bank-logo.png" 
+        imageUrl: "/assets/mocklogo.png" 
       },
       { 
         nameEn: "European Union Humanitarian Aid", 
         nameAr: "المساعدات الإنسانية للاتحاد الأوروبي", 
-        imageUrl: "/assets/partners/eu-aid-logo.png" 
+        imageUrl: "/assets/mocklogo.png" 
       },
       { 
         nameEn: "USAID Development Programs", 
         nameAr: "برامج التنمية الأمريكية", 
-        imageUrl: "/assets/partners/usaid-logo.png" 
+        imageUrl: "/assets/mocklogo.png" 
       },
       { 
         nameEn: "Gulf Cooperation Council Fund", 
         nameAr: "صندوق مجلس التعاون الخليجي", 
-        imageUrl: "/assets/partners/gcc-fund-logo.png" 
+        imageUrl: "/assets/mocklogo.png" 
       }
     ],
     donors: [

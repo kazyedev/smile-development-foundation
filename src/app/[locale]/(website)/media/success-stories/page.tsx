@@ -295,6 +295,7 @@ export default function MediaSuccessStoriesPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center"
+          viewport={{once:true}}
         >
           <div className="bg-gradient-to-r from-amber-50/50 to-orange-50/30 dark:from-amber-950/20 dark:to-orange-950/10 rounded-3xl p-8 lg:p-12 border border-amber-200/50 dark:border-amber-800/30">
             <div className="flex items-center justify-center gap-2 mb-6">
@@ -303,7 +304,7 @@ export default function MediaSuccessStoriesPage() {
               <Heart className="w-6 h-6 text-red-500" fill="currentColor" />
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold mb-6 bg-gradient-to-r from-amber-600 to-red-500 bg-clip-text text-transparent">
-              {isEn ? "Your Story Could Be Next" : "قصتك قد تكون التالية"}
+              {isEn ? "Your Story Could Be Next" : " قد تكون سبباً في القصة التالية"}
             </h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
               {isEn 
@@ -313,17 +314,17 @@ export default function MediaSuccessStoriesPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white">
-                <a href={`/${locale}/programs`}>
+                <a href={`/${locale}/donate`}>
                   <Users className="w-4 h-4 mr-2" />
-                  {isEn ? "Join Our Programs" : "انضم لبرامجنا"}
+                  {isEn ? "Donate Now" : "التبرع الان"}
                 </a>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-amber-300 dark:border-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/30">
+              {/* <Button asChild variant="outline" size="lg" className="border-amber-300 dark:border-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/30">
                 <a href={`/${locale}/contact`}>
                   <Heart className="w-4 h-4 mr-2" />
-                  {isEn ? "Share Your Story" : "شارك قصتك"}
+                  {isEn ? "Donate Now" : " التبرع"}
                 </a>
-              </Button>
+              </Button> */}
             </div>
           </div>
         </motion.div>

@@ -365,12 +365,12 @@ export default function MediaPublicationsPage() {
                   {isEn ? "Subscribe Newsletter" : "اشترك في النشرة"}
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-green-300 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-950/30">
+              {/* <Button asChild variant="outline" size="lg" className="border-green-300 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-950/30">
                 <Link href={`/${locale}/research`}>
                   <GraduationCap className="w-4 h-4 mr-2" />
                   {isEn ? "Request Research" : "طلب بحث"}
                 </Link>
-              </Button>
+              </Button> */}
             </div>
           </div>
         </motion.div>

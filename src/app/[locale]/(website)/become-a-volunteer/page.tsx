@@ -121,6 +121,7 @@ export default function BecomeAVolunteerPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl"
+          viewport={{once:true}}
         >
           <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
@@ -160,6 +161,7 @@ export default function BecomeAVolunteerPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
+            viewport={{once:true}}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-700 dark:text-amber-300 rounded-full text-sm font-medium mb-6">
               <HandHeart className="w-4 h-4" />
@@ -194,6 +196,7 @@ export default function BecomeAVolunteerPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="text-center p-6 bg-background/80 backdrop-blur-sm border border-border rounded-2xl"
+                viewport={{once:true}}
               >
                 <div className="text-3xl font-bold text-amber-600 mb-2">{stat.number}</div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
@@ -211,6 +214,7 @@ export default function BecomeAVolunteerPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
+            viewport={{once:true}}
           >
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               {isEn ? "Volunteer Opportunities" : "فرص التطوع"}
@@ -232,6 +236,7 @@ export default function BecomeAVolunteerPage() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-background border border-border rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group cursor-pointer"
                 onClick={() => handleInterestToggle(area.id)}
+                viewport={{once:true}}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="text-4xl">{area.icon}</div>
@@ -269,6 +274,7 @@ export default function BecomeAVolunteerPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
+            viewport={{once:true}}
           >
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               {isEn ? "Why Volunteer with Us?" : "لماذا التطوع معنا؟"}
@@ -291,6 +297,7 @@ export default function BecomeAVolunteerPage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="flex items-start gap-4 p-6 bg-background border border-border rounded-2xl"
+                  viewport={{once:true}}
                 >
                   <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Icon className="w-6 h-6 text-amber-600 dark:text-amber-400" />
@@ -314,6 +321,7 @@ export default function BecomeAVolunteerPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
+            viewport={{once:true}}
           >
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               {isEn ? "Ready to Get Started?" : "مستعد للبدء؟"}
@@ -331,7 +339,8 @@ export default function BecomeAVolunteerPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="bg-background border border-border rounded-3xl p-8 lg:p-12 shadow-lg"
-          >
+            viewport={{once:true}}
+              >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>

@@ -1,23 +1,13 @@
 import { ReactNode } from "react";
-import { supabaseServer } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
-export default async function AuthLayout({
+export default function AuthLayout({
   children,
   params,
 }: {
   children: ReactNode;
   params: { locale: string };
 }) {
-  const supabase = await supabaseServer();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    redirect(`/${params.locale}/cms`);
-  }
-
+  // Simple server component layout - authentication will be handled by individual pages
   return <>{children}</>;
 }
 
