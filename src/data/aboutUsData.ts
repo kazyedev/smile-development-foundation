@@ -145,22 +145,21 @@ export const aboutUsContent: AboutUsContent = {
     title: { en: "About the Organization", ar: "عن المؤسسة" },
     content: {
       en: "Ibtisama Development Foundation is a Yemeni non-profit charitable organization dedicated to creating sustainable positive change in communities across Yemen. We focus on delivering comprehensive health and education programs that address the most pressing needs of vulnerable populations.",
-      ar: "مؤسسة الابتسامة للتنمية هي مؤسسة خيرية يمنية غير ربحية مكرسة لخلق تغيير إيجابي مستدام في المجتمعات عبر اليمن. نركز على تقديم برامج صحية وتعليمية شاملة تلبي أهم احتياجات الفئات الضعيفة."
+      ar: "مؤسسة ابتسامة التنموية هي منظمة إنسانية تعمل في اليمن لتقديم الدعم والمساعدة للفئات المحتاجة والهشة في المجتمع، بما في ذلك الأطفال، والأفراد ذوي الاحتياجات الخاصة. وتركز على تلبية الاحتياجات الأساسية : «الغذاء والصحة والتعليم » بهدف تحقيق حياة آمنة ومستقرة للفئات المستهدفة"
     }
   },
   mission: {
     title: { en: "Our Mission", ar: "رسالتنا" },
     content: {
       en: "To alleviate suffering and create sustainable positive change in Yemeni communities through innovative health and education programs, while empowering individuals and families to build better futures.",
-      ar: "تخفيف المعاناة وخلق تغيير إيجابي مستدام في المجتمعات اليمنية من خلال برامج صحية وتعليمية مبتكرة، مع تمكين الأفراد والعائلات لبناء مستقبل أفضل."
+      ar:"حشد الجهود وتوظيف الطاقات لصناعة البسمة على وجوه المحتاجين في اليمن من خلال مجموعة من البرامج التعليمية والصحية والاغاثية والتنموية"
     }
   },
   vision: {
     title: { en: "Our Vision", ar: "رؤيتنا" },
     content: {
       en: "To be the leading organization in social responsibility and sustainable community development, creating a Yemen where every individual has access to quality healthcare and education.",
-      ar: "أن نكون المنظمة الرائدة في المسؤولية الاجتماعية والتنمية المجتمعية المستدامة، لخلق يمن يحصل فيه كل فرد على رعاية صحية وتعليم جيد."
-    }
+      ar: "تحقيق التنمية الشاملة والعدالة الاجتماعية في اليمن من خلال تقديم الدعم الإنساني لتحسين حياة الأفراد والأسر"    }
   },
   values: [
     {

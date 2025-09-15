@@ -27,6 +27,21 @@ interface Resource {
   titleAr: string;
   image: string;
 }
+interface Cost{
+  costTitleEn: string;
+  costTitleAr: string;
+  costAmount: number;
+  costCurrencyEn: string;
+  costCurrencyAr: string;
+  costPeriodEn: string;
+  costPeriodAr: string;
+}
+
+interface Beneficiaries{
+  beneficiaryAmount: number;
+  beneficiaryTargetEn: string; // famieles, persons, ..etc
+  beneficiaryTargetAr: string;
+}
 
 export interface Project {
    id: number;
@@ -73,5 +88,7 @@ export interface Project {
    isPublished: boolean;
    publishedAt: Date;
    createdAt: Date;
-   updatedAt: Date;   
+   updatedAt: Date;  
+   cost: Cost[];
+   beneficiaries: Beneficiaries[];
 } 

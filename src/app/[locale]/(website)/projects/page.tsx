@@ -1,13 +1,14 @@
 "use client";
 
-import { mockProjects } from "@/data/mockProjects";
 import ProjectCard from "@/components/website/ProjectCard";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Target, Users, MapPin, Filter, Search, Grid, List, TrendingUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Target, Users, MapPin, Filter, Search, Grid, List, TrendingUp, Loader2, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Project } from "@/types/project";
+import { ProjectCardSkeletonGrid } from "@/components/ui/project-card-skeleton";
 
 export default function ProjectsPage() {
   const params = useParams<{ locale: string }>();
@@ -17,9 +18,41 @@ export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [displayedCount, setDisplayedCount] = useState(9);
 
-  // Filter projects based on search and category
-  const filteredProjects = mockProjects.filter(project => {
+  const INITIAL_DISPLAY_COUNT = 9;
+  const LOAD_MORE_COUNT = 6;
+
+  // Fetch all projects once on component mount
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/projects');
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects');
+        }
+        
+        const data = await response.json();
+        setAllProjects(data.items || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching projects:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  // Client-side filtering
+  const filteredProjects = allProjects.filter(project => {
     const matchesSearch = searchTerm === "" || 
       (isEn ? project.titleEn : project.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
       (isEn ? project.descriptionEn : project.descriptionAr).toLowerCase().includes(searchTerm.toLowerCase());
@@ -30,10 +63,23 @@ export default function ProjectsPage() {
     return matchesSearch && matchesCategory;
   });
 
-  // Get unique categories
+  // Reset displayed count when filters change
+  useEffect(() => {
+    setDisplayedCount(INITIAL_DISPLAY_COUNT);
+  }, [searchTerm, selectedCategory]);
+
+  // Get unique categories from all projects
   const allCategories = Array.from(new Set(
-    mockProjects.flatMap(project => isEn ? project.tagsEn : project.tagsAr)
+    allProjects.flatMap(project => isEn ? project.tagsEn : project.tagsAr)
   ));
+
+  // Projects to display (with pagination)
+  const displayedProjects = filteredProjects.slice(0, displayedCount);
+  const hasMoreProjects = filteredProjects.length > displayedCount;
+
+  const handleShowMore = () => {
+    setDisplayedCount(prev => Math.min(prev + LOAD_MORE_COUNT, filteredProjects.length));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
@@ -74,7 +120,9 @@ export default function ProjectsPage() {
             {/* Project Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold text-brand-primary mb-1">{mockProjects.length}</div>
+                <div className="text-3xl font-bold text-brand-primary mb-1">
+                  {loading ? <Loader2 className="w-8 h-8 animate-spin mx-auto" /> : allProjects.length}
+                </div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Active Projects" : "مشروع نشط"}</div>
               </div>
               <div className="text-center">
@@ -157,10 +205,16 @@ export default function ProjectsPage() {
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4" />
               <span>
-                {isEn 
-                  ? `Showing ${filteredProjects.length} of ${mockProjects.length} projects`
-                  : `عرض ${filteredProjects.length} من ${mockProjects.length} مشروع`
-                }
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {isEn ? "Loading projects..." : "جاري تحميل المشاريع..."}
+                  </span>
+                ) : (
+                  isEn 
+                    ? `Showing ${displayedProjects.length} of ${filteredProjects.length} projects`
+                    : `عرض ${displayedProjects.length} من ${filteredProjects.length} مشروع`
+                )}
               </span>
             </div>
             {selectedCategory !== "all" && (
@@ -178,7 +232,32 @@ export default function ProjectsPage() {
       {/* Projects Grid/List */}
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          {filteredProjects.length === 0 ? (
+          {error ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-16"
+            >
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-red-600">
+                {isEn ? "Error loading projects" : "خطأ في تحميل المشاريع"}
+              </h3>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>
+                {isEn ? "Try Again" : "حاول مرة أخرى"}
+              </Button>
+            </motion.div>
+          ) : loading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-8"
+            >
+              <ProjectCardSkeletonGrid count={INITIAL_DISPLAY_COUNT} />
+            </motion.div>
+          ) : filteredProjects.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -198,71 +277,96 @@ export default function ProjectsPage() {
               </p>
             </motion.div>
           ) : (
-            <div className={
-              viewMode === "grid" 
-                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                : "space-y-6"
-            }>
-              {filteredProjects.map((project, idx) => (
-                <motion.div
-                  key={project.slugEn}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1, duration: 0.5 }}
-                  className={viewMode === "list" ? "w-full" : ""}
-                >
-                  {viewMode === "grid" ? (
-            <ProjectCard project={project} locale={locale} />
-                  ) : (
-                    <div className="bg-background border border-border rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
-                      <div className="flex flex-col lg:flex-row gap-6">
-                        <div className="lg:w-1/3">
-                          <img
-                            src={project.featuredImageUrl}
-                            alt={isEn ? project.titleEn : project.titleAr}
-                            className="w-full h-48 lg:h-32 object-cover rounded-xl"
-                          />
-                        </div>
-                        <div className="lg:w-2/3 space-y-4">
-                          <div>
-                            <h3 className="text-xl font-bold mb-2">
-                              {isEn ? project.titleEn : project.titleAr}
-                            </h3>
-                            <p className="text-muted-foreground line-clamp-2">
-                              {isEn ? project.descriptionEn : project.descriptionAr}
-                            </p>
+            <>
+              <div className={
+                viewMode === "grid" 
+                  ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                  : "space-y-6"
+              }>
+                {displayedProjects.map((project, idx) => (
+                  <motion.div
+                    key={project.slugEn}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1, duration: 0.5 }}
+                    className={viewMode === "list" ? "w-full" : ""}
+                  >
+                    {viewMode === "grid" ? (
+                      <ProjectCard project={project} locale={locale} />
+                    ) : (
+                      <div className="bg-background border border-border rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
+                        <div className="flex flex-col lg:flex-row gap-6">
+                          <div className="lg:w-1/3">
+                            <img
+                              src={project.featuredImageUrl}
+                              alt={isEn ? project.titleEn : project.titleAr}
+                              className="w-full h-48 lg:h-32 object-cover rounded-xl"
+                            />
                           </div>
-                          <div className="flex flex-wrap gap-2">
-                            {(isEn ? project.tagsEn : project.tagsAr).slice(0, 3).map(tag => (
-                              <span key={tag} className="px-2 py-1 bg-brand-primary/10 text-brand-primary rounded-full text-xs">
-                                #{tag}
-                              </span>
-                            ))}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                              <div className="flex items-center gap-1">
-                                <Users className="w-4 h-4" />
-                                <span>{project.pageViews.toLocaleString()}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4" />
-                                <span>{isEn ? "Multiple Locations" : "مواقع متعددة"}</span>
-                              </div>
+                          <div className="lg:w-2/3 space-y-4">
+                            <div>
+                              <h3 className="text-xl font-bold mb-2">
+                                {isEn ? project.titleEn : project.titleAr}
+                              </h3>
+                              <p className="text-muted-foreground line-clamp-2">
+                                {isEn ? project.descriptionEn : project.descriptionAr}
+                              </p>
                             </div>
-                            <Button asChild variant="outline" size="sm">
-                              <a href={`/${locale}/projects/${isEn ? project.slugEn : project.slugAr}`}>
-                                {isEn ? "View Project" : "عرض المشروع"}
-                              </a>
-                            </Button>
+                            <div className="flex flex-wrap gap-2">
+                              {(isEn ? project.tagsEn : project.tagsAr).slice(0, 3).map(tag => (
+                                <span key={tag} className="px-2 py-1 bg-brand-primary/10 text-brand-primary rounded-full text-xs">
+                                  #{tag}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-1">
+                                  <Users className="w-4 h-4" />
+                                  <span>{project.pageViews.toLocaleString()}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" />
+                                  <span>{isEn ? "Multiple Locations" : "مواقع متعددة"}</span>
+                                </div>
+                              </div>
+                              <Button asChild variant="outline" size="sm">
+                                <a href={`/${locale}/projects/${isEn ? project.slugEn : project.slugAr}`}>
+                                  {isEn ? "View Project" : "عرض المشروع"}
+                                </a>
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-          </motion.div>
-        ))}
-      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Show More Button */}
+              {hasMoreProjects && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  className="flex justify-center mt-12"
+                >
+                  <Button
+                    onClick={handleShowMore}
+                    variant="outline"
+                    size="lg"
+                    className="group hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all duration-300"
+                  >
+                    <ChevronDown className="w-4 h-4 mr-2 group-hover:animate-bounce" />
+                    {isEn 
+                      ? `Show More Projects (${filteredProjects.length - displayedCount} remaining)`
+                      : `عرض المزيد من المشاريع (${filteredProjects.length - displayedCount} متبقي)`
+                    }
+                  </Button>
+                </motion.div>
+              )}
+            </>
           )}
         </div>
       </section>

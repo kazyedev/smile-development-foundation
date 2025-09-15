@@ -53,11 +53,11 @@ export default function Footer({ locale }: { locale: string }) {
             
             <h2 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               <span className="bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary bg-clip-text text-transparent">
-                {isEnglish ? "Make a difference today." : "اجعل الفرق الآن"}
+                {isEnglish ? "Make a difference today." : "إصنع الفرق الآن"}
               </span>
               <br />
               <span className="text-foreground">
-                {isEnglish ? "Your impact starts now." : "تبدأ أثرك الآن"}
+                {isEnglish ? "Your impact starts now." : "أثرك يبدأ من هنا"}
               </span>
             </h2>
             
