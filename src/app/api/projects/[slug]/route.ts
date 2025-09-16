@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const supabase = await supabaseServer();
-    const { slug } = params;
+    const { slug } = await params;
 
     // First, fetch the project
     const { data, error } = await supabase

@@ -1,12 +1,12 @@
 import { eq, desc, asc, like, and, inArray } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { database } from "@/lib/db";
 import { projects, type Project, type NewProject } from "@/lib/db/schema/projects";
 import { programs } from "@/lib/db/schema/programs";
 
 export class ProjectsRepository {
   // Create a new project
   static async create(data: NewProject): Promise<Project> {
-    const [project] = await db
+    const [project] = await database()
       .insert(projects)
       .values(data)
       .returning();
@@ -31,7 +31,7 @@ export class ProjectsRepository {
     orderBy?: keyof Project;
     order?: "asc" | "desc";
   } = {}): Promise<Project[]> {
-    let query = db.select().from(projects);
+    let query = database().select().from(projects);
 
     // Build where conditions
     const conditions = [];
@@ -63,7 +63,7 @@ export class ProjectsRepository {
 
   // Get project by ID
   static async findById(id: number): Promise<Project | null> {
-    const [project] = await db
+    const [project] = await database()
       .select()
       .from(projects)
       .where(eq(projects.id, id))
@@ -73,7 +73,7 @@ export class ProjectsRepository {
 
   // Get project by slug (English or Arabic)
   static async findBySlug(slug: string): Promise<Project | null> {
-    const [project] = await db
+    const [project] = await database()
       .select()
       .from(projects)
       .where(
@@ -87,7 +87,7 @@ export class ProjectsRepository {
     if (project) return project;
 
     // Try Arabic slug
-    const [projectAr] = await db
+    const [projectAr] = await database()
       .select()
       .from(projects)
       .where(
@@ -113,7 +113,7 @@ export class ProjectsRepository {
     limit?: number;
     offset?: number;
   } = {}) {
-    let query = db
+    let query = database()
       .select({
         project: projects,
         program: programs,
@@ -146,7 +146,7 @@ export class ProjectsRepository {
   static async search(query: string, published = true): Promise<Project[]> {
     const searchPattern = `%${query}%`;
     
-    return await db
+    return await database()
       .select()
       .from(projects)
       .where(
@@ -162,7 +162,7 @@ export class ProjectsRepository {
 
   // Update project
   static async update(id: number, data: Partial<NewProject>): Promise<Project | null> {
-    const [updated] = await db
+    const [updated] = await database()
       .update(projects)
       .set({ ...data, updatedAt: new Date() })
       .where(eq(projects.id, id))
@@ -172,7 +172,7 @@ export class ProjectsRepository {
 
   // Delete project
   static async delete(id: number): Promise<boolean> {
-    const result = await db
+    const result = await database()
       .delete(projects)
       .where(eq(projects.id, id));
     return result.rowCount > 0;
@@ -180,7 +180,7 @@ export class ProjectsRepository {
 
   // Publish/unpublish project
   static async publish(id: number, published: boolean): Promise<Project | null> {
-    const [updated] = await db
+    const [updated] = await database()
       .update(projects)
       .set({
         isPublished: published,
@@ -194,7 +194,7 @@ export class ProjectsRepository {
 
   // Increment page views
   static async incrementPageViews(id: number): Promise<number> {
-    const [updated] = await db
+    const [updated] = await database()
       .update(projects)
       .set({
         pageViews: projects.pageViews + 1,
@@ -208,7 +208,7 @@ export class ProjectsRepository {
 
   // Get published projects count
   static async getPublishedCount(): Promise<number> {
-    const [result] = await db
+    const [result] = await database()
       .select({ count: projects.id })
       .from(projects)
       .where(eq(projects.isPublished, true));
@@ -218,7 +218,7 @@ export class ProjectsRepository {
 
   // Get projects by program ID
   static async findByProgramId(programId: number, published = true): Promise<Project[]> {
-    return await db
+    return await database()
       .select()
       .from(projects)
       .where(
@@ -232,7 +232,7 @@ export class ProjectsRepository {
 
   // Get projects by activity IDs
   static async findByActivityIds(activityIds: number[], published = true): Promise<Project[]> {
-    return await db
+    return await database()
       .select()
       .from(projects)
       .where(
@@ -247,7 +247,7 @@ export class ProjectsRepository {
 
   // Get projects by category ID
   static async findByCategoryId(categoryId: number, published = true): Promise<Project[]> {
-    return await db
+    return await database()
       .select()
       .from(projects)
       .where(
@@ -261,7 +261,7 @@ export class ProjectsRepository {
 
   // Get most viewed projects
   static async getMostViewed(limit = 10, published = true): Promise<Project[]> {
-    return await db
+    return await database()
       .select()
       .from(projects)
       .where(published ? eq(projects.isPublished, true) : undefined)
@@ -271,7 +271,7 @@ export class ProjectsRepository {
 
   // Get recent projects
   static async getRecent(limit = 10, published = true): Promise<Project[]> {
-    return await db
+    return await database()
       .select()
       .from(projects)
       .where(published ? eq(projects.isPublished, true) : undefined)

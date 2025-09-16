@@ -1,21 +1,11 @@
 import { eq, desc, asc, like, and, isNull, isNotNull } from "drizzle-orm";
-import { db } from "@/lib/db";
+import { database } from "@/lib/db";
 import { programs, type Program, type NewProgram } from "@/lib/db/schema/programs";
-
-// Helper function to get database instance
-function getDatabase() {
-  const database = db();
-  if (!database) {
-    throw new Error("Database not available");
-  }
-  return database;
-}
 
 export class ProgramsRepository {
   // Create a new program
   static async create(data: NewProgram): Promise<Program> {
-    const database = getDatabase();
-    const [program] = await database
+    const [program] = await database()
       .insert(programs)
       .values(data)
       .returning();
@@ -36,7 +26,7 @@ export class ProgramsRepository {
     orderBy?: keyof Program;
     order?: "asc" | "desc";
   } = {}): Promise<Program[]> {
-    const query = db.select().from(programs);
+    const query = database().select().from(programs);
 
     // Add published filter
     if (published !== undefined) {
@@ -57,7 +47,7 @@ export class ProgramsRepository {
 
   // Get program by ID
   static async findById(id: number): Promise<Program | null> {
-    const [program] = await db
+    const [program] = await database()
       .select()
       .from(programs)
       .where(eq(programs.id, id))
@@ -67,7 +57,7 @@ export class ProgramsRepository {
 
   // Get program by slug (English or Arabic)
   static async findBySlug(slug: string): Promise<Program | null> {
-    const [program] = await db
+    const [program] = await database()
       .select()
       .from(programs)
       .where(
@@ -81,7 +71,7 @@ export class ProgramsRepository {
     if (program) return program;
 
     // Try Arabic slug
-    const [programAr] = await db
+    const [programAr] = await database()
       .select()
       .from(programs)
       .where(
@@ -99,7 +89,7 @@ export class ProgramsRepository {
   static async search(query: string, published = true): Promise<Program[]> {
     const searchPattern = `%${query}%`;
     
-    return await db
+    return await database()
       .select()
       .from(programs)
       .where(
@@ -115,7 +105,7 @@ export class ProgramsRepository {
 
   // Update program
   static async update(id: number, data: Partial<NewProgram>): Promise<Program | null> {
-    const [updated] = await db
+    const [updated] = await database()
       .update(programs)
       .set({ ...data, updatedAt: new Date() })
       .where(eq(programs.id, id))
@@ -125,7 +115,7 @@ export class ProgramsRepository {
 
   // Delete program
   static async delete(id: number): Promise<boolean> {
-    const result = await db
+    const result = await database()
       .delete(programs)
       .where(eq(programs.id, id));
     return result.rowCount > 0;
@@ -133,7 +123,7 @@ export class ProgramsRepository {
 
   // Publish/unpublish program
   static async publish(id: number, published: boolean): Promise<Program | null> {
-    const [updated] = await db
+    const [updated] = await database()
       .update(programs)
       .set({
         isPublished: published,
@@ -147,7 +137,7 @@ export class ProgramsRepository {
 
   // Increment page views
   static async incrementPageViews(id: number): Promise<number> {
-    const [updated] = await db
+    const [updated] = await database()
       .update(programs)
       .set({
         pageViews: programs.pageViews + 1,
@@ -161,7 +151,7 @@ export class ProgramsRepository {
 
   // Get published programs count
   static async getPublishedCount(): Promise<number> {
-    const [result] = await db
+    const [result] = await database()
       .select({ count: programs.id })
       .from(programs)
       .where(eq(programs.isPublished, true));
@@ -171,7 +161,7 @@ export class ProgramsRepository {
 
   // Get programs by created user
   static async findByCreatedBy(userId: string): Promise<Program[]> {
-    return await db
+    return await database()
       .select()
       .from(programs)
       .where(eq(programs.createdBy, userId))

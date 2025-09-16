@@ -30,8 +30,17 @@ function getDb() {
   return db;
 }
 
-// Export the lazy-loaded database
+// Export the lazy-loaded database function
 export { getDb as db };
+
+// Export a direct database instance getter for convenience
+export const database = () => {
+  const instance = getDb();
+  if (!instance) {
+    throw new Error("Database not available - check DATABASE_URL environment variable");
+  }
+  return instance;
+};
 
 // Export all schema types and functions
 export * from "./schema";
