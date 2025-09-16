@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Project } from "@/types/project";
 import { ProjectCardSkeletonGrid } from "@/components/ui/project-card-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ProjectsPage() {
   const params = useParams<{ locale: string }>();
@@ -121,16 +122,20 @@ export default function ProjectsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="text-center">
                 <div className="text-3xl font-bold text-brand-primary mb-1">
-                  {loading ? <Loader2 className="w-8 h-8 animate-spin mx-auto" /> : allProjects.length}
+                  {loading ? <Skeleton className="h-9 w-12 mx-auto" /> : allProjects.length}
                 </div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Active Projects" : "مشروع نشط"}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-brand-secondary mb-1">25K+</div>
+                <div className="text-3xl font-bold text-brand-secondary mb-1">
+                  {loading ? <Skeleton className="h-9 w-16 mx-auto" /> : "25K+"}
+                </div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Lives Impacted" : "حياة تأثرت"}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-brand-primary mb-1">15</div>
+                <div className="text-3xl font-bold text-brand-primary mb-1">
+                  {loading ? <Skeleton className="h-9 w-8 mx-auto" /> : "15"}
+                </div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Communities" : "مجتمع"}</div>
               </div>
             </div>

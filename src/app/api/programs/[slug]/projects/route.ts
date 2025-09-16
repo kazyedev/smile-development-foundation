@@ -1,16 +1,28 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const limit = parseInt(searchParams.get("limit") || "100", 10);
-  const offset = parseInt(searchParams.get("offset") || "0", 10);
-  const search = searchParams.get("search");
-  const category = searchParams.get("category");
-
+export async function GET(
+  request: Request,
+  { params }: { params: { slug: string } }
+) {
   try {
     const supabase = await supabaseServer();
-    let query = supabase
+    const { slug } = params;
+
+    // First, get the program ID from the slug
+    const { data: programData, error: programError } = await supabase
+      .from("programs")
+      .select("id")
+      .or(`slug_en.eq.${slug},slug_ar.eq.${slug}`)
+      .eq("is_published", true)
+      .single();
+
+    if (programError || !programData) {
+      return NextResponse.json({ error: "Program not found" }, { status: 404 });
+    }
+
+    // Then fetch projects linked to this program
+    const { data: projectsData, error: projectsError } = await supabase
       .from("projects")
       .select(`
         id,
@@ -35,31 +47,17 @@ export async function GET(request: Request) {
         created_at,
         updated_at
       `)
+      .eq("program_id", programData.id)
       .eq("is_published", true)
       .order("created_at", { ascending: false });
 
-    // Apply search filter if provided
-    if (search) {
-      query = query.or(`title_en.ilike.%${search}%,title_ar.ilike.%${search}%,description_en.ilike.%${search}%,description_ar.ilike.%${search}%`);
-    }
-
-    // Apply category filter if provided and not "all"
-    if (category && category !== "all") {
-      query = query.or(`tags_en.cs.{${category}},tags_ar.cs.{${category}}`);
-    }
-
-    // Apply pagination
-    const { data, error, count } = await query
-      .range(offset, offset + limit - 1)
-      .limit(limit);
-
-    if (error) {
-      console.error("Database error:", error);
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    if (projectsError) {
+      console.error("Database error:", projectsError);
+      return NextResponse.json({ error: projectsError.message }, { status: 400 });
     }
 
     // Transform the data to match the frontend interface
-    const transformedData = data?.map(project => ({
+    const transformedData = projectsData?.map(project => ({
       id: project.id,
       titleEn: project.title_en,
       titleAr: project.title_ar,
@@ -100,9 +98,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ 
       items: transformedData,
-      total: count || transformedData.length,
-      offset,
-      limit
+      total: transformedData.length,
+      programId: programData.id
     });
 
   } catch (error) {

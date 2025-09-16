@@ -20,34 +20,49 @@ export default function ProjectDetailPage({ params: { slug, locale } }: { params
   const decoded = decodeURIComponent(slug);
   const isEn = locale === 'en';
   const [project, setProject] = useState<Project | null>(null);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProject = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`/api/projects/${decoded}`);
-        if (!response.ok) {
-          if (response.status === 404) {
+        // Fetch both the specific project and all projects in parallel
+        const [projectResponse, allProjectsResponse] = await Promise.all([
+          fetch(`/api/projects/${decoded}`),
+          fetch('/api/projects')
+        ]);
+        
+        if (!projectResponse.ok) {
+          if (projectResponse.status === 404) {
             throw new Error('Project not found');
           }
           throw new Error('Failed to fetch project');
         }
         
-        const data = await response.json();
-        setProject(data);
+        if (!allProjectsResponse.ok) {
+          throw new Error('Failed to fetch all projects');
+        }
+        
+        const [projectData, allProjectsData] = await Promise.all([
+          projectResponse.json(),
+          allProjectsResponse.json()
+        ]);
+        
+        setProject(projectData);
+        setAllProjects(allProjectsData.items || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
-        console.error('Error fetching project:', err);
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProject();
+    fetchData();
   }, [decoded]);
 
   if (loading) {
@@ -115,7 +130,7 @@ export default function ProjectDetailPage({ params: { slug, locale } }: { params
       </div>
 
       {/* Related Projects Section */}
-      <ProjectRelatedSection project={project} locale={locale} isEn={isEn} />
+      <ProjectRelatedSection project={project} locale={locale} isEn={isEn} allProjects={allProjects} />
     </div>
   );
 }

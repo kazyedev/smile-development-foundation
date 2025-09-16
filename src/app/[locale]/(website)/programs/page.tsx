@@ -1,13 +1,15 @@
 "use client";
 
-import { mockPrograms } from "@/data/mockPrograms";
 import ProgramCard from "@/components/website/ProgramCard";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Target, Sparkles, Filter, Search, Grid3X3, List } from "lucide-react";
+import { Target, Sparkles, Filter, Search, Grid3X3, List, Loader2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ProgramCardSkeletonGrid } from "@/components/ui/program-card-skeleton";
+import { useState, useEffect } from "react";
+import { Program } from "@/types/program";
 
 export default function ProgramsPage() {
   const params = useParams<{ locale: string }>();
@@ -16,8 +18,41 @@ export default function ProgramsPage() {
   
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [allPrograms, setAllPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [displayedCount, setDisplayedCount] = useState(6);
 
-  const filteredPrograms = mockPrograms.filter(program => {
+  const INITIAL_DISPLAY_COUNT = 6;
+  const LOAD_MORE_COUNT = 3;
+
+  // Fetch all programs once on component mount
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/programs');
+        if (!response.ok) {
+          throw new Error('Failed to fetch programs');
+        }
+        
+        const data = await response.json();
+        setAllPrograms(data.items || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching programs:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  // Client-side filtering
+  const filteredPrograms = allPrograms.filter(program => {
     const title = isEn ? program.titleEn : program.titleAr;
     const description = isEn ? program.descriptionEn : program.descriptionAr;
     const location = isEn ? program.implementationLocationEn : program.implementationLocationAr;
@@ -27,6 +62,19 @@ export default function ProgramsPage() {
            description.toLowerCase().includes(searchLower) ||
            location.toLowerCase().includes(searchLower);
   });
+
+  // Reset displayed count when search changes
+  useEffect(() => {
+    setDisplayedCount(INITIAL_DISPLAY_COUNT);
+  }, [searchQuery]);
+
+  // Programs to display (with pagination)
+  const displayedPrograms = filteredPrograms.slice(0, displayedCount);
+  const hasMorePrograms = filteredPrograms.length > displayedCount;
+
+  const handleShowMore = () => {
+    setDisplayedCount(prev => Math.min(prev + LOAD_MORE_COUNT, filteredPrograms.length));
+  };
 
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
@@ -114,19 +162,25 @@ export default function ProgramsPage() {
               variants={fadeInUp}
             >
               <div className="text-center">
-                <div className="text-3xl font-bold text-brand-primary">{mockPrograms.length}</div>
+                <div className="text-3xl font-bold text-brand-primary">
+                  {loading ? <Skeleton className="h-9 w-8 mx-auto" /> : allPrograms.length}
+                </div>
                 <div className="text-sm text-muted-foreground">
                   {isEn ? "Active Programs" : "برامج نشطة"}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-brand-secondary">25+</div>
+                <div className="text-3xl font-bold text-brand-secondary">
+                  {loading ? <Skeleton className="h-9 w-12 mx-auto" /> : "25+"}
+                </div>
                 <div className="text-sm text-muted-foreground">
                   {isEn ? "Communities Served" : "مجتمع تم خدمته"}
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-accent">10K+</div>
+                <div className="text-3xl font-bold text-accent">
+                  {loading ? <Skeleton className="h-9 w-14 mx-auto" /> : "10K+"}
+                </div>
                 <div className="text-sm text-muted-foreground">
                   {isEn ? "Beneficiaries" : "مستفيد"}
                 </div>
@@ -190,36 +244,93 @@ export default function ProgramsPage() {
 
               {/* Results Count */}
               <div className="text-sm text-muted-foreground">
-                {isEn 
-                  ? `${filteredPrograms.length} of ${mockPrograms.length} programs`
-                  : `${filteredPrograms.length} من ${mockPrograms.length} برنامج`
-                }
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {isEn ? "Loading programs..." : "جاري تحميل البرامج..."}
+                  </span>
+                ) : (
+                  isEn 
+                    ? `Showing ${displayedPrograms.length} of ${filteredPrograms.length} programs`
+                    : `عرض ${displayedPrograms.length} من ${filteredPrograms.length} برنامج`
+                )}
               </div>
             </div>
 
             {/* Programs Grid/List */}
-            {filteredPrograms.length > 0 ? (
+            {error ? (
               <motion.div 
-                className={`${
-                  viewMode === "grid" 
-                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                    : "space-y-4"
-                }`}
-                initial="initial"
-                whileInView="animate"
-                viewport={{ once: true }}
-                variants={staggerChildren}
+                className="text-center py-16"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
               >
-                {filteredPrograms.map((program, idx) => (
-                  <motion.div
-                    key={program.slugEn}
-                    variants={fadeInUp}
-                    className={viewMode === "list" ? "w-full" : ""}
-                  >
-                    <ProgramCard program={program} locale={locale} />
-                  </motion.div>
-                ))}
+                <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="w-12 h-12 text-red-500" />
+                </div>
+                <h3 className="text-xl font-semibold text-red-600 mb-2">
+                  {isEn ? "Error loading programs" : "خطأ في تحميل البرامج"}
+                </h3>
+                <p className="text-muted-foreground mb-4">{error}</p>
+                <Button onClick={() => window.location.reload()}>
+                  {isEn ? "Try Again" : "حاول مرة أخرى"}
+                </Button>
               </motion.div>
+            ) : loading ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-8"
+              >
+                <ProgramCardSkeletonGrid count={INITIAL_DISPLAY_COUNT} />
+              </motion.div>
+            ) : filteredPrograms.length > 0 ? (
+              <>
+                <motion.div 
+                  className={`${
+                    viewMode === "grid" 
+                      ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                      : "space-y-4"
+                  }`}
+                  initial="initial"
+                  whileInView="animate"
+                  viewport={{ once: true }}
+                  variants={staggerChildren}
+                >
+                  {displayedPrograms.map((program, idx) => (
+                    <motion.div
+                      key={program.slugEn}
+                      variants={fadeInUp}
+                      className={viewMode === "list" ? "w-full" : ""}
+                    >
+                      <ProgramCard program={program} locale={locale} />
+                    </motion.div>
+                  ))}
+                </motion.div>
+
+                {/* Show More Button */}
+                {hasMorePrograms && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                    className="flex justify-center mt-12"
+                  >
+                    <Button
+                      onClick={handleShowMore}
+                      variant="outline"
+                      size="lg"
+                      className="group hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all duration-300"
+                    >
+                      <ChevronDown className="w-4 h-4 mr-2 group-hover:animate-bounce" />
+                      {isEn 
+                        ? `Show More Programs (${filteredPrograms.length - displayedCount} remaining)`
+                        : `عرض المزيد من البرامج (${filteredPrograms.length - displayedCount} متبقي)`
+                      }
+                    </Button>
+                  </motion.div>
+                )}
+              </>
             ) : (
               <motion.div 
                 className="text-center py-16"

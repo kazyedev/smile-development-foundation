@@ -3,19 +3,43 @@
 import { motion } from "framer-motion";
 import { Target } from "lucide-react";
 import { Project } from "@/types/project";
-import { mockProjects } from "@/data/mockProjects";
 import ProjectCard from "@/components/website/ProjectCard";
+import { useMemo } from "react";
 
 interface ProjectRelatedSectionProps {
   project: Project;
   locale: string;
   isEn: boolean;
+  allProjects?: Project[];
 }
 
-export default function ProjectRelatedSection({ project, locale, isEn }: ProjectRelatedSectionProps) {
-  const relatedProjects = mockProjects
-    .filter(p => p.id !== project.id) // Exclude current project
-    .slice(0, 3); // Show only 3 other projects
+export default function ProjectRelatedSection({ project, locale, isEn, allProjects = [] }: ProjectRelatedSectionProps) {
+  const relatedProjects = useMemo(() => {
+    if (!allProjects.length) return [];
+    
+    // Filter out current project and get related projects
+    let related = allProjects.filter(p => p.id !== project.id);
+    
+    // Try to find projects with similar tags first
+    const currentTags = isEn ? project.tagsEn : project.tagsAr;
+    if (currentTags.length > 0) {
+      const similarProjects = related.filter(p => {
+        const projectTags = isEn ? p.tagsEn : p.tagsAr;
+        return projectTags.some(tag => currentTags.includes(tag));
+      });
+      
+      if (similarProjects.length >= 3) {
+        return similarProjects.slice(0, 3);
+      } else {
+        // If not enough similar projects, add random ones
+        const remainingProjects = related.filter(p => !similarProjects.includes(p));
+        return [...similarProjects, ...remainingProjects].slice(0, 3);
+      }
+    }
+    
+    // If no tags or no similar projects, return first 3
+    return related.slice(0, 3);
+  }, [allProjects, project, isEn]);
 
   // Don't render the section if there are no related projects
   if (relatedProjects.length === 0) {

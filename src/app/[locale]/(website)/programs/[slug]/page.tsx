@@ -1,10 +1,49 @@
-import { mockPrograms } from "@/data/mockPrograms";
-import { mockProjects } from "@/data/mockProjects";
-import { mockStories } from "@/data/mockStories";
 import ProgramDetailClient from "@/components/website/programs/ProgramDetailClient";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Program } from "@/types/program";
+import { Project } from "@/types/project";
+
+// Helper functions to fetch data from APIs
+async function fetchProgram(slug: string): Promise<Program | null> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/programs/${encodeURIComponent(slug)}`, {
+      next: { revalidate: 3600 } // Revalidate every hour
+    });
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error('Failed to fetch program');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching program:', error);
+    return null;
+  }
+}
+
+async function fetchProjectsByProgram(programSlug: string): Promise<Project[]> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/programs/${encodeURIComponent(programSlug)}/projects`, {
+      next: { revalidate: 3600 } // Revalidate every hour
+    });
+    
+    if (!response.ok) {
+      // If the specific endpoint fails, return empty array (program might not have projects)
+      return [];
+    }
+    
+    const data = await response.json();
+    return data.items || [];
+  } catch (error) {
+    console.error('Error fetching program projects:', error);
+    return [];
+  }
+}
 
 // Loading skeleton component for better UX
 function ProgramDetailSkeleton() {
@@ -64,58 +103,32 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
       notFound();
     }
 
-    // Decode the slug and find the program
+    // Decode the slug and fetch the program
     const decodedSlug = decodeURIComponent(slug);
     const isEn = locale === "en";
     
-    const program = mockPrograms.find((p) => 
-      p.slugEn === decodedSlug || p.slugAr === decodedSlug
-    );
+    // Fetch program and its linked projects in parallel
+    const [program, linkedProjects] = await Promise.all([
+      fetchProgram(decodedSlug),
+      fetchProjectsByProgram(decodedSlug)
+    ]);
 
     // If program not found, show 404
     if (!program) {
       notFound();
     }
 
-    // Check if program is available in the current locale
-    const isAvailableInLocale = isEn 
-      ? (program as any).isEnglish !== false // Default to true if not specified
-      : (program as any).isArabic !== false; // Default to true if not specified
-
-    if (!isAvailableInLocale) {
-      // Redirect to programs list if not available in current locale
-      return (
-        <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center">
-          <div className="text-center px-4">
-            <h1 className="text-2xl font-bold text-foreground mb-4">
-              {isEn ? "Program Not Available" : "البرنامج غير متاح"}
-            </h1>
-            <p className="text-muted-foreground mb-6">
-              {isEn 
-                ? "This program is not available in the selected language. Please check our programs list."
-                : "هذا البرنامج غير متاح باللغة المحددة. يرجى التحقق من قائمة برامجنا."
-              }
-            </p>
-            <a 
-              href={`/${locale}/programs`}
-              className="inline-flex items-center px-6 py-3 bg-brand-primary text-white rounded-xl hover:bg-brand-primary/90 transition-colors"
-            >
-              {isEn ? "View All Programs" : "عرض جميع البرامج"}
-            </a>
-          </div>
-        </div>
-      );
-    }
-
-    // Get related content
-    const relatedProjects = mockProjects.filter((p) => p.programId === program.id);
-    const relatedStories = mockStories.filter((s) => s.programId === program.id);
-
     // Validate that we have the required data
     if (!program.titleEn || !program.titleAr || !program.descriptionEn || !program.descriptionAr) {
       console.error('Program data is incomplete:', program);
       notFound();
     }
+
+    // Use the directly linked projects (already filtered by program_id in the API)
+    const relatedProjects = linkedProjects.slice(0, 6); // Limit to 6 related projects
+
+    // For now, we'll use empty stories array since we don't have stories in the database yet
+    const relatedStories: any[] = [];
 
     return (
       <Suspense fallback={<ProgramDetailSkeleton />}>
@@ -158,9 +171,7 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
   try {
     const { slug, locale } = await params;
     const decodedSlug = decodeURIComponent(slug);
-    const program = mockPrograms.find((p) => 
-      p.slugEn === decodedSlug || p.slugAr === decodedSlug
-    );
+    const program = await fetchProgram(decodedSlug);
 
     if (!program) {
       return {
@@ -177,10 +188,10 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
       : program.descriptionAr.substring(0, 160);
 
     return {
-      title: `${title} - Ibtisama Foundation`,
+      title: `${title} - Smile Development Foundation`,
       description,
       openGraph: {
-        title: `${title} - Ibtisama Foundation`,
+        title: `${title} - Smile Development Foundation`,
         description,
         type: 'website',
         locale: locale,
@@ -188,15 +199,16 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${title} - Ibtisama Foundation`,
+        title: `${title} - Smile Development Foundation`,
         description,
         images: program.featuredImageUrl ? [program.featuredImageUrl] : [],
       },
+      keywords: locale === 'en' ? program.keywordsEn?.join(', ') : program.keywordsAr?.join(', '),
     };
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {
-      title: 'Program - Ibtisama Foundation',
+      title: 'Program - Smile Development Foundation',
       description: 'Learn more about our programs and initiatives.',
     };
   }
@@ -204,26 +216,41 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
 
 // Generate static params for better performance
 export async function generateStaticParams() {
-  const params: Array<{ slug: string; locale: string }> = [];
-  
-  // Generate params for all programs in both languages
-  mockPrograms.forEach((program) => {
-    // English version
-    if (program.slugEn && (program as any).isEnglish !== false) {
-      params.push({
-        slug: program.slugEn,
-        locale: 'en'
-      });
+  try {
+    // Fetch all programs from API
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/programs`);
+    if (!response.ok) {
+      console.error('Failed to fetch programs for static generation');
+      return [];
     }
     
-    // Arabic version
-    if (program.slugAr && (program as any).isArabic !== false) {
-      params.push({
-        slug: program.slugAr,
-        locale: 'ar'
-      });
-    }
-  });
+    const data = await response.json();
+    const programs = data.items || [];
+    
+    const params: Array<{ slug: string; locale: string }> = [];
+    
+    // Generate params for all programs in both languages
+    programs.forEach((program: Program) => {
+      // English version
+      if (program.slugEn) {
+        params.push({
+          slug: program.slugEn,
+          locale: 'en'
+        });
+      }
+      
+      // Arabic version
+      if (program.slugAr) {
+        params.push({
+          slug: program.slugAr,
+          locale: 'ar'
+        });
+      }
+    });
 
-  return params;
+    return params;
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
