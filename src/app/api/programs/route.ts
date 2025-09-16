@@ -1,108 +1,81 @@
-import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
+import { ProgramsRepository } from "@/lib/db/repositories/programs";
+import { db } from "@/lib/db";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  // Get database instance
+  const database = db();
+  if (!database) {
+    return NextResponse.json(
+      { error: "Database not configured" },
+      { status: 503 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get("limit") || "100", 10);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
   const search = searchParams.get("search");
 
   try {
-    const supabase = await supabaseServer();
-    let query = supabase
-      .from("programs")
-      .select(`
-        id,
-        title_en,
-        title_ar,
-        description_en,
-        description_ar,
-        about_en,
-        about_ar,
-        goals_en,
-        goals_ar,
-        statics,
-        icon,
-        color,
-        implementation_location_en,
-        implementation_location_ar,
-        funding_providers,
-        donors,
-        partners,
-        featured_image_url,
-        slides,
-        slug_en,
-        slug_ar,
-        keywords_en,
-        keywords_ar,
-        tags_en,
-        tags_ar,
-        include_in_sitemap_en,
-        include_in_sitemap_ar,
-        page_views,
-        is_published,
-        published_at,
-        created_at,
-        updated_at
-      `)
-      .eq("is_published", true)
-      .order("created_at", { ascending: false });
-
-    // Apply search filter if provided
+    let programs;
+    
     if (search) {
-      query = query.or(`title_en.ilike.%${search}%,title_ar.ilike.%${search}%,description_en.ilike.%${search}%,description_ar.ilike.%${search}%,implementation_location_en.ilike.%${search}%,implementation_location_ar.ilike.%${search}%`);
-    }
-
-    // Apply pagination
-    const { data, error, count } = await query
-      .range(offset, offset + limit - 1)
-      .limit(limit);
-
-    if (error) {
-      console.error("Database error:", error);
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      // Use search method if search query is provided
+      programs = await ProgramsRepository.search(search, true);
+      // Apply manual pagination for search results
+      programs = programs.slice(offset, offset + limit);
+    } else {
+      // Use standard findMany with pagination
+      programs = await ProgramsRepository.findMany({
+        published: true,
+        limit,
+        offset,
+        orderBy: "createdAt",
+        order: "desc",
+      });
     }
 
     // Transform the data to match the frontend interface
-    const transformedData = data?.map(program => ({
+    const transformedData = programs?.map(program => ({
       id: program.id,
-      titleEn: program.title_en,
-      titleAr: program.title_ar,
-      descriptionEn: program.description_en,
-      descriptionAr: program.description_ar,
-      aboutEn: program.about_en || "",
-      aboutAr: program.about_ar || "",
-      goalsEn: program.goals_en || [],
-      goalsAr: program.goals_ar || [],
+      titleEn: program.titleEn,
+      titleAr: program.titleAr,
+      descriptionEn: program.descriptionEn,
+      descriptionAr: program.descriptionAr,
+      aboutEn: program.aboutEn || "",
+      aboutAr: program.aboutAr || "",
+      goalsEn: program.goalsEn || [],
+      goalsAr: program.goalsAr || [],
       statics: program.statics || [],
       icon: program.icon || "target",
       color: program.color || "#3498DB",
-      implementationLocationEn: program.implementation_location_en || "",
-      implementationLocationAr: program.implementation_location_ar || "",
-      fundingProviders: program.funding_providers || [],
+      implementationLocationEn: program.implementationLocationEn || "",
+      implementationLocationAr: program.implementationLocationAr || "",
+      fundingProviders: program.fundingProviders || [],
       donors: program.donors || [],
       partners: program.partners || [],
-      featuredImageUrl: program.featured_image_url || "/assets/mockimage.jpg",
+      featuredImageUrl: program.featuredImageUrl || "/assets/mockimage.jpg",
       slides: program.slides || [],
-      slugEn: program.slug_en,
-      slugAr: program.slug_ar,
-      keywordsEn: program.keywords_en || [],
-      keywordsAr: program.keywords_ar || [],
-      tagsEn: program.tags_en || [],
-      tagsAr: program.tags_ar || [],
-      includeInSitemapEn: program.include_in_sitemap_en !== false,
-      includeInSitemapAr: program.include_in_sitemap_ar !== false,
-      pageViews: program.page_views || 0,
+      slugEn: program.slugEn,
+      slugAr: program.slugAr,
+      keywordsEn: program.keywordsEn || [],
+      keywordsAr: program.keywordsAr || [],
+      tagsEn: program.tagsEn || [],
+      tagsAr: program.tagsAr || [],
+      includeInSitemapEn: program.includeInSitemapEn !== false,
+      includeInSitemapAr: program.includeInSitemapAr !== false,
+      pageViews: program.pageViews || 0,
       createdBy: "", // We don't expose this in the public API
-      isPublished: program.is_published,
-      publishedAt: new Date(program.published_at),
-      createdAt: new Date(program.created_at),
-      updatedAt: new Date(program.updated_at)
+      isPublished: program.isPublished,
+      publishedAt: program.publishedAt ? new Date(program.publishedAt) : null,
+      createdAt: program.createdAt ? new Date(program.createdAt) : null,
+      updatedAt: program.updatedAt ? new Date(program.updatedAt) : null
     })) || [];
 
     return NextResponse.json({ 
       items: transformedData,
-      total: count || transformedData.length,
+      total: transformedData.length, // Note: For proper pagination, you'd want to implement a separate count query
       offset,
       limit
     });

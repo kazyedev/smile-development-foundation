@@ -1,106 +1,88 @@
-import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
+import { ProjectsRepository } from "@/lib/db/repositories/projects";
+import { db } from "@/lib/db";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  // Get database instance
+  const database = db();
+  if (!database) {
+    return NextResponse.json(
+      { error: "Database not configured" },
+      { status: 503 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get("limit") || "100", 10);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
   const search = searchParams.get("search");
-  const category = searchParams.get("category");
+  const programId = searchParams.get("programId");
+  const categoryId = searchParams.get("categoryId");
 
   try {
-    const supabase = await supabaseServer();
-    let query = supabase
-      .from("projects")
-      .select(`
-        id,
-        title_en,
-        title_ar,
-        description_en,
-        description_ar,
-        featured_image_url,
-        color,
-        slug_en,
-        slug_ar,
-        keywords_en,
-        keywords_ar,
-        tags_en,
-        tags_ar,
-        page_views,
-        cost,
-        beneficiaries,
-        program_id,
-        is_published,
-        published_at,
-        created_at,
-        updated_at
-      `)
-      .eq("is_published", true)
-      .order("created_at", { ascending: false });
-
-    // Apply search filter if provided
+    let projects;
+    
     if (search) {
-      query = query.or(`title_en.ilike.%${search}%,title_ar.ilike.%${search}%,description_en.ilike.%${search}%,description_ar.ilike.%${search}%`);
-    }
-
-    // Apply category filter if provided and not "all"
-    if (category && category !== "all") {
-      query = query.or(`tags_en.cs.{${category}},tags_ar.cs.{${category}}`);
-    }
-
-    // Apply pagination
-    const { data, error, count } = await query
-      .range(offset, offset + limit - 1)
-      .limit(limit);
-
-    if (error) {
-      console.error("Database error:", error);
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      // Use search method if search query is provided
+      projects = await ProjectsRepository.search(search, true);
+      // Apply manual pagination for search results
+      projects = projects.slice(offset, offset + limit);
+    } else {
+      // Use standard findMany with filters and pagination
+      projects = await ProjectsRepository.findMany({
+        published: true,
+        programId: programId ? parseInt(programId, 10) : undefined,
+        categoryId: categoryId ? parseInt(categoryId, 10) : undefined,
+        limit,
+        offset,
+        orderBy: "createdAt",
+        order: "desc",
+      });
     }
 
     // Transform the data to match the frontend interface
-    const transformedData = data?.map(project => ({
+    const transformedData = projects?.map(project => ({
       id: project.id,
-      titleEn: project.title_en,
-      titleAr: project.title_ar,
-      descriptionEn: project.description_en,
-      descriptionAr: project.description_ar,
-      featuredImageUrl: project.featured_image_url,
+      titleEn: project.titleEn,
+      titleAr: project.titleAr,
+      descriptionEn: project.descriptionEn,
+      descriptionAr: project.descriptionAr,
+      featuredImageUrl: project.featuredImageUrl,
       color: project.color,
-      slugEn: project.slug_en,
-      slugAr: project.slug_ar,
-      keywordsEn: project.keywords_en || [],
-      keywordsAr: project.keywords_ar || [],
-      tagsEn: project.tags_en || [],
-      tagsAr: project.tags_ar || [],
-      pageViews: project.page_views || 0,
+      slugEn: project.slugEn,
+      slugAr: project.slugAr,
+      keywordsEn: project.keywordsEn || [],
+      keywordsAr: project.keywordsAr || [],
+      tagsEn: project.tagsEn || [],
+      tagsAr: project.tagsAr || [],
+      pageViews: project.pageViews || 0,
       cost: project.cost || [],
       beneficiaries: project.beneficiaries || [],
-      programId: project.program_id || 0,
-      isPublished: project.is_published,
-      publishedAt: new Date(project.published_at),
-      createdAt: new Date(project.created_at),
-      updatedAt: new Date(project.updated_at),
-      // Default values for fields not in database yet
-      isEnglish: true,
-      isArabic: true,
-      banners: [],
-      goalsEn: [],
-      goalsAr: [],
-      videoUrl: "",
-      statics: [],
-      fundingProviders: [],
-      donors: [],
-      partners: [],
-      deliverables: [],
-      resources: [],
-      categoryId: 0,
-      activityIds: []
+      programId: project.programId || null,
+      categoryId: project.categoryId || null,
+      activityIds: project.activityIds || [],
+      isPublished: project.isPublished,
+      publishedAt: project.publishedAt ? new Date(project.publishedAt) : null,
+      createdAt: project.createdAt ? new Date(project.createdAt) : null,
+      updatedAt: project.updatedAt ? new Date(project.updatedAt) : null,
+      // Include all the new fields from Drizzle schema
+      isEnglish: project.isEnglish ?? true,
+      isArabic: project.isArabic ?? true,
+      banners: project.banners || [],
+      goalsEn: project.goalsEn || [],
+      goalsAr: project.goalsAr || [],
+      videoUrl: project.videoUrl || "",
+      statics: project.statics || [],
+      fundingProviders: project.fundingProviders || [],
+      donors: project.donors || [],
+      partners: project.partners || [],
+      deliverables: project.deliverables || [],
+      resources: project.resources || []
     })) || [];
 
     return NextResponse.json({ 
       items: transformedData,
-      total: count || transformedData.length,
+      total: transformedData.length, // Note: For proper pagination, you'd want to implement a separate count query
       offset,
       limit
     });
