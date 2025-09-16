@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +21,16 @@ export default function LoginPage() {
       subtitle: "Sign in to your account",
       description: "Access your personalized dashboard and continue making a difference",
       email: "Email Address",
+      title: "Welcome Back",
+      subtitle: "Sign in to your account",
+      description: "Access your personalized dashboard and continue making a difference",
+      email: "Email Address",
       password: "Password",
+      signIn: "Sign In",
+      signingIn: "Signing In...",
+      forgotPassword: "Forgot your password?",
+      createAccount: "Don't have an account?",
+      signUp: "Sign up",
       signIn: "Sign In",
       signingIn: "Signing In...",
       forgotPassword: "Forgot your password?",
@@ -29,7 +39,19 @@ export default function LoginPage() {
       unknownError: "Failed to login",
       emailPlaceholder: "Enter your email",
       passwordPlaceholder: "Enter your password",
+      emailPlaceholder: "Enter your email",
+      passwordPlaceholder: "Enter your password",
       notAuthorized: "Not authorized. Please contact your admin to set a role.",
+      backHome: "Back to Home",
+      emailRequired: "Email is required",
+      passwordRequired: "Password is required",
+      invalidEmail: "Please enter a valid email address",
+      features: [
+        "Access to exclusive content",
+        "Personalized dashboard",
+        "Track your contributions",
+        "Connect with community"
+      ]
       backHome: "Back to Home",
       emailRequired: "Email is required",
       passwordRequired: "Password is required",
@@ -45,6 +67,9 @@ export default function LoginPage() {
       title: "مرحباً بعودتك",
       subtitle: "سجل دخولك إلى حسابك",
       description: "احصل على لوحة التحكم الشخصية واستمر في إحداث فرق",
+      title: "مرحباً بعودتك",
+      subtitle: "سجل دخولك إلى حسابك",
+      description: "احصل على لوحة التحكم الشخصية واستمر في إحداث فرق",
       email: "البريد الإلكتروني",
       password: "كلمة المرور",
       signIn: "تسجيل الدخول",
@@ -52,10 +77,25 @@ export default function LoginPage() {
       forgotPassword: "نسيت كلمة المرور؟",
       createAccount: "ليس لديك حساب؟",
       signUp: "سجل الآن",
+      forgotPassword: "نسيت كلمة المرور؟",
+      createAccount: "ليس لديك حساب؟",
+      signUp: "سجل الآن",
       unknownError: "فشل تسجيل الدخول",
       emailPlaceholder: "أدخل بريدك الإلكتروني",
       passwordPlaceholder: "أدخل كلمة المرور",
+      emailPlaceholder: "أدخل بريدك الإلكتروني",
+      passwordPlaceholder: "أدخل كلمة المرور",
       notAuthorized: "غير مخول. يرجى التواصل مع المسؤول لتعيين دور.",
+      backHome: "العودة للرئيسية",
+      emailRequired: "البريد الإلكتروني مطلوب",
+      passwordRequired: "كلمة المرور مطلوبة",
+      invalidEmail: "يرجى إدخال عنوان بريد إلكتروني صحيح",
+      features: [
+        "الوصول إلى محتوى حصري",
+        "لوحة تحكم شخصية",
+        "تتبع مساهماتك",
+        "تواصل مع المجتمع"
+      ]
       backHome: "العودة للرئيسية",
       emailRequired: "البريد الإلكتروني مطلوب",
       passwordRequired: "كلمة المرور مطلوبة",
@@ -80,8 +120,12 @@ export default function LoginPage() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [alreadyLogged, setAlreadyLogged] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   // If already authenticated, redirect to cms (will be guarded by layout)
+  useEffect(() => {
   useEffect(() => {
     (async () => {
       try {
@@ -146,6 +190,11 @@ export default function LoginPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
     
     if (!validateForm()) {
       return;
