@@ -178,7 +178,7 @@ export default function ProgramsPage() {
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-accent">
+                <div className="text-3xl font-bold text-brand-primary">
                   {loading ? <Skeleton className="h-9 w-14 mx-auto" /> : "10K+"}
                 </div>
                 <div className="text-sm text-muted-foreground">

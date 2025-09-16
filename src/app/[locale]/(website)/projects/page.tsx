@@ -119,6 +119,7 @@ export default function ProjectsPage() {
             </p>
 
             {/* Project Stats */}
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="text-center">
                 <div className="text-3xl font-bold text-brand-primary mb-1">
@@ -130,13 +131,13 @@ export default function ProjectsPage() {
                 <div className="text-3xl font-bold text-brand-secondary mb-1">
                   {loading ? <Skeleton className="h-9 w-16 mx-auto" /> : "25K+"}
                 </div>
-                <div className="text-sm text-muted-foreground">{isEn ? "Lives Impacted" : "حياة تأثرت"}</div>
+                <div className="text-sm text-muted-foreground">{isEn ? "Beneficiaries" : "عدد المستفيدين"}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-brand-primary mb-1">
                   {loading ? <Skeleton className="h-9 w-8 mx-auto" /> : "15"}
                 </div>
-                <div className="text-sm text-muted-foreground">{isEn ? "Communities" : "مجتمع"}</div>
+                <div className="text-sm text-muted-foreground">{isEn ? "Communities" : "مناطق التدخل"}</div>
               </div>
             </div>
           </motion.div>

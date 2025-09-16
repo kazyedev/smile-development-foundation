@@ -20,16 +20,25 @@ export default function ProgramHero({ program, locale }: ProgramHeroProps) {
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.6 }
   };
+  function hexToRgba(hex: string, alpha: number) {
+    const match = hex.match(/\w\w/g);
+    if (!match) {
+      throw new Error(`Invalid hex color: ${hex}`);
+    }
+    const [r, g, b] = match.map(x => parseInt(x, 16));
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  
 
   return (
     <section className="relative py-24 overflow-hidden">
       {/* Background with program color */}
-      <div className={`absolute inset-0 opacity-10`} style={{ backgroundColor: program.color }} />
+      <div className={`absolute inset-0 opacity-10 bg-`} style={{ backgroundColor: hexToRgba(program.color, 0.2)}} />
       
       {/* Decorative elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-32 h-32 rounded-full blur-3xl" style={{ backgroundColor: program.color }} />
-        <div className="absolute bottom-20 right-20 w-40 h-40 rounded-full blur-3xl" style={{ backgroundColor: program.color }} />
+        <div className="absolute top-20 left-20 w-32 h-32 rounded-full blur-3xl" style={{ backgroundColor: hexToRgba(program.color, 0.8) }} />
+        <div className="absolute bottom-20 right-20 w-40 h-40 rounded-full blur-3xl" style={{ backgroundColor: hexToRgba(program.color, 0.8) }} />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -117,12 +126,12 @@ export default function ProgramHero({ program, locale }: ProgramHeroProps) {
                   alt={isEn ? program.titleEn : program.titleAr}
                   width={600}
                   height={400}
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover "
                 />
                 {/* Overlay with program color */}
                 <div 
                   className="absolute inset-0 opacity-20"
-                  style={{ backgroundColor: program.color }}
+                  style={{ backgroundColor: hexToRgba(program.color, 0.1) }}
                 />
               </div>
             </motion.div>
