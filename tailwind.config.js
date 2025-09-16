@@ -18,6 +18,8 @@ module.exports = {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
+        'brand-primary': 'hsl(var(--brand-primary, 220 100% 50%))',
+        'brand-secondary': 'hsl(var(--brand-secondary, 260 100% 60%))',
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
