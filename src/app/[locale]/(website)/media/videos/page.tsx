@@ -1,14 +1,15 @@
 "use client";
 
-import { mockVideos } from "@/data/mockVideos";
 import VideoCard from "@/components/website/VideoCard";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Film, Search, Filter, Grid, List, Play, Clock, Eye, Calendar, MapPin, Clapperboard } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Film, Search, Filter, Grid, List, Play, Clock, Eye, Calendar, MapPin, Clapperboard, Loader2, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { Video } from "@/types/video";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MediaVideosPage() {
   const params = useParams<{ locale: string }>();
@@ -18,23 +19,68 @@ export default function MediaVideosPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [allVideos, setAllVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [displayedCount, setDisplayedCount] = useState(9);
 
-  // Filter videos based on search and location
-  const filteredVideos = mockVideos.filter(video => {
+  const INITIAL_DISPLAY_COUNT = 9;
+  const LOAD_MORE_COUNT = 6;
+
+  // Fetch all videos once on component mount
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/videos?published=true&isPublic=true');
+        if (!response.ok) {
+          throw new Error('Failed to fetch videos');
+        }
+        
+        const data = await response.json();
+        setAllVideos(data.items || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching videos:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  // Client-side filtering
+  const filteredVideos = allVideos.filter(video => {
     const matchesSearch = searchTerm === "" || 
       (isEnglish ? video.titleEn : video.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (isEnglish ? video.descriptionEn : video.descriptionAr).toLowerCase().includes(searchTerm.toLowerCase());
+      (isEnglish ? video.descriptionEn : video.descriptionAr)?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesLocation = selectedLocation === "all" || 
-      (isEnglish ? video.locationEn : video.locationAr).toLowerCase() === selectedLocation.toLowerCase();
+      (isEnglish ? video.locationEn : video.locationAr)?.toLowerCase() === selectedLocation.toLowerCase();
     
     return matchesSearch && matchesLocation;
   });
 
-  // Get unique locations
+  // Reset displayed count when filters change
+  useEffect(() => {
+    setDisplayedCount(INITIAL_DISPLAY_COUNT);
+  }, [searchTerm, selectedLocation]);
+
+  // Get unique locations from all videos
   const allLocations = Array.from(new Set(
-    mockVideos.map(video => isEnglish ? video.locationEn : video.locationAr)
+    allVideos.map(video => isEnglish ? video.locationEn : video.locationAr).filter(Boolean)
   ));
+
+  // Videos to display (with pagination)
+  const displayedVideos = filteredVideos.slice(0, displayedCount);
+  const hasMoreVideos = filteredVideos.length > displayedCount;
+
+  const handleShowMore = () => {
+    setDisplayedCount(prev => Math.min(prev + LOAD_MORE_COUNT, filteredVideos.length));
+  };
 
   // Helper functions
   const getThumbnailUrl = (url: string) => {
@@ -87,16 +133,24 @@ export default function MediaVideosPage() {
             {/* Video Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold text-red-600 mb-1">{mockVideos.length}</div>
+                <div className="text-3xl font-bold text-red-600 mb-1">
+                  {loading ? <Skeleton className="h-9 w-12 mx-auto" /> : allVideos.length}
+                </div>
                 <div className="text-sm text-muted-foreground">{isEnglish ? "Videos" : "فيديو"}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-pink-500 mb-1">2.5M+</div>
+                <div className="text-3xl font-bold text-pink-500 mb-1">
+                  {loading ? <Skeleton className="h-9 w-16 mx-auto" /> : 
+                    (allVideos.reduce((total, video) => total + (video.views || 0), 0).toLocaleString() + "+")
+                  }
+                </div>
                 <div className="text-sm text-muted-foreground">{isEnglish ? "Total Views" : "إجمالي المشاهدات"}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-500 mb-1">48hr</div>
-                <div className="text-sm text-muted-foreground">{isEnglish ? "Content" : "محتوى"}</div>
+                <div className="text-3xl font-bold text-purple-500 mb-1">
+                  {loading ? <Skeleton className="h-9 w-8 mx-auto" /> : allLocations.length}
+                </div>
+                <div className="text-sm text-muted-foreground">{isEnglish ? "Locations" : "المواقع"}</div>
               </div>
             </div>
           </motion.div>
@@ -170,10 +224,16 @@ export default function MediaVideosPage() {
             <div className="flex items-center gap-2">
               <Clapperboard className="w-4 h-4" />
               <span>
-                {isEnglish 
-                  ? `Showing ${filteredVideos.length} of ${mockVideos.length} videos`
-                  : `عرض ${filteredVideos.length} من ${mockVideos.length} فيديو`
-                }
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {isEnglish ? "Loading videos..." : "جاري تحميل الفيديوهات..."}
+                  </span>
+                ) : (
+                  isEnglish 
+                    ? `Showing ${displayedVideos.length} of ${filteredVideos.length} videos`
+                    : `عرض ${displayedVideos.length} من ${filteredVideos.length} فيديو`
+                )}
               </span>
             </div>
             {selectedLocation !== "all" && (
@@ -191,7 +251,38 @@ export default function MediaVideosPage() {
       {/* Video Gallery */}
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          {filteredVideos.length === 0 ? (
+          {error ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-16"
+            >
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-red-600">
+                {isEnglish ? "Error loading videos" : "خطأ في تحميل الفيديوهات"}
+              </h3>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>
+                {isEnglish ? "Try Again" : "حاول مرة أخرى"}
+              </Button>
+            </motion.div>
+          ) : loading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {Array.from({ length: INITIAL_DISPLAY_COUNT }).map((_, idx) => (
+                <div key={idx} className="space-y-4">
+                  <Skeleton className="h-48 w-full rounded-xl" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              ))}
+            </motion.div>
+          ) : filteredVideos.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -211,12 +302,13 @@ export default function MediaVideosPage() {
               </p>
             </motion.div>
           ) : (
-            <div className={
-              viewMode === "grid" 
-                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                : "space-y-8"
-            }>
-              {filteredVideos.map((video, idx) => (
+            <>
+              <div className={
+                viewMode === "grid" 
+                  ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                  : "space-y-8"
+              }>
+                {displayedVideos.map((video, idx) => (
                 <motion.div
                   key={video.slugEn}
                   initial={{ opacity: 0, y: 20 }}
@@ -267,19 +359,21 @@ export default function MediaVideosPage() {
                             <div className="flex items-center gap-4 text-sm text-muted-foreground">
                               <div className="flex items-center gap-1">
                                 <Eye className="w-4 h-4" />
-                                <span>{video.views.toLocaleString()}</span>
+                                <span>{(video.views || 0).toLocaleString()}</span>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4" />
-                                <span>{isEnglish ? video.locationEn : video.locationAr}</span>
-                              </div>
+                              {(video.locationEn || video.locationAr) && (
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" />
+                                  <span>{isEnglish ? video.locationEn : video.locationAr}</span>
+                                </div>
+                              )}
                               <div className="flex items-center gap-1">
                                 <Clock className="w-4 h-4" />
                                 <span>{formatDuration(video.width, video.height)}</span>
                               </div>
                             </div>
                             <Button asChild variant="outline" className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-950/30 dark:to-pink-950/30 border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/50">
-                              <a href={video.url} target="_blank" rel="noopener noreferrer">
+                              <a href={`/${locale}/media/videos/${isEnglish ? video.slugEn : video.slugAr}`}>
                                 <Play className="w-4 h-4 mr-2" />
                                 {isEnglish ? "Watch Video" : "مشاهدة الفيديو"}
                               </a>
@@ -292,6 +386,30 @@ export default function MediaVideosPage() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Show More Button */}
+            {hasMoreVideos && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="flex justify-center mt-12"
+              >
+                <Button
+                  onClick={handleShowMore}
+                  variant="outline"
+                  size="lg"
+                  className="group hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300"
+                >
+                  <ChevronDown className="w-4 h-4 mr-2 group-hover:animate-bounce" />
+                  {isEnglish 
+                    ? `Show More Videos (${filteredVideos.length - displayedCount} remaining)`
+                    : `عرض المزيد من الفيديوهات (${filteredVideos.length - displayedCount} متبقي)`
+                  }
+                </Button>
+              </motion.div>
+            )}
+          </>
           )}
         </div>
       </section>
