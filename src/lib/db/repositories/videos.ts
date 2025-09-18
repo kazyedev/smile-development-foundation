@@ -79,6 +79,7 @@ export class VideosRepository {
       .where(
         and(
           eq(videos.isPublished, true),
+          eq(videos.isPublic, true),
           eq(videos.slugEn, slug)
         )
       )
@@ -93,6 +94,7 @@ export class VideosRepository {
       .where(
         and(
           eq(videos.isPublished, true),
+          eq(videos.isPublic, true),
           eq(videos.slugAr, slug)
         )
       )
@@ -200,16 +202,28 @@ export class VideosRepository {
 
   // Increment video views
   static async incrementViews(id: number): Promise<number> {
+    // First get the current views count
+    const [currentVideo] = await database()
+      .select({ views: videos.views })
+      .from(videos)
+      .where(eq(videos.id, id))
+      .limit(1);
+    
+    if (!currentVideo) return 0;
+    
+    const newViews = (currentVideo.views || 0) + 1;
+    
+    // Update with the new views count
     const [updated] = await database()
       .update(videos)
       .set({
-        views: videos.views + 1,
+        views: newViews,
         updatedAt: new Date(),
       })
       .where(eq(videos.id, id))
       .returning({ views: videos.views });
     
-    return updated?.views || 0;
+    return updated?.views || newViews;
   }
 
   // Get published videos count

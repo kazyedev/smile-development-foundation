@@ -3,26 +3,32 @@ import { VideosRepository } from "@/lib/db/repositories/videos";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = decodeURIComponent(params.slug);
+    const { slug } = await params;
+    const decodedSlug = decodeURIComponent(slug);
     
-    const video = await VideosRepository.findBySlug(slug);
+    const video = await VideosRepository.findBySlug(decodedSlug);
     
     if (!video) {
       return NextResponse.json(
         {
           success: false,
           error: "Video not found",
-          details: `No video found with slug: ${slug}`
+          details: `No video found with slug: ${decodedSlug}`
         },
         { status: 404 }
       );
     }
 
     // Increment views when video is accessed
-    await VideosRepository.incrementViews(video.id);
+    try {
+      await VideosRepository.incrementViews(video.id);
+    } catch (viewError) {
+      console.error(`Error incrementing views for video ${video.id}:`, viewError);
+      // Don't fail the request if view increment fails
+    }
 
     return NextResponse.json({
       success: true,
