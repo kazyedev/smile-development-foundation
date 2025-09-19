@@ -8,6 +8,20 @@
       "when": 1758167179202,
       "tag": "0000_mighty_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1758300696374,
+      "tag": "0001_tan_adam_warlock",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1758300743181,
+      "tag": "0002_first_johnny_storm",
+      "breakpoints": true
     }
   ]
 }

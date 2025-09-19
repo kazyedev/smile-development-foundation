@@ -35,7 +35,7 @@ export const images = pgTable("images", {
   
   // Visibility and categorization
   isPublic: boolean("is_public").notNull().default(true),
-  programId: bigint("program_id", { mode: "number" }),
+  programId: integer("program_id"),
   projectId: bigint("project_id", { mode: "number" }),
   activityId: bigint("activity_id", { mode: "number" }),
   categoryId: bigint("category_id", { mode: "number" }),

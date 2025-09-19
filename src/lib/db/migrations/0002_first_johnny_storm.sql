@@ -1,0 +1,1 @@
+ALTER TABLE "images" ALTER COLUMN "program_id" SET DATA TYPE integer;
