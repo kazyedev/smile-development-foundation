@@ -1,40 +1,86 @@
 "use client";
 
-import { mockPhotos } from "@/data/mockPhotos";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Camera, Search, Filter, Grid, List, Eye, Calendar, Tag, Aperture, ImageIcon } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Camera, Search, Filter, Grid, List, Eye, Calendar, Tag, Aperture, ImageIcon, Loader2, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Image as ImageType } from "@/types/photo";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MediaImagesPage() {
   const params = useParams<{ locale: string }>();
   const locale = params?.locale || 'en';
-  const isEn = locale === 'en';
+  const isEnglish = locale === 'en';
   
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "masonry">("masonry");
+  const [allImages, setAllImages] = useState<ImageType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [displayedCount, setDisplayedCount] = useState(9);
 
-  // Filter photos based on search and category
-  const filteredPhotos = mockPhotos.filter(photo => {
+  const INITIAL_DISPLAY_COUNT = 9;
+  const LOAD_MORE_COUNT = 6;
+
+  // Fetch all images once on component mount
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/images?published=true&isPublic=true');
+        if (!response.ok) {
+          throw new Error('Failed to fetch images');
+        }
+        
+        const data = await response.json();
+        setAllImages(data.items || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching images:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
+  // Client-side filtering
+  const filteredPhotos = allImages.filter(image => {
     const matchesSearch = searchTerm === "" || 
-      (isEn ? photo.titleEn : photo.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (isEn ? photo.descriptionEn : photo.descriptionAr)?.toLowerCase().includes(searchTerm.toLowerCase());
+      (isEnglish ? image.titleEn : image.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (isEnglish ? image.descriptionEn : image.descriptionAr)?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesCategory = selectedCategory === "all" || 
-      (isEn ? photo.tagsEn : photo.tagsAr)?.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
+      (isEnglish ? image.tagsEn : image.tagsAr)?.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase());
     
     return matchesSearch && matchesCategory;
   });
 
-  // Get unique categories
+  // Reset displayed count when filters change
+  useEffect(() => {
+    setDisplayedCount(INITIAL_DISPLAY_COUNT);
+  }, [searchTerm, selectedCategory]);
+
+  // Get unique categories from all images
   const allCategories = Array.from(new Set(
-    mockPhotos.flatMap(photo => isEn ? photo.tagsEn || [] : photo.tagsAr || [])
+    allImages.flatMap(image => isEnglish ? image.tagsEn || [] : image.tagsAr || [])
   ));
+
+  // Images to display (with pagination)
+  const displayedPhotos = filteredPhotos.slice(0, displayedCount);
+  const hasMorePhotos = filteredPhotos.length > displayedCount;
+
+  const handleShowMore = () => {
+    setDisplayedCount(prev => Math.min(prev + LOAD_MORE_COUNT, filteredPhotos.length));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-blue-50/20 dark:to-blue-950/10">
@@ -57,17 +103,17 @@ export default function MediaImagesPage() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium mb-6">
               <Camera className="w-4 h-4" />
-              {isEn ? "Visual Stories" : "قصص بصرية"}
+              {isEnglish ? "Visual Stories" : "قصص بصرية"}
             </div>
             
             <h1 className="text-4xl lg:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                {isEn ? "Photo Gallery" : "معرض الصور"}
+                {isEnglish ? "Photo Gallery" : "معرض الصور"}
               </span>
             </h1>
             
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-              {isEn 
+              {isEnglish 
                 ? "Explore our visual journey through impactful moments captured across our projects, programs, and community initiatives. Every image tells a story of transformation and hope."
                 : "استكشف رحلتنا البصرية من خلال اللحظات المؤثرة التي تم التقاطها عبر مشاريعنا وبرامجنا ومبادراتنا المجتمعية. كل صورة تحكي قصة تحول وأمل."
               }
@@ -76,16 +122,24 @@ export default function MediaImagesPage() {
             {/* Gallery Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600 mb-1">{mockPhotos.length}</div>
-                <div className="text-sm text-muted-foreground">{isEn ? "Photos" : "صورة"}</div>
+                <div className="text-3xl font-bold text-blue-600 mb-1">
+                  {loading ? <Skeleton className="h-9 w-12 mx-auto" /> : allImages.length}
+                </div>
+                <div className="text-sm text-muted-foreground">{isEnglish ? "Photos" : "صورة"}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-indigo-500 mb-1">{allCategories.length}</div>
-                <div className="text-sm text-muted-foreground">{isEn ? "Categories" : "فئة"}</div>
+                <div className="text-3xl font-bold text-indigo-500 mb-1">
+                  {loading ? <Skeleton className="h-9 w-8 mx-auto" /> : allCategories.length}
+                </div>
+                <div className="text-sm text-muted-foreground">{isEnglish ? "Categories" : "فئة"}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-500 mb-1">50K+</div>
-                <div className="text-sm text-muted-foreground">{isEn ? "Views" : "مشاهدة"}</div>
+                <div className="text-3xl font-bold text-purple-500 mb-1">
+                  {loading ? <Skeleton className="h-9 w-16 mx-auto" /> : 
+                    (allImages.reduce((total, image) => total + (image.views || 0), 0).toLocaleString() + "+")
+                  }
+                </div>
+                <div className="text-sm text-muted-foreground">{isEnglish ? "Total Views" : "إجمالي المشاهدات"}</div>
               </div>
             </div>
           </motion.div>
@@ -106,7 +160,7 @@ export default function MediaImagesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder={isEn ? "Search photos..." : "البحث في الصور..."}
+                placeholder={isEnglish ? "Search photos..." : "البحث في الصور..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 h-12"
@@ -121,7 +175,7 @@ export default function MediaImagesPage() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-4 py-2 rounded-lg border border-border bg-background text-foreground h-12"
               >
-                <option value="all">{isEn ? "All Categories" : "جميع الفئات"}</option>
+                <option value="all">{isEnglish ? "All Categories" : "جميع الفئات"}</option>
                 {allCategories.map(category => (
                   <option key={category} value={category}>{category}</option>
                 ))}
@@ -159,15 +213,21 @@ export default function MediaImagesPage() {
             <div className="flex items-center gap-2">
               <Aperture className="w-4 h-4" />
               <span>
-                {isEn 
-                  ? `Showing ${filteredPhotos.length} of ${mockPhotos.length} photos`
-                  : `عرض ${filteredPhotos.length} من ${mockPhotos.length} صورة`
-                }
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    {isEnglish ? "Loading photos..." : "جاري تحميل الصور..."}
+                  </span>
+                ) : (
+                  isEnglish 
+                    ? `Showing ${displayedPhotos.length} of ${filteredPhotos.length} photos`
+                    : `عرض ${displayedPhotos.length} من ${filteredPhotos.length} صورة`
+                )}
               </span>
             </div>
             {selectedCategory !== "all" && (
               <div className="flex items-center gap-2">
-                <span>{isEn ? "Category:" : "الفئة:"}</span>
+                <span>{isEnglish ? "Category:" : "الفئة:"}</span>
                 <span className="px-2 py-1 bg-blue-600/10 text-blue-600 rounded-full text-xs">
                   {selectedCategory}
                 </span>
@@ -180,7 +240,38 @@ export default function MediaImagesPage() {
       {/* Photo Gallery */}
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          {filteredPhotos.length === 0 ? (
+          {error ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-16"
+            >
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-red-600">
+                {isEnglish ? "Error loading photos" : "خطأ في تحميل الصور"}
+              </h3>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>
+                {isEnglish ? "Try Again" : "حاول مرة أخرى"}
+              </Button>
+            </motion.div>
+          ) : loading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"}
+            >
+              {Array.from({ length: INITIAL_DISPLAY_COUNT }).map((_, idx) => (
+                <div key={idx} className="space-y-4">
+                  <Skeleton className="h-48 w-full rounded-xl" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              ))}
+            </motion.div>
+          ) : filteredPhotos.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -190,98 +281,123 @@ export default function MediaImagesPage() {
                 <Search className="w-8 h-8 text-muted-foreground" />
               </div>
               <h3 className="text-xl font-semibold mb-2">
-                {isEn ? "No photos found" : "لم يتم العثور على صور"}
+                {isEnglish ? "No photos found" : "لم يتم العثور على صور"}
               </h3>
               <p className="text-muted-foreground">
-                {isEn 
+                {isEnglish 
                   ? "Try adjusting your search terms or filters"
                   : "جرب تعديل مصطلحات البحث أو المرشحات"
                 }
               </p>
             </motion.div>
           ) : (
-            <div className={
-              viewMode === "masonry" 
-                ? "columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6"
-                : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            }>
-              {filteredPhotos.map((photo, idx) => (
+            <>
+              <div className={
+                viewMode === "masonry" 
+                  ? "columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6"
+                  : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              }>
+                {displayedPhotos.map((photo, idx) => (
+                  <motion.div
+                    key={photo.slugEn}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05, duration: 0.5 }}
+                    className={viewMode === "masonry" ? "break-inside-avoid mb-6" : ""}
+                  >
+                    <Link href={`/${locale}/media/images/${isEnglish ? photo.slugEn : photo.slugAr}`}>
+                      <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 hover:shadow-xl transition-all duration-500">
+                        <div className={`relative ${viewMode === "grid" ? "aspect-square" : ""} overflow-hidden`}>
+                          <Image 
+                            src={photo.url} 
+                            alt={photo.alt || (isEnglish ? photo.titleEn : photo.titleAr)} 
+                            width={400}
+                            height={viewMode === "grid" ? 400 : 100}
+                            className={`${viewMode === "grid" ? "w-full h-full object-cover" : "w-full"} group-hover:scale-105 transition-transform duration-500`}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                          
+                          {/* Overlay Info */}
+                          <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                            <h3 className="font-bold text-lg mb-1 line-clamp-1">
+                              {isEnglish ? photo.titleEn : photo.titleAr}
+                            </h3>
+                            {photo.descriptionEn && (
+                              <p className="text-sm text-white/90 line-clamp-2 mb-2">
+                                {isEnglish ? photo.descriptionEn : photo.descriptionAr}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-4 text-xs text-white/80">
+                              <div className="flex items-center gap-1">
+                                <Eye className="w-3 h-3" />
+                                <span>{photo.views || 0}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                <span>{new Date(photo.publishedAt || photo.createdAt).toLocaleDateString(isEnglish ? 'en-US' : 'ar-EG')}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Corner Badge */}
+                          <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <Camera className="w-3 h-3 inline mr-1" />
+                            {isEnglish ? 'View' : 'عرض'}
+                          </div>
+                        </div>
+                        
+                        {/* Caption for Masonry */}
+                        {viewMode === "masonry" && (
+                          <div className="p-4">
+                            <h3 className="font-semibold text-foreground mb-1 line-clamp-1">
+                              {isEnglish ? photo.titleEn : photo.titleAr}
+                            </h3>
+                            {photo.descriptionEn && (
+                              <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                                {isEnglish ? photo.descriptionEn : photo.descriptionAr}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <Eye className="w-3 h-3" />
+                                <span>{photo.views || 0}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                <span>{new Date(photo.publishedAt || photo.createdAt).toLocaleDateString(isEnglish ? 'en-US' : 'ar-EG')}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Show More Button */}
+              {hasMorePhotos && (
                 <motion.div
-                  key={photo.slugEn}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05, duration: 0.5 }}
-                  className={viewMode === "masonry" ? "break-inside-avoid mb-6" : ""}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  className="flex justify-center mt-12"
                 >
-                  <Link href={`/${locale}/media/images/${isEn ? photo.slugEn : photo.slugAr}`}>
-                    <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 hover:shadow-xl transition-all duration-500">
-                      <div className={`relative ${viewMode === "grid" ? "aspect-square" : ""} overflow-hidden`}>
-                        <Image 
-                          src={photo.url} 
-                          alt={photo.alt || (isEn ? photo.titleEn : photo.titleAr)} 
-                          width={400}
-                          height={viewMode === "grid" ? 400 : 100}
-                          className={`${viewMode === "grid" ? "w-full h-full object-cover" : "w-full"} group-hover:scale-105 transition-transform duration-500`}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        
-                        {/* Overlay Info */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                          <h3 className="font-bold text-lg mb-1 line-clamp-1">
-                            {isEn ? photo.titleEn : photo.titleAr}
-                          </h3>
-                          {photo.descriptionEn && (
-                            <p className="text-sm text-white/90 line-clamp-2 mb-2">
-                              {isEn ? photo.descriptionEn : photo.descriptionAr}
-                            </p>
-                          )}
-                          <div className="flex items-center gap-4 text-xs text-white/80">
-                            <div className="flex items-center gap-1">
-                              <Eye className="w-3 h-3" />
-                              <span>{Math.floor(Math.random() * 500) + 100}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              <span>{new Date().toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Corner Badge */}
-                        <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <Camera className="w-3 h-3 inline mr-1" />
-                          {isEn ? 'View' : 'عرض'}
-                        </div>
-                      </div>
-                      
-                      {/* Caption for Masonry */}
-                      {viewMode === "masonry" && (
-                        <div className="p-4">
-                          <h3 className="font-semibold text-foreground mb-1 line-clamp-1">
-                            {isEn ? photo.titleEn : photo.titleAr}
-                          </h3>
-                          {photo.descriptionEn && (
-                            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                              {isEn ? photo.descriptionEn : photo.descriptionAr}
-                            </p>
-                          )}
-                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Eye className="w-3 h-3" />
-                              <span>{Math.floor(Math.random() * 500) + 100}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              <span>{new Date().toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-          </motion.div>
-        ))}
-      </div>
+                  <Button
+                    onClick={handleShowMore}
+                    variant="outline"
+                    size="lg"
+                    className="group hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all duration-300"
+                  >
+                    <ChevronDown className="w-4 h-4 mr-2 group-hover:animate-bounce" />
+                    {isEnglish 
+                      ? `Show More Photos (${filteredPhotos.length - displayedCount} remaining)`
+                      : `عرض المزيد من الصور (${filteredPhotos.length - displayedCount} متبقي)`
+                    }
+                  </Button>
+                </motion.div>
+              )}
+            </>
           )}
         </div>
       </section>

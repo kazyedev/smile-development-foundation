@@ -1,5 +1,5 @@
-
 export interface Photo {
+  id: number;
   titleEn: string;
   titleAr: string;
   descriptionEn?: string;
@@ -19,15 +19,18 @@ export interface Photo {
   projectId?: number;
   activityId?: number;
   categoryId?: number;
-    slugEn: string;
+  slugEn: string;
   slugAr: string;
-  keywordsEn: string[];
-  keywordsAr: string[];
-  tagsEn: string[];
-  tagsAr: string[];
-  views: number;
-  isPublished: boolean;
-  publishedAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
-} 
+  keywordsEn?: string[];
+  keywordsAr?: string[];
+  tagsEn?: string[];
+  tagsAr?: string[];
+  views?: number;
+  isPublished?: boolean;
+  publishedAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+// Alias for compatibility
+export type Image = Photo;
