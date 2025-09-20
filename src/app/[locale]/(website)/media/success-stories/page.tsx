@@ -1,40 +1,90 @@
 "use client";
 
-import { mockStories } from "@/data/mockStories";
 import SuccessStoryCard from "@/components/website/SuccessStoryCard";
-import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Heart, Users, MapPin, Search, Filter, Grid, List, Star, Award, Sparkles } from "lucide-react";
+import { useState, useEffect, use } from "react";
+import { SuccessStory } from "@/lib/db/schema/successStories";
+import { Heart, Users, MapPin, Search, Filter, Grid, List, Star, Award, Sparkles, Loader2, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function MediaSuccessStoriesPage() {
-  const params = useParams<{ locale: string }>();
-  const locale = params?.locale || "en";
+interface MediaSuccessStoriesPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default function MediaSuccessStoriesPage({ params }: MediaSuccessStoriesPageProps) {
+  const { locale } = use(params);
   const isEn = locale === "en";
   
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [stories, setStories] = useState<SuccessStory[]>([]);
+  const [filteredStories, setFilteredStories] = useState<SuccessStory[]>([]);
+  const [allLocations, setAllLocations] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Filter stories based on search and location
-  const filteredStories = mockStories.filter(story => {
-    const matchesSearch = searchTerm === "" || 
-      (isEn ? story.titleEn : story.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (isEn ? story.personNameEn : story.personNameAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (isEn ? story.contentEn : story.contentAr).toLowerCase().includes(searchTerm.toLowerCase());
+  // Fetch stories from API
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        setLoading(true);
+        
+        const params = new URLSearchParams({
+          published: 'true',
+          limit: '100',
+          orderBy: 'publishedAt',
+          order: 'desc'
+        });
+        
+        if (searchTerm.trim()) {
+          params.append('search', searchTerm.trim());
+        }
+        
+        const response = await fetch(`/api/success-stories?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch success stories');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setStories(data.items || []);
+          
+          // Get unique locations
+          const uniqueLocations = Array.from(new Set(
+            data.items.map((story: SuccessStory) => isEn ? story.cityEn : story.cityAr)
+          ));
+          setAllLocations(uniqueLocations);
+          
+          setError(null);
+        } else {
+          throw new Error(data.error || 'Failed to fetch success stories');
+        }
+      } catch (err) {
+        console.error('Error fetching success stories:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    const matchesLocation = selectedLocation === "all" || 
-      (isEn ? story.cityEn : story.cityAr).toLowerCase() === selectedLocation.toLowerCase();
-    
-    return matchesSearch && matchesLocation;
-  });
+    fetchStories();
+  }, [searchTerm, isEn]);
 
-  // Get unique locations
-  const allLocations = Array.from(new Set(
-    mockStories.map(story => isEn ? story.cityEn : story.cityAr)
-  ));
+  // Filter stories locally based on location
+  useEffect(() => {
+    if (selectedLocation === 'all') {
+      setFilteredStories(stories);
+    } else {
+      const filtered = stories.filter(story => 
+        (isEn ? story.cityEn : story.cityAr).toLowerCase() === selectedLocation.toLowerCase()
+      );
+      setFilteredStories(filtered);
+    }
+  }, [stories, selectedLocation, isEn]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-amber-50/20 dark:to-amber-950/10">
@@ -75,10 +125,10 @@ export default function MediaSuccessStoriesPage() {
 
             {/* Stories Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-amber-600 mb-1">{mockStories.length}</div>
-                <div className="text-sm text-muted-foreground">{isEn ? "Stories Shared" : "قصة مشتركة"}</div>
-              </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-amber-600 mb-1">{loading ? '...' : stories.length}</div>
+              <div className="text-sm text-muted-foreground">{isEn ? "Stories Shared" : "قصة مشتركة"}</div>
+            </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-orange-500 mb-1">50K+</div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Lives Inspired" : "حياة ألهمت"}</div>
@@ -160,8 +210,8 @@ export default function MediaSuccessStoriesPage() {
               <Star className="w-4 h-4" />
               <span>
                 {isEn 
-                  ? `Showing ${filteredStories.length} of ${mockStories.length} stories`
-                  : `عرض ${filteredStories.length} من ${mockStories.length} قصة`
+                  ? `Showing ${filteredStories.length} of ${stories.length} stories`
+                  : `عرض ${filteredStories.length} من ${stories.length} قصة`
                 }
               </span>
             </div>
@@ -180,7 +230,36 @@ export default function MediaSuccessStoriesPage() {
       {/* Stories Grid/List */}
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          {filteredStories.length === 0 ? (
+          {loading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-20"
+            >
+              <Loader2 className="w-16 h-16 text-amber-600 mx-auto mb-6 animate-spin" />
+              <h3 className="text-2xl font-bold mb-4">
+                {isEn ? 'Loading success stories...' : 'جاري تحميل قصص النجاح...'}
+              </h3>
+            </motion.div>
+          ) : error ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-20"
+            >
+              <TrendingUp className="w-16 h-16 text-red-500 mx-auto mb-6" />
+              <h3 className="text-2xl font-bold text-red-600 mb-4">
+                {isEn ? 'Error loading success stories' : 'خطأ في تحميل قصص النجاح'}
+              </h3>
+              <p className="text-muted-foreground mb-6">{error}</p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+              >
+                {isEn ? 'Try Again' : 'حاول مرة أخرى'}
+              </Button>
+            </motion.div>
+          ) : filteredStories.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -207,7 +286,7 @@ export default function MediaSuccessStoriesPage() {
             }>
               {filteredStories.map((story, idx) => (
                 <motion.div
-                  key={story.slugEn}
+                  key={story.slug}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1, duration: 0.5 }}
@@ -254,7 +333,7 @@ export default function MediaSuccessStoriesPage() {
                             </p>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            {(isEn ? story.tagsEn : story.tagsAr).slice(0, 4).map(tag => (
+                            {story.tags && story.tags.slice(0, 4).map(tag => (
                               <span key={tag} className="px-3 py-1 bg-amber-600/10 text-amber-600 rounded-full text-xs font-medium">
                                 #{tag}
                               </span>
@@ -272,7 +351,7 @@ export default function MediaSuccessStoriesPage() {
                               </div>
                             </div>
                             <Button asChild variant="outline" className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/50">
-                              <a href={`/${locale}/media/success-stories/${isEn ? story.slugEn : story.slugAr}`}>
+                              <a href={`/${locale}/media/success-stories/${story.slug}`}>
                                 {isEn ? "Read Story" : "قراءة القصة"}
                               </a>
                             </Button>

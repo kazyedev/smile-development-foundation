@@ -1,19 +1,105 @@
 "use client";
 
-import { mockStories } from "@/data/mockStories";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { motion } from "framer-motion";
-import { Heart, Users, MapPin, Calendar, Eye, ArrowLeft, Share2, Bookmark, Quote, Star, Award, Sparkles } from "lucide-react";
+import { useState, useEffect, use } from "react";
+import { SuccessStory } from "@/lib/db/schema/successStories";
+import { Heart, Users, MapPin, Calendar, Eye, ArrowLeft, Share2, Bookmark, Quote, Star, Award, Sparkles, Loader2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export default function MediaSuccessStoryDetailPage({ params: { slug, locale } }: { params: { slug: string; locale: string } }) {
-  const decoded = decodeURIComponent(slug);
+interface MediaSuccessStoryDetailPageProps {
+  params: Promise<{ slug: string; locale: string }>;
+}
+
+export default function MediaSuccessStoryDetailPage({ params }: MediaSuccessStoryDetailPageProps) {
+  const { slug, locale } = use(params);
+  const decodedSlug = decodeURIComponent(slug);
   const isEn = locale === 'en';
-  const story = mockStories.find(s => s.slugEn === decoded || s.slugAr === decoded);
   
-  if (!story) return notFound();
+  const [story, setStory] = useState<SuccessStory | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchStory = async () => {
+      try {
+        setLoading(true);
+        
+        const response = await fetch(`/api/success-stories/${decodedSlug}`);
+        
+        if (response.status === 404) {
+          notFound();
+          return;
+        }
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch success story');
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success || !data.item) {
+          throw new Error(data.error || 'Success story not found');
+        }
+        
+        setStory(data.item);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching success story:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (decodedSlug) {
+      fetchStory();
+    }
+  }, [decodedSlug]);
+  
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(isEn ? 'en-US' : 'ar-EG');
+  };
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-amber-50/20 dark:to-amber-950/10 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 text-amber-600 mx-auto mb-4 animate-spin" />
+          <h3 className="text-2xl font-bold mb-2">
+            {isEn ? 'Loading success story...' : 'جاري تحميل قصة النجاح...'}
+          </h3>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-amber-50/20 dark:to-amber-950/10 flex items-center justify-center">
+        <div className="text-center">
+          <TrendingUp className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-red-600 mb-2">
+            {isEn ? 'Error loading success story' : 'خطأ في تحميل قصة النجاح'}
+          </h3>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+          >
+            {isEn ? 'Try Again' : 'حاول مرة أخرى'}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!story) {
+    notFound();
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-amber-50/20 dark:to-amber-950/10">
@@ -81,10 +167,12 @@ export default function MediaSuccessStoryDetailPage({ params: { slug, locale } }
 
                 {/* Meta Info */}
                 <div className="flex flex-wrap items-center gap-6 text-white/80 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>{new Date(story.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
-                  </div>
+                  {story.publishedAt && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>{formatDate(story.publishedAt)}</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
                     <Eye className="w-4 h-4" />
                     <span>{story.pageViews.toLocaleString(isEn ? 'en-US' : 'ar-EG')} {isEn ? 'reads' : 'قراءة'}</span>
@@ -166,13 +254,15 @@ export default function MediaSuccessStoryDetailPage({ params: { slug, locale } }
                   <span className="text-muted-foreground">{isEn ? "Story Reads" : "قراءات القصة"}</span>
                   <span className="font-semibold">{story.pageViews.toLocaleString(isEn ? 'en-US' : 'ar-EG')}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">{isEn ? "Published" : "تاريخ النشر"}</span>
-                  <span className="font-semibold">{new Date(story.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
-                </div>
+                {story.publishedAt && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">{isEn ? "Published" : "تاريخ النشر"}</span>
+                    <span className="font-semibold">{formatDate(story.publishedAt)}</span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">{isEn ? "Last Updated" : "آخر تحديث"}</span>
-                  <span className="font-semibold">{new Date(story.updatedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
+                  <span className="font-semibold">{formatDate(story.updatedAt)}</span>
                 </div>
               </div>
             </div>
@@ -190,21 +280,25 @@ export default function MediaSuccessStoryDetailPage({ params: { slug, locale } }
               {isEn ? 'Story Themes & Keywords' : 'مواضيع ومفاتيح القصة'}
             </h3>
             
-            <div className="flex flex-wrap justify-center gap-3 mb-6">
-              {(isEn ? story.keywordsEn : story.keywordsAr).map((keyword) => (
-                <span key={keyword} className="px-4 py-2 bg-muted text-muted-foreground rounded-full text-sm hover:bg-amber-600/10 hover:text-amber-600 transition-colors cursor-pointer">
-                  {keyword}
-                </span>
-              ))}
-            </div>
+            {story.keywords && story.keywords.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-3 mb-6">
+                {story.keywords.map((keyword) => (
+                  <span key={keyword} className="px-4 py-2 bg-muted text-muted-foreground rounded-full text-sm hover:bg-amber-600/10 hover:text-amber-600 transition-colors cursor-pointer">
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            )}
             
-            <div className="flex flex-wrap justify-center gap-3">
-              {(isEn ? story.tagsEn : story.tagsAr).map((tag) => (
-                <span key={tag} className="px-4 py-2 bg-amber-600/10 text-amber-600 rounded-full text-sm font-medium hover:bg-amber-600/20 transition-colors cursor-pointer">
-                  #{tag}
-                </span>
-              ))}
-            </div>
+            {story.tags && story.tags.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-3">
+                {story.tags.map((tag) => (
+                  <span key={tag} className="px-4 py-2 bg-amber-600/10 text-amber-600 rounded-full text-sm font-medium hover:bg-amber-600/20 transition-colors cursor-pointer">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Call to Action */}
