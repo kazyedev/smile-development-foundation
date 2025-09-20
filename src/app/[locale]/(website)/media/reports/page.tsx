@@ -1,38 +1,89 @@
 "use client";
 
-import { mockReports } from "@/data/mockReports";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { BarChart3, Search, Filter, Grid, List, TrendingUp, Calendar, Users, Target, Download, FileText } from "lucide-react";
+import { useState, useEffect, use } from "react";
+import { Report } from "@/lib/db/schema/reports";
+import { BarChart3, Search, Filter, Grid, List, TrendingUp, Calendar, Users, Target, Download, FileText, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function MediaReportsPage() {
-  const params = useParams<{ locale: string }>();
-  const locale = params?.locale || 'en';
+interface MediaReportsPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default function MediaReportsPage({ params }: MediaReportsPageProps) {
+  const { locale } = use(params);
   const isEn = locale === 'en';
   
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [reports, setReports] = useState<Report[]>([]);
+  const [filteredReports, setFilteredReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock report categories
+  // Report categories
   const reportCategories = ["Impact", "Financial", "Research", "Annual", "Project", "Evaluation"];
 
-  // Filter reports based on search and category
-  const filteredReports = mockReports.filter(report => {
-    const matchesSearch = searchTerm === "" || 
-      (isEn ? report.titleEn : report.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (isEn ? report.descriptionEn : report.descriptionAr)?.toLowerCase().includes(searchTerm.toLowerCase());
+  // Fetch reports from API
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        setLoading(true);
+        
+        const params = new URLSearchParams({
+          published: 'true',
+          limit: '100',
+          orderBy: 'publishedAt',
+          order: 'desc'
+        });
+        
+        if (searchTerm.trim()) {
+          params.append('search', searchTerm.trim());
+        }
+        
+        const response = await fetch(`/api/reports?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch reports');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setReports(data.items || []);
+          setError(null);
+        } else {
+          throw new Error(data.error || 'Failed to fetch reports');
+        }
+      } catch (err) {
+        console.error('Error fetching reports:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    const matchesCategory = selectedCategory === "all" || 
-      reportCategories.some(cat => cat.toLowerCase() === selectedCategory.toLowerCase());
-    
-    return matchesSearch && matchesCategory;
-  });
+    fetchReports();
+  }, [searchTerm]);
+
+  // Filter reports locally based on category
+  useEffect(() => {
+    if (selectedCategory === 'all') {
+      setFilteredReports(reports);
+    } else {
+      // For now, filter based on tags - you can enhance this based on your category system
+      const filtered = reports.filter(report => 
+        report.tags && report.tags.some(tag => 
+          tag.toLowerCase().includes(selectedCategory.toLowerCase())
+        )
+      );
+      setFilteredReports(filtered);
+    }
+  }, [reports, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-slate-50/20 dark:to-slate-950/10">
@@ -75,10 +126,10 @@ export default function MediaReportsPage() {
 
             {/* Reports Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-slate-600 mb-1">{mockReports.length}</div>
-                <div className="text-sm text-muted-foreground">{isEn ? "Reports" : "تقرير"}</div>
-              </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-slate-600 mb-1">{loading ? '...' : reports.length}</div>
+              <div className="text-sm text-muted-foreground">{isEn ? "Reports" : "تقرير"}</div>
+            </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-gray-500 mb-1">98%</div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Transparency" : "شفافية"}</div>
@@ -164,8 +215,8 @@ export default function MediaReportsPage() {
               <TrendingUp className="w-4 h-4" />
               <span>
                 {isEn 
-                  ? `Showing ${filteredReports.length} of ${mockReports.length} reports`
-                  : `عرض ${filteredReports.length} من ${mockReports.length} تقرير`
+                  ? `Showing ${filteredReports.length} of ${reports.length} reports`
+                  : `عرض ${filteredReports.length} من ${reports.length} تقرير`
                 }
               </span>
             </div>
@@ -184,7 +235,36 @@ export default function MediaReportsPage() {
       {/* Reports Gallery */}
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          {filteredReports.length === 0 ? (
+          {loading ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-20"
+            >
+              <Loader2 className="w-16 h-16 text-slate-600 mx-auto mb-6 animate-spin" />
+              <h3 className="text-2xl font-bold mb-4">
+                {isEn ? 'Loading reports...' : 'جاري تحميل التقارير...'}
+              </h3>
+            </motion.div>
+          ) : error ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-20"
+            >
+              <TrendingUp className="w-16 h-16 text-red-500 mx-auto mb-6" />
+              <h3 className="text-2xl font-bold text-red-600 mb-4">
+                {isEn ? 'Error loading reports' : 'خطأ في تحميل التقارير'}
+              </h3>
+              <p className="text-muted-foreground mb-6">{error}</p>
+              <Button
+                onClick={() => window.location.reload()}
+                className="bg-gradient-to-r from-slate-500 to-gray-500 text-white"
+              >
+                {isEn ? 'Try Again' : 'حاول مرة أخرى'}
+              </Button>
+            </motion.div>
+          ) : filteredReports.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -211,14 +291,14 @@ export default function MediaReportsPage() {
             }>
               {filteredReports.map((report, idx) => (
                 <motion.div
-                  key={report.slugEn}
+                  key={report.slug}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1, duration: 0.5 }}
                   className={viewMode === "list" ? "w-full" : ""}
                 >
                   {viewMode === "grid" ? (
-                    <Link href={`/${locale}/media/reports/${isEn ? report.slugEn : report.slugAr}`}>
+                    <Link href={`/${locale}/media/reports/${report.slug}`}>
                       <div className="group bg-gradient-to-br from-slate-50/50 to-gray-50/30 dark:from-slate-950/20 dark:to-gray-950/10 border border-border rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-500">
                         <div className="relative aspect-[4/3] overflow-hidden">
                           {report.featuredImageUrl ? (
@@ -258,13 +338,15 @@ export default function MediaReportsPage() {
                             </p>
                           )}
                           <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                            {report.publishedAt && (
+                              <div className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                <span>{new Date(report.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
+                              </div>
+                            )}
                             <div className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              <span>{new Date(report.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Users className="w-3 h-3" />
-                              <span>{Math.floor(Math.random() * 500) + 100} {isEn ? 'readers' : 'قارئ'}</span>
+                              <Download className="w-3 h-3" />
+                              <span>{report.downloads || 0} {isEn ? 'downloads' : 'تحميل'}</span>
                             </div>
                           </div>
                         </div>
@@ -305,13 +387,15 @@ export default function MediaReportsPage() {
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              {report.publishedAt && (
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="w-4 h-4" />
+                                  <span>{new Date(report.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
+                                </div>
+                              )}
                               <div className="flex items-center gap-1">
-                                <Calendar className="w-4 h-4" />
-                                <span>{new Date(report.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Users className="w-4 h-4" />
-                                <span>{Math.floor(Math.random() * 500) + 100} {isEn ? 'readers' : 'قارئ'}</span>
+                                <Download className="w-4 h-4" />
+                                <span>{report.downloads || 0} {isEn ? 'downloads' : 'تحميل'}</span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <TrendingUp className="w-4 h-4" />
@@ -320,13 +404,15 @@ export default function MediaReportsPage() {
                             </div>
                             <div className="flex gap-2">
                               <Button asChild variant="outline" size="sm">
-                                <Link href={`/${locale}/media/reports/${isEn ? report.slugEn : report.slugAr}`}>
+                                <Link href={`/${locale}/media/reports/${report.slug}`}>
                                   {isEn ? "View Report" : "عرض التقرير"}
                                 </Link>
                               </Button>
-                              <Button size="sm" className="bg-gradient-to-r from-slate-500 to-gray-500 hover:from-slate-600 hover:to-gray-600 text-white">
-                                <Download className="w-4 h-4 mr-2" />
-                                {isEn ? "Download" : "تحميل"}
+                              <Button asChild size="sm" className="bg-gradient-to-r from-slate-500 to-gray-500 hover:from-slate-600 hover:to-gray-600 text-white">
+                                <a href={report.url} target="_blank" rel="noopener noreferrer">
+                                  <Download className="w-4 h-4 mr-2" />
+                                  {isEn ? "Download" : "تحميل"}
+                                </a>
                               </Button>
                             </div>
                           </div>
