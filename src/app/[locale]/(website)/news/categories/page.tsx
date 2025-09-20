@@ -1,22 +1,86 @@
 "use client";
 
-import { mockNewsCategories } from "@/data/mockNewsCategories";
-import { mockNews } from "@/data/mockNews";
+import { NewsCategory } from "@/lib/db/schema/newsCategories";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { FolderOpen, Newspaper, ArrowRight, Hash, TrendingUp, Calendar, Eye } from "lucide-react";
+import { useState, useEffect } from "react";
+import { FolderOpen, Newspaper, ArrowRight, Hash, TrendingUp, Calendar, Eye, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NewsCategoriesPage() {
   const params = useParams<{ locale: string }>();
   const locale = params?.locale || 'en';
   const isEn = locale === 'en';
-
+  
+  const [newsCategories, setNewsCategories] = useState<NewsCategory[]>([]);
+  const [newsCounts, setNewsCounts] = useState<Record<number, number>>({});
+  const [totalNews, setTotalNews] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch categories and total news count in parallel
+        const [categoriesResponse, newsResponse] = await Promise.all([
+          fetch('/api/news-categories?published=true&orderBy=nameEn&order=asc'),
+          fetch('/api/news?published=true&limit=1')
+        ]);
+        
+        if (!categoriesResponse.ok || !newsResponse.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        
+        const categoriesData = await categoriesResponse.json();
+        const newsData = await newsResponse.json();
+        
+        if (!categoriesData.success) {
+          throw new Error(categoriesData.error || 'Failed to fetch categories');
+        }
+        
+        if (!newsData.success) {
+          throw new Error(newsData.error || 'Failed to fetch news');
+        }
+        
+        setNewsCategories(categoriesData.items || []);
+        setTotalNews(newsData.total || 0);
+        
+        // Fetch news count for each category
+        const counts: Record<number, number> = {};
+        for (const category of categoriesData.items || []) {
+          try {
+            const categoryNewsResponse = await fetch(`/api/news?published=true&categoryId=${category.id}&limit=1`);
+            if (categoryNewsResponse.ok) {
+              const categoryNewsData = await categoryNewsResponse.json();
+              if (categoryNewsData.success) {
+                counts[category.id] = categoryNewsData.total || 0;
+              }
+            }
+          } catch (err) {
+            console.warn(`Failed to fetch count for category ${category.id}:`, err);
+            counts[category.id] = 0;
+          }
+        }
+        setNewsCounts(counts);
+        
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+  
   // Get article count for each category
   const getCategoryCount = (categoryId: number) => {
-    return mockNews.filter(news => news.categoryId === categoryId).length;
+    return newsCounts[categoryId] || 0;
   };
 
   return (
@@ -59,11 +123,11 @@ export default function NewsCategoriesPage() {
             {/* Categories Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600 mb-1">{mockNewsCategories.length}</div>
+                <div className="text-3xl font-bold text-orange-600 mb-1">{loading ? '...' : newsCategories.length}</div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Categories" : "فئة"}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-500 mb-1">{mockNews.length}</div>
+                <div className="text-3xl font-bold text-yellow-500 mb-1">{loading ? '...' : totalNews}</div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Total Articles" : "إجمالي المقالات"}</div>
               </div>
               <div className="text-center">
@@ -78,10 +142,38 @@ export default function NewsCategoriesPage() {
       {/* Categories Grid */}
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
+          {loading ? (
+            <div className="text-center py-16">
+              <Loader2 className="w-8 h-8 animate-spin text-orange-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">
+                {isEn ? "Loading categories..." : "جارٍ تحميل الفئات..."}
+              </h3>
+            </div>
+          ) : error ? (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-red-600">
+                {isEn ? "Error loading categories" : "خطأ في تحميل الفئات"}
+              </h3>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>
+                {isEn ? "Try Again" : "حاول مرة أخرى"}
+              </Button>
+            </div>
+          ) : newsCategories.length === 0 ? (
+            <div className="text-center py-16">
+              <FolderOpen className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">
+                {isEn ? "No categories found" : "لا توجد فئات"}
+              </h3>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mockNewsCategories.map((category, idx) => (
+            {newsCategories.map((category, idx) => (
               <motion.div
-                key={category.slugEn}
+                key={category.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1, duration: 0.5 }}
@@ -89,12 +181,7 @@ export default function NewsCategoriesPage() {
                 <Link href={`/${locale}/news/categories/${isEn ? category.slugEn : category.slugAr}`}>
                   <article className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 border border-border hover:shadow-xl transition-all duration-500">
                     <div className="relative aspect-[4/3] overflow-hidden">
-                      <Image
-                        src={category.featuredImageUrl}
-                        alt={isEn ? category.titleEn : category.titleAr}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-yellow-100 dark:from-orange-900 dark:to-yellow-900"></div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                       
                       {/* Article Count Badge */}
@@ -110,10 +197,13 @@ export default function NewsCategoriesPage() {
                       {/* Category Title */}
                       <div className="absolute bottom-0 left-0 right-0 p-6">
                         <h3 className="text-2xl font-bold text-white mb-2">
-                          {isEn ? category.titleEn : category.titleAr}
+                          {isEn ? category.nameEn : category.nameAr}
                         </h3>
                         <p className="text-white/90 text-sm line-clamp-2 mb-4">
-                          {isEn ? "Explore the latest articles in this category" : "استكشف آخر المقالات في هذه الفئة"}
+                          {category.descriptionEn || category.descriptionAr ? 
+                            (isEn ? category.descriptionEn : category.descriptionAr) :
+                            (isEn ? "Explore the latest articles in this category" : "استكشف آخر المقالات في هذه الفئة")
+                          }
                         </p>
                         
                         {/* View Category Button */}
@@ -143,6 +233,7 @@ export default function NewsCategoriesPage() {
               </motion.div>
             ))}
           </div>
+          )}
         </div>
       </section>
 
@@ -213,9 +304,9 @@ export default function NewsCategoriesPage() {
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {mockNewsCategories.slice(0, 3).map((category, idx) => (
+            {newsCategories.slice(0, 3).map((category, idx) => (
               <motion.div
-                key={`popular-${category.slugEn}`}
+                key={`popular-${category.id}`}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1, duration: 0.5 }}
@@ -228,7 +319,7 @@ export default function NewsCategoriesPage() {
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold group-hover:text-orange-600 transition-colors">
-                          {isEn ? category.titleEn : category.titleAr}
+                          {isEn ? category.nameEn : category.nameAr}
                         </h3>
                         <p className="text-sm text-muted-foreground">
                           {getCategoryCount(category.id)} {isEn ? 'articles' : 'مقال'}

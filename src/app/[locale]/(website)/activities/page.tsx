@@ -1,39 +1,89 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { mockActivities, mockActivityCategories } from '@/data/mockActivities';
-import { Activity as ActivityIcon, Calendar, Eye, Users, Search, Filter, Grid, List, ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
+import { Activity } from '@/lib/db/schema/activities';
+import { Activity as ActivityIcon, Calendar, Eye, Users, Search, Filter, Grid, List, ArrowRight, Sparkles, TrendingUp, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
 
 interface ActivitiesPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export default function ActivitiesPage({ params: { locale } }: ActivitiesPageProps) {
+export default function ActivitiesPage({ params }: ActivitiesPageProps) {
+  const { locale } = use(params);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [filteredActivities, setFilteredActivities] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const isEn = locale === 'en';
   
-  // Filter activities
-  const filteredActivities = mockActivities.filter(activity => {
-    const matchesSearch = searchQuery === '' || 
-      (isEn ? activity.titleEn : activity.titleAr).toLowerCase().includes(searchQuery.toLowerCase());
+  // Fetch activities from API
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        setLoading(true);
+        
+        const params = new URLSearchParams({
+          published: 'true',
+          limit: '100',
+          orderBy: 'publishedAt',
+          order: 'desc'
+        });
+        
+        if (searchQuery.trim()) {
+          params.append('search', searchQuery.trim());
+        }
+        
+        const response = await fetch(`/api/activities?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch activities');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setActivities(data.items || []);
+          setError(null);
+        } else {
+          throw new Error(data.error || 'Failed to fetch activities');
+        }
+      } catch (err) {
+        console.error('Error fetching activities:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    const matchesCategory = selectedCategory === 'all' || 
-      (isEn ? activity.tagsEn : activity.tagsAr).some(tag => 
-        mockActivityCategories.find(cat => cat.id.toString() === selectedCategory)?.[isEn ? 'nameEn' : 'nameAr'] === tag
+    fetchActivities();
+  }, [searchQuery]);
+  
+  // Filter activities locally based on category (using tags)
+  useEffect(() => {
+    if (selectedCategory === 'all') {
+      setFilteredActivities(activities);
+    } else {
+      // Filter based on tags array
+      const filtered = activities.filter(activity => 
+        activity.tags && activity.tags.some(tag => 
+          tag.toLowerCase().includes(selectedCategory.toLowerCase())
+        )
       );
-    
-    return matchesSearch && matchesCategory;
-  });
+      setFilteredActivities(filtered);
+    }
+  }, [activities, selectedCategory]);
 
-  const formatDate = (date: Date) => {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
     if (isEn) {
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
@@ -121,11 +171,11 @@ export default function ActivitiesPage({ params: { locale } }: ActivitiesPagePro
                 transition={{ duration: 0.8, delay: 0.3 }}
                 className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
               >
-                {[
-                  { icon: ActivityIcon, value: '50+', label: isEn ? 'Activities Completed' : 'نشاط مكتمل' },
-                  { icon: Users, value: '2,500+', label: isEn ? 'Participants Reached' : 'مشارك تم الوصول إليه' },
-                  { icon: TrendingUp, value: '15', label: isEn ? 'Communities Served' : 'مجتمع تم خدمته' }
-                ].map((stat, index) => (
+              {[
+                { icon: ActivityIcon, value: loading ? '...' : `${activities.length}+`, label: isEn ? 'Activities Completed' : 'نشاط مكتمل' },
+                { icon: Users, value: '2,500+', label: isEn ? 'Participants Reached' : 'مشارك تم الوصول إليه' },
+                { icon: TrendingUp, value: '15', label: isEn ? 'Communities Served' : 'مجتمع تم خدمته' }
+              ].map((stat, index) => (
                   <div key={index} className="text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] rounded-2xl mb-4">
                       <stat.icon className="w-8 h-8 text-white" />
@@ -172,11 +222,10 @@ export default function ActivitiesPage({ params: { locale } }: ActivitiesPagePro
                     className="px-4 py-3 bg-[var(--background)]/50 border border-[var(--border)] rounded-xl focus:border-[var(--brand-primary)] outline-none"
                   >
                     <option value="all">{isEn ? 'All Categories' : 'جميع الفئات'}</option>
-                    {mockActivityCategories.map((category) => (
-                      <option key={category.id} value={category.id.toString()}>
-                        {isEn ? category.nameEn : category.nameAr}
-                      </option>
-                    ))}
+                    <option value="community">{isEn ? 'Community' : 'مجتمعي'}</option>
+                    <option value="education">{isEn ? 'Education' : 'تعليم'}</option>
+                    <option value="health">{isEn ? 'Health' : 'صحة'}</option>
+                    <option value="environment">{isEn ? 'Environment' : 'بيئة'}</option>
                   </select>
                 </div>
 
@@ -210,8 +259,8 @@ export default function ActivitiesPage({ params: { locale } }: ActivitiesPagePro
                 <div className="flex items-center justify-between">
                   <span className="text-[var(--muted-foreground)]">
                     {isEn 
-                      ? `Showing ${filteredActivities.length} of ${mockActivities.length} activities`
-                      : `عرض ${filteredActivities.length} من ${mockActivities.length} نشاط`
+                      ? `Showing ${filteredActivities.length} of ${activities.length} activities`
+                      : `عرض ${filteredActivities.length} من ${activities.length} نشاط`
                     }
                   </span>
                   {(searchQuery || selectedCategory !== 'all') && (
@@ -235,7 +284,38 @@ export default function ActivitiesPage({ params: { locale } }: ActivitiesPagePro
         <section className="pb-20 px-8">
           <div className="container mx-auto max-w-6xl">
             <AnimatePresence mode="wait">
-              {filteredActivities.length === 0 ? (
+              {loading ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="text-center py-20"
+                >
+                  <Loader2 className="w-16 h-16 text-[var(--brand-primary)] mx-auto mb-6 animate-spin" />
+                  <h3 className="text-2xl font-bold text-[var(--foreground)] mb-4">
+                    {isEn ? 'Loading activities...' : 'جاري تحميل الأنشطة...'}
+                  </h3>
+                </motion.div>
+              ) : error ? (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="text-center py-20"
+                >
+                  <TrendingUp className="w-16 h-16 text-red-500 mx-auto mb-6" />
+                  <h3 className="text-2xl font-bold text-red-600 mb-4">
+                    {isEn ? 'Error loading activities' : 'خطأ في تحميل الأنشطة'}
+                  </h3>
+                  <p className="text-[var(--muted-foreground)] mb-6">{error}</p>
+                  <Button
+                    onClick={() => window.location.reload()}
+                    className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white"
+                  >
+                    {isEn ? 'Try Again' : 'حاول مرة أخرى'}
+                  </Button>
+                </motion.div>
+              ) : filteredActivities.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -311,7 +391,7 @@ export default function ActivitiesPage({ params: { locale } }: ActivitiesPagePro
                           </p>
                           
                           <div className="flex flex-wrap gap-2 mb-4">
-                            {(isEn ? activity.tagsEn : activity.tagsAr).slice(0, 2).map((tag, tagIndex) => (
+                            {activity.tags && activity.tags.slice(0, 2).map((tag, tagIndex) => (
                               <span
                                 key={tagIndex}
                                 className="px-2 py-1 text-xs bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] rounded-full border border-[var(--brand-primary)]/20"
@@ -329,7 +409,7 @@ export default function ActivitiesPage({ params: { locale } }: ActivitiesPagePro
                               </span>
                             </div>
                             
-                            <Link href={`/${locale}/activities/${isEn ? activity.slugEn : activity.slugAr}`}>
+                            <Link href={`/${locale}/activities/${activity.slug}`}>
                               <Button variant="ghost" size="sm" className="group/btn">
                                 {isEn ? 'Learn More' : 'اقرأ المزيد'}
                                 <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />

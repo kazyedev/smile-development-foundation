@@ -1,31 +1,125 @@
 "use client";
 
-import { mockNews } from "@/data/mockNews";
-import { mockNewsCategories } from "@/data/mockNewsCategories";
+import { News } from "@/types/news";
+import { NewsCategory } from "@/lib/db/schema/newsCategories";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Share2, Bookmark, Clock, Eye, Calendar, User, Tag, MessageCircle, TrendingUp, Globe } from "lucide-react";
+import { ArrowLeft, Share2, Bookmark, Clock, Eye, Calendar, User, Tag, MessageCircle, TrendingUp, Globe, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NewsDetailPage({ params }: { params: Promise<{ slug: string; locale: string }> }) {
   const { slug, locale } = use(params);
   const decoded = decodeURIComponent(slug || '');
   const isEn = (locale || 'en') === 'en';
-  const news = mockNews.find(x => x.slugEn === decoded || x.slugAr === decoded);
   
-  if (!news) return notFound();
-
-  // Get related news (same category, excluding current)
-  const relatedNews = mockNews.filter(n => 
-    n.categoryId === news.categoryId && 
-    n.slugEn !== news.slugEn && 
-    n.slugAr !== news.slugAr
-  ).slice(0, 3);
-
-  const category = mockNewsCategories.find(c => c.id === news.categoryId);
+  const [news, setNews] = useState<News | null>(null);
+  const [relatedNews, setRelatedNews] = useState<News[]>([]);
+  const [newsCategories, setNewsCategories] = useState<NewsCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch the news article by slug
+        const newsResponse = await fetch(`/api/news/${decoded}`);
+        
+        if (newsResponse.status === 404) {
+          notFound();
+          return;
+        }
+        
+        if (!newsResponse.ok) {
+          throw new Error('Failed to fetch news article');
+        }
+        
+        const newsData = await newsResponse.json();
+        
+        if (!newsData.success || !newsData.item) {
+          throw new Error(newsData.error || 'News article not found');
+        }
+        
+        setNews(newsData.item);
+        
+        // Fetch related news and categories
+        const [relatedResponse, categoriesResponse] = await Promise.all([
+          fetch(`/api/news?published=true&categoryId=${newsData.item.categoryId}&limit=4`),
+          fetch('/api/news-categories?published=true')
+        ]);
+        
+        if (relatedResponse.ok) {
+          const relatedData = await relatedResponse.json();
+          if (relatedData.success && relatedData.items) {
+            // Filter out the current article and limit to 3
+            const filtered = relatedData.items.filter((n: News) => 
+              n.id !== newsData.item.id
+            ).slice(0, 3);
+            setRelatedNews(filtered);
+          }
+        }
+        
+        if (categoriesResponse.ok) {
+          const categoriesData = await categoriesResponse.json();
+          if (categoriesData.success) {
+            setNewsCategories(categoriesData.items || []);
+          }
+        }
+        
+      } catch (err) {
+        console.error('Error fetching news:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (decoded) {
+      fetchNews();
+    }
+  }, [decoded]);
+  
+  const category = news && newsCategories.find(c => c.id === news.categoryId);
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-orange-600 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold mb-2">
+            {isEn ? "Loading article..." : "جاري تحميل المقال..."}
+          </h3>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <TrendingUp className="w-8 h-8 text-red-600" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2 text-red-600">
+            {isEn ? "Error loading article" : "خطأ في تحميل المقال"}
+          </h3>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            {isEn ? "Try Again" : "حاول مرة أخرى"}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!news) {
+    notFound();
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10">
@@ -74,7 +168,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                 {/* Category Badge */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600/90 backdrop-blur-sm text-white rounded-full text-sm border border-white/30 mb-6">
                   <Globe className="w-4 h-4" />
-                  {category ? (isEn ? category.titleEn : category.titleAr) : (isEn ? "News" : "أخبار")}
+                  {category ? (isEn ? category.nameEn : category.nameAr) : (isEn ? "News" : "أخبار")}
                 </div>
                 
                 <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
@@ -93,7 +187,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                   </div>
                   <div className="flex items-center gap-2">
                     <Eye className="w-5 h-5" />
-                    <span>{Math.floor(Math.random() * 5000) + 1000} {isEn ? 'views' : 'مشاهدة'}</span>
+                    <span>{news.pageViews || 0} {isEn ? 'views' : 'مشاهدة'}</span>
                   </div>
                 </div>
               </motion.div>
@@ -157,15 +251,15 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
             <div className="bg-gradient-to-r from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 rounded-3xl p-8 border border-orange-200/50 dark:border-orange-800/30 mb-12">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                 <div>
-                  <div className="text-3xl font-bold text-orange-600 mb-2">{Math.floor(Math.random() * 5000) + 1000}</div>
+                  <div className="text-3xl font-bold text-orange-600 mb-2">{news.pageViews || 0}</div>
                   <div className="text-sm text-muted-foreground">{isEn ? "Views" : "مشاهدة"}</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-yellow-500 mb-2">{Math.floor(Math.random() * 100) + 20}</div>
+                  <div className="text-3xl font-bold text-yellow-500 mb-2">-</div>
                   <div className="text-sm text-muted-foreground">{isEn ? "Shares" : "مشاركة"}</div>
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-red-500 mb-2">{Math.floor(Math.random() * 50) + 5}</div>
+                  <div className="text-3xl font-bold text-red-500 mb-2">-</div>
                   <div className="text-sm text-muted-foreground">{isEn ? "Comments" : "تعليق"}</div>
                 </div>
               </div>
@@ -244,7 +338,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                             </div>
                             <div className="flex items-center gap-1">
                               <Eye className="w-3 h-3" />
-                              <span>{Math.floor(Math.random() * 1000) + 100}</span>
+                              <span>{relatedItem.pageViews || 0}</span>
                             </div>
                           </div>
                         </div>

@@ -8,20 +8,30 @@ import { Loader2, Camera, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export default function MediaImageDetailPage({ params: { image, locale } }: { params: { image: string; locale: string } }) {
-  const isEnglish = locale === 'en';
-  const decodedSlug = decodeURIComponent(image);
+export default function MediaImageDetailPage({ params }: { params: Promise<{ image: string; locale: string }> }) {
+  const [isEnglish, setIsEnglish] = useState(true);
+  const [decodedSlug, setDecodedSlug] = useState('');
   const [photo, setPhoto] = useState<ImageType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchImage = async () => {
+    const initializeAndFetchImage = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`/api/images/${decodedSlug}`);
+        // Await params to get locale and image slug
+        const { image, locale } = await params;
+        const currentDecodedSlug = decodeURIComponent(image);
+        const currentIsEnglish = locale === 'en';
+        
+        // Set state
+        setDecodedSlug(currentDecodedSlug);
+        setIsEnglish(currentIsEnglish);
+        
+        // Fetch image data
+        const response = await fetch(`/api/images/${currentDecodedSlug}`);
         if (!response.ok) {
           if (response.status === 404) {
             throw new Error('Image not found');
@@ -39,8 +49,8 @@ export default function MediaImageDetailPage({ params: { image, locale } }: { pa
       }
     };
 
-    fetchImage();
-  }, [decodedSlug]);
+    initializeAndFetchImage();
+  }, [params]);
 
   if (loading) {
     return (
@@ -70,7 +80,7 @@ export default function MediaImageDetailPage({ params: { image, locale } }: { pa
             {error || (isEnglish ? 'The image you are looking for does not exist.' : 'الصورة التي تبحث عنها غير موجودة.')}
           </p>
           <Button asChild>
-            <Link href={`/${locale}/media/images`}>
+            <Link href={`/${isEnglish ? 'en' : 'ar'}/media/images`}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               {isEnglish ? 'Back to Photos' : 'العودة للصور'}
             </Link>

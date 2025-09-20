@@ -10,6 +10,7 @@ import {
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 import { programs } from "./programs";
+import { projectCategories } from "./projectCategories";
 
 // JSON Schema types for complex fields
 export const BannerSchema = z.object({
@@ -110,7 +111,10 @@ export const projects = pgTable("projects", {
     onDelete: "set null",
     onUpdate: "cascade",
   }),
-  categoryId: bigint("category_id", { mode: "number" }),
+  categoryId: bigint("category_id", { mode: "number" }).references(() => projectCategories.id, {
+    onDelete: "set null",
+    onUpdate: "cascade",
+  }),
   activityIds: bigint("activity_ids", { mode: "number" }).array().default([]),
   
   // Publishing status

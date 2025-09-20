@@ -1,12 +1,13 @@
 'use client';
 
-import { mockNewsCategories } from "@/data/mockNewsCategories";
-import { mockNews } from "@/data/mockNews";
+import { NewsCategory } from "@/lib/db/schema/newsCategories";
+import { News } from "@/types/news";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { use, useState } from "react";
-import { ArrowLeft, Search, Grid, List, Clock, Eye, Calendar, Newspaper, TrendingUp, Filter, Globe } from "lucide-react";
+import { use, useState, useEffect } from "react";
+import { notFound } from "next/navigation";
+import { ArrowLeft, Search, Grid, List, Clock, Eye, Calendar, Newspaper, TrendingUp, Filter, Globe, Loader2, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -14,50 +15,122 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
 	const { locale, slug } = use(params);
 	const isEn = (locale || 'en') === 'en';
 	const decoded = decodeURIComponent(slug || '');
-  
-  const category = mockNewsCategories.find(c => c.slugEn === decoded || c.slugAr === decoded);
-  if (!category) {
+
+  const [category, setCategory] = useState<NewsCategory | null>(null);
+  const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch category details
+        const categoryResponse = await fetch(`/api/news-categories/${decoded}`);
+        
+        if (categoryResponse.status === 404) {
+          notFound();
+          return;
+        }
+
+        if (!categoryResponse.ok) {
+          throw new Error("Failed to fetch category");
+        }
+
+        const categoryData = await categoryResponse.json();
+
+        if (!categoryData.success || !categoryData.item) {
+          throw new Error(categoryData.error || "Category not found");
+        }
+
+        setCategory(categoryData.item);
+
+        // Build news search parameters
+        const newsParams = new URLSearchParams({
+          published: "true",
+          categoryId: categoryData.item.id.toString(),
+          limit: "50",
+          orderBy: "publishedAt",
+          order: "desc",
+        });
+
+        if (searchTerm.trim()) {
+          newsParams.append("search", searchTerm.trim());
+        }
+
+        // Fetch news in this category
+        const newsResponse = await fetch(`/api/news?${newsParams.toString()}`);
+
+        if (newsResponse.ok) {
+          const newsData = await newsResponse.json();
+          if (newsData.success) {
+            setNews(newsData.items || []);
+          }
+        }
+
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (decoded) {
+      fetchData();
+    }
+  }, [decoded, searchTerm]);
+
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{isEn ? 'Category not found' : 'الفئة غير موجودة'}</h1>
-          <Button asChild>
-            <Link href={`/${locale}/news/categories`}>
-              {isEn ? 'Back to Categories' : 'العودة للفئات'}
-            </Link>
+          <Loader2 className="w-8 h-8 animate-spin text-orange-600 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold mb-2">
+            {isEn ? "Loading category..." : "جاري تحميل الفئة..."}
+          </h3>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <TrendingUp className="w-8 h-8 text-red-600" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2 text-red-600">
+            {isEn ? "Error loading category" : "خطأ في تحميل الفئة"}
+          </h3>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            {isEn ? "Try Again" : "حاول مرة أخرى"}
           </Button>
         </div>
       </div>
     );
   }
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-
-  // Filter news for this category
-  const categoryNews = mockNews.filter(n => n.categoryId === category.id);
-  const filteredNews = categoryNews.filter(news => 
-    searchTerm === "" || 
-    (isEn ? news.titleEn : news.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (isEn ? news.contentEn : news.contentAr).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  if (!category) {
+    notFound();
+  }
 
   // Get featured article (first one)
-  const featuredArticle = filteredNews[0];
-  const regularArticles = filteredNews.slice(1);
+  const featuredArticle = news[0];
+  const regularArticles = news.slice(1);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10">
       {/* Hero Section */}
       <section className="relative">
         <div className="relative w-full h-[50vh] lg:h-[60vh]">
-          <Image 
-            src={category.featuredImageUrl} 
-            alt={isEn ? category.titleEn : category.titleAr} 
-            fill 
-            className="object-cover" 
-            priority
-          />
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-100 to-yellow-100 dark:from-orange-900 dark:to-yellow-900"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           
           {/* Navigation */}
@@ -86,18 +159,21 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
                 </div>
                 
                 <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                  {isEn ? category.titleEn : category.titleAr}
+                  {isEn ? category.nameEn : category.nameAr}
                 </h1>
                 
                 <p className="text-xl text-white/90 max-w-2xl mb-6">
-                  {isEn ? "Explore the latest articles in this category" : "استكشف آخر المقالات في هذه الفئة"}
+                  {category.descriptionEn || category.descriptionAr ? 
+                    (isEn ? category.descriptionEn : category.descriptionAr) :
+                    (isEn ? "Explore the latest articles in this category" : "استكشف آخر المقالات في هذه الفئة")
+                  }
                 </p>
 
                 {/* Category Stats */}
                 <div className="flex flex-wrap items-center gap-6 text-white/80 text-lg">
                   <div className="flex items-center gap-2">
                     <Newspaper className="w-5 h-5" />
-                    <span>{categoryNews.length} {isEn ? 'articles' : 'مقال'}</span>
+                    <span>{news.length} {isEn ? 'articles' : 'مقال'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5" />
@@ -229,8 +305,8 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
               <Filter className="w-4 h-4" />
               <span>
                 {isEn 
-                  ? `Showing ${filteredNews.length} of ${categoryNews.length} articles`
-                  : `عرض ${filteredNews.length} من ${categoryNews.length} مقال`
+                  ? `Showing ${news.length} articles in "${category.nameEn}"`
+                  : `عرض ${news.length} مقال في "${category.nameAr}"`
                 }
               </span>
             </div>
@@ -267,9 +343,9 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
                 ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 : "space-y-8"
             }>
-              {regularArticles.map((news, idx) => (
+              {regularArticles.map((newsItem, idx) => (
                 <motion.div
-                  key={news.slugEn}
+                  key={newsItem.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1, duration: 0.5 }}
@@ -277,35 +353,35 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
                   viewport={{once:true}}
                 >
                   {viewMode === "grid" ? (
-                    <Link href={`/${locale}/news/${isEn ? news.slugEn : news.slugAr}`}>
+                    <Link href={`/${locale}/news/${isEn ? newsItem.slugEn : newsItem.slugAr}`}>
                       <article className="group bg-gradient-to-br from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 border border-border rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-500">
                         <div className="relative aspect-[4/3] overflow-hidden">
                           <Image 
-                            src={news.featuredImageUrl} 
-                            alt={isEn ? news.titleEn : news.titleAr} 
+                            src={newsItem.featuredImageUrl} 
+                            alt={isEn ? newsItem.titleEn : newsItem.titleAr} 
                             fill 
                             className="object-cover group-hover:scale-105 transition-transform duration-500" 
                           />
                           <div className="absolute top-4 right-4 bg-orange-600/90 text-white px-3 py-1 rounded-full text-xs font-medium">
-                            {news.readTime} {isEn ? 'min' : 'د'}
+                            {newsItem.readTime} {isEn ? 'min' : 'د'}
                           </div>
                         </div>
                         
                         <div className="p-6">
                           <h3 className="font-bold text-lg mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors">
-                            {isEn ? news.titleEn : news.titleAr}
+                            {isEn ? newsItem.titleEn : newsItem.titleAr}
                           </h3>
                           <p className="text-muted-foreground text-sm line-clamp-3 mb-4 leading-relaxed">
-                            {(isEn ? news.contentEn : news.contentAr).substring(0, 120)}...
+                            {(isEn ? newsItem.contentEn : newsItem.contentAr).substring(0, 120)}...
                           </p>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
-                              <span>{new Date(news.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
+                              <span>{new Date(newsItem.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Eye className="w-3 h-3" />
-                              <span>{Math.floor(Math.random() * 1000) + 100}</span>
+                              <span>{newsItem.pageViews || 0}</span>
                             </div>
                           </div>
                         </div>
@@ -313,32 +389,32 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
                     </Link>
                   ) : (
                     <article className="bg-gradient-to-r from-background to-orange-50/30 dark:to-orange-950/10 border border-border rounded-3xl p-6 hover:shadow-xl transition-all duration-500">
-                      <Link href={`/${locale}/news/${isEn ? news.slugEn : news.slugAr}`}>
+                      <Link href={`/${locale}/news/${isEn ? newsItem.slugEn : newsItem.slugAr}`}>
                         <div className="flex flex-col lg:flex-row gap-6">
                           <div className="lg:w-1/3">
                             <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
                               <Image
-                                src={news.featuredImageUrl}
-                                alt={isEn ? news.titleEn : news.titleAr}
+                                src={newsItem.featuredImageUrl}
+                                alt={isEn ? newsItem.titleEn : newsItem.titleAr}
                                 fill
                                 className="object-cover hover:scale-105 transition-transform duration-300"
                               />
                               <div className="absolute top-3 right-3 bg-orange-600/90 text-white px-2 py-1 rounded-full text-xs">
-                                {news.readTime} {isEn ? 'min' : 'د'}
+                                {newsItem.readTime} {isEn ? 'min' : 'د'}
                               </div>
                             </div>
                           </div>
                           <div className="lg:w-2/3 space-y-4">
                             <div>
                               <h3 className="text-xl font-bold mb-2 text-foreground hover:text-orange-600 transition-colors">
-                                {isEn ? news.titleEn : news.titleAr}
+                                {isEn ? newsItem.titleEn : newsItem.titleAr}
                               </h3>
                               <p className="text-muted-foreground line-clamp-3 leading-relaxed">
-                                {(isEn ? news.contentEn : news.contentAr).substring(0, 200)}...
+                                {(isEn ? newsItem.contentEn : newsItem.contentAr).substring(0, 200)}...
                               </p>
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              {(isEn ? news.tagsEn : news.tagsAr).slice(0, 3).map(tag => (
+                              {(isEn ? newsItem.tagsEn : newsItem.tagsAr).slice(0, 3).map(tag => (
                                 <span key={tag} className="px-3 py-1 bg-orange-600/10 text-orange-600 rounded-full text-xs font-medium">
                                   #{tag}
                                 </span>
@@ -348,11 +424,11 @@ export default function NewsCategoryDetailPage({ params }: { params: Promise<{ l
                               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-1">
                                   <Calendar className="w-4 h-4" />
-                                  <span>{new Date(news.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
+                                  <span>{new Date(newsItem.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
                                 </div>
                                 <div className="flex items-center gap-1">
                                   <Eye className="w-4 h-4" />
-                                  <span>{Math.floor(Math.random() * 1000) + 100} {isEn ? 'views' : 'مشاهدة'}</span>
+                                  <span>{newsItem.pageViews || 0} {isEn ? 'views' : 'مشاهدة'}</span>
                                 </div>
                               </div>
                               <Button variant="outline" size="sm" className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-950/30 dark:to-yellow-950/30 border-orange-200 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900/50">

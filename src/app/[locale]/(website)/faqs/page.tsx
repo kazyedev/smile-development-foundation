@@ -1,37 +1,66 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { mockFAQs, mockFAQCategories } from '@/data/mockFAQs';
+import { FAQ } from '@/types/faq';
 import { 
   HelpCircle, Search, Filter, ChevronDown, ChevronUp, Users, 
   MessageCircle, Clock, Eye, Sparkles, BookOpen, ArrowRight,
-  Plus, Minus, Mail, Phone, MessageSquare
+  Plus, Minus, Mail, Phone, MessageSquare, Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface FAQsPageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export default function FAQsPage({ params: { locale } }: FAQsPageProps) {
+export default function FAQsPage({ params }: FAQsPageProps) {
+  // Unwrap the params promise using React.use()
+  const { locale } = use(params);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [allFAQs, setAllFAQs] = useState<FAQ[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   const isEn = locale === 'en';
+
+  // Fetch FAQs from API
+  useEffect(() => {
+    const fetchFAQs = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/faqs?published=true&orderBy=views&order=desc');
+        if (!response.ok) {
+          throw new Error('Failed to fetch FAQs');
+        }
+        
+        const data = await response.json();
+        setAllFAQs(data.items || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching FAQs:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFAQs();
+  }, []);
   
-  // Filter FAQs based on search and category
-  const filteredFAQs = mockFAQs.filter(faq => {
-    if (!faq.isPublished) return false;
-    
+  // Filter FAQs based on search (client-side filtering for better UX)
+  const filteredFAQs = allFAQs.filter(faq => {
     const matchesSearch = searchQuery === '' || 
       (isEn ? faq.questionEn : faq.questionAr).toLowerCase().includes(searchQuery.toLowerCase()) ||
       (isEn ? faq.answerEn : faq.answerAr).toLowerCase().includes(searchQuery.toLowerCase());
     
-    // For this demo, we'll assume all FAQs are in "General" category for simplicity
-    const matchesCategory = selectedCategory === 'all' || selectedCategory === '1';
+    // For now, we'll show all FAQs regardless of category since we don't have categories yet
+    const matchesCategory = selectedCategory === 'all';
     
     return matchesSearch && matchesCategory;
   });
@@ -59,8 +88,7 @@ export default function FAQsPage({ params: { locale } }: FAQsPageProps) {
   };
 
   // Get popular FAQs (top 3 by views)
-  const popularFAQs = [...mockFAQs]
-    .filter(faq => faq.isPublished)
+  const popularFAQs = [...allFAQs]
     .sort((a, b) => b.views - a.views)
     .slice(0, 3);
 
@@ -141,8 +169,8 @@ export default function FAQsPage({ params: { locale } }: FAQsPageProps) {
                 className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
               >
                 {[
-                  { icon: MessageCircle, value: mockFAQs.length.toString(), label: isEn ? 'Questions Answered' : 'سؤال مجاب' },
-                  { icon: Users, value: '5K+', label: isEn ? 'People Helped' : 'شخص تمت مساعدته' },
+                  { icon: MessageCircle, value: loading ? '...' : allFAQs.length.toString(), label: isEn ? 'Questions Answered' : 'سؤال مجاب' },
+                  { icon: Users, value: loading ? '...' : (allFAQs.reduce((sum, faq) => sum + faq.views, 0) > 1000 ? `${Math.round(allFAQs.reduce((sum, faq) => sum + faq.views, 0) / 1000)}K+` : allFAQs.reduce((sum, faq) => sum + faq.views, 0).toString()), label: isEn ? 'Total Views' : 'إجمالي المشاهدات' },
                   { icon: Clock, value: '24/7', label: isEn ? 'Support Available' : 'دعم متاح' }
                 ].map((stat, index) => (
                   <div key={index} className="text-center">
@@ -182,32 +210,35 @@ export default function FAQsPage({ params: { locale } }: FAQsPageProps) {
                   </div>
                 </div>
 
-                {/* Category Filter */}
-                <div className="flex items-center gap-3">
-                  <Filter className="w-5 h-5 text-[var(--muted-foreground)]" />
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="px-4 py-4 bg-[var(--background)]/50 border border-[var(--border)] rounded-2xl focus:border-[var(--brand-primary)] outline-none"
-                  >
-                    <option value="all">{isEn ? 'All Categories' : 'جميع الفئات'}</option>
-                    {mockFAQCategories.map((category) => (
-                      <option key={category.id} value={category.id.toString()}>
-                        {isEn ? category.nameEn : category.nameAr}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {/* Category Filter - Hidden for now since we don't have categories */}
+                {false && (
+                  <div className="flex items-center gap-3">
+                    <Filter className="w-5 h-5 text-[var(--muted-foreground)]" />
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="px-4 py-4 bg-[var(--background)]/50 border border-[var(--border)] rounded-2xl focus:border-[var(--brand-primary)] outline-none"
+                    >
+                      <option value="all">{isEn ? 'All Categories' : 'جميع الفئات'}</option>
+                    </select>
+                  </div>
+                )}
               </div>
 
               {/* Results Summary */}
               <div className="mt-6 pt-6 border-t border-[var(--border)]/30">
                 <div className="flex items-center justify-between">
                   <span className="text-[var(--muted-foreground)]">
-                    {isEn 
-                      ? `Showing ${filteredFAQs.length} of ${mockFAQs.length} questions`
-                      : `عرض ${filteredFAQs.length} من ${mockFAQs.length} سؤال`
-                    }
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {isEn ? 'Loading FAQs...' : 'جاري تحميل الأسئلة...'}
+                      </span>
+                    ) : (
+                      isEn 
+                        ? `Showing ${filteredFAQs.length} of ${allFAQs.length} questions`
+                        : `عرض ${filteredFAQs.length} من ${allFAQs.length} سؤال`
+                    )}
                   </span>
                   {(searchQuery || selectedCategory !== 'all') && (
                     <button
@@ -232,8 +263,36 @@ export default function FAQsPage({ params: { locale } }: FAQsPageProps) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* FAQ List */}
               <div className="lg:col-span-2">
-                <AnimatePresence>
-                  {filteredFAQs.length === 0 ? (
+                {error ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center py-16"
+                  >
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <HelpCircle className="w-8 h-8 text-red-500" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2 text-red-600">
+                      {isEn ? "Error loading FAQs" : "خطأ في تحميل الأسئلة"}
+                    </h3>
+                    <p className="text-muted-foreground mb-4">{error}</p>
+                    <Button onClick={() => window.location.reload()}>
+                      {isEn ? "Try Again" : "حاول مرة أخرى"}
+                    </Button>
+                  </motion.div>
+                ) : loading ? (
+                  <div className="space-y-4">
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <Card key={idx} className="bg-[var(--card)]/80 p-6">
+                        <Skeleton className="h-6 w-3/4 mb-3" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-2/3" />
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <AnimatePresence>
+                    {filteredFAQs.length === 0 ? (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -286,7 +345,7 @@ export default function FAQsPage({ params: { locale } }: FAQsPageProps) {
                                   </span>
                                   <span className="flex items-center gap-1">
                                     <Clock className="w-4 h-4" />
-                                    {faq.updatedAt.toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}
+                                    {new Date(faq.updatedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}
                                   </span>
                                 </div>
                               </div>
@@ -322,8 +381,9 @@ export default function FAQsPage({ params: { locale } }: FAQsPageProps) {
                         </motion.div>
                       ))}
                     </div>
-                  )}
-                </AnimatePresence>
+                    )}
+                  </AnimatePresence>
+                )}
               </div>
 
               {/* Sidebar */}

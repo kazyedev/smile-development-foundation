@@ -1,13 +1,13 @@
 "use client";
 
-import { mockNews } from "@/data/mockNews";
-import { mockNewsCategories } from "@/data/mockNewsCategories";
+import { News } from "@/types/news";
+import { NewsCategory } from "@/lib/db/schema/newsCategories";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Newspaper, Search, Filter, Grid, List, Clock, Eye, Calendar, TrendingUp, Zap, Globe } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Newspaper, Search, Filter, Grid, List, Clock, Eye, Calendar, TrendingUp, Zap, Globe, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -19,22 +19,72 @@ export default function NewsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [news, setNews] = useState<News[]>([]);
+  const [newsCategories, setNewsCategories] = useState<NewsCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Filter news based on search and category
-  const filteredNews = mockNews.filter(news => {
-    const matchesSearch = searchTerm === "" || 
-      (isEn ? news.titleEn : news.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (isEn ? news.contentEn : news.contentAr).toLowerCase().includes(searchTerm.toLowerCase());
+  // Fetch news and categories on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch news
+        const newsParams = new URLSearchParams({
+          published: 'true',
+          limit: '100',
+          orderBy: 'publishedAt',
+          order: 'desc'
+        });
+        
+        if (searchTerm.trim()) {
+          newsParams.append('search', searchTerm.trim());
+        }
+        
+        if (selectedCategory !== "all") {
+          newsParams.append('categoryId', selectedCategory);
+        }
+        
+        const [newsResponse, categoriesResponse] = await Promise.all([
+          fetch(`/api/news?${newsParams.toString()}`),
+          fetch('/api/news-categories?published=true')
+        ]);
+        
+        if (!newsResponse.ok || !categoriesResponse.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        
+        const newsData = await newsResponse.json();
+        const categoriesData = await categoriesResponse.json();
+        
+        if (newsData.success) {
+          setNews(newsData.items || []);
+        } else {
+          throw new Error(newsData.error || 'Failed to fetch news');
+        }
+        
+        if (categoriesData.success) {
+          setNewsCategories(categoriesData.items || []);
+        } else {
+          throw new Error(categoriesData.error || 'Failed to fetch categories');
+        }
+        
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    const matchesCategory = selectedCategory === "all" || 
-      news.categoryId === parseInt(selectedCategory);
-    
-    return matchesSearch && matchesCategory;
-  });
-
+    fetchData();
+  }, [searchTerm, selectedCategory]);
+  
   // Get featured news (first 3)
-  const featuredNews = filteredNews.slice(0, 3);
-  const regularNews = filteredNews.slice(3);
+  const featuredNews = news.slice(0, 3);
+  const regularNews = news.slice(3);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10">
@@ -76,7 +126,7 @@ export default function NewsPage() {
             {/* News Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600 mb-1">{mockNews.length}</div>
+                <div className="text-3xl font-bold text-orange-600 mb-1">{loading ? '...' : news.length}</div>
                 <div className="text-sm text-muted-foreground">{isEn ? "Articles" : "مقال"}</div>
               </div>
               <div className="text-center">
@@ -216,9 +266,9 @@ export default function NewsPage() {
                 className="px-4 py-2 rounded-lg border border-border bg-background text-foreground h-12"
               >
                 <option value="all">{isEn ? "All Categories" : "جميع الفئات"}</option>
-                {mockNewsCategories.map(category => (
-                  <option key={category.id} value={category.id}>
-                    {isEn ? category.titleEn : category.titleAr}
+                {newsCategories.map(category => (
+                  <option key={category.id} value={category.id.toString()}>
+                    {isEn ? category.nameEn : category.nameAr}
                   </option>
                 ))}
               </select>
@@ -256,8 +306,8 @@ export default function NewsPage() {
               <TrendingUp className="w-4 h-4" />
               <span>
                 {isEn 
-                  ? `Showing ${filteredNews.length} of ${mockNews.length} articles`
-                  : `عرض ${filteredNews.length} من ${mockNews.length} مقال`
+                  ? `Showing ${news.length} articles`
+                  : `عرض ${news.length} مقال`
                 }
               </span>
             </div>
@@ -265,10 +315,10 @@ export default function NewsPage() {
               <div className="flex items-center gap-2">
                 <span>{isEn ? "Category:" : "الفئة:"}</span>
                 <span className="px-2 py-1 bg-orange-600/10 text-orange-600 rounded-full text-xs">
-                  {mockNewsCategories.find(c => c.id === parseInt(selectedCategory))
+                  {newsCategories.find(c => c.id === parseInt(selectedCategory))
                     ? isEn 
-                      ? mockNewsCategories.find(c => c.id === parseInt(selectedCategory))!.titleEn
-                      : mockNewsCategories.find(c => c.id === parseInt(selectedCategory))!.titleAr
+                      ? newsCategories.find(c => c.id === parseInt(selectedCategory))!.nameEn
+                      : newsCategories.find(c => c.id === parseInt(selectedCategory))!.nameAr
                     : selectedCategory
                   }
                 </span>
@@ -281,7 +331,27 @@ export default function NewsPage() {
       {/* News Articles */}
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          {regularNews.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-16">
+              <Loader2 className="w-8 h-8 animate-spin text-orange-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">
+                {isEn ? "Loading news..." : "جاري تحميل الأخبار..."}
+              </h3>
+            </div>
+          ) : error ? (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-red-600">
+                {isEn ? "Error loading news" : "خطأ في تحميل الأخبار"}
+              </h3>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>
+                {isEn ? "Try Again" : "حاول مرة أخرى"}
+              </Button>
+            </div>
+          ) : regularNews.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -335,11 +405,11 @@ export default function NewsPage() {
                           {/* Category Badge */}
                           <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <span className="bg-white/90 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
-                              {mockNewsCategories.find(c => c.id === news.categoryId)
+                              {newsCategories.find(c => c.id === news.categoryId)
                                 ? isEn 
-                                  ? mockNewsCategories.find(c => c.id === news.categoryId)!.titleEn
-                                  : mockNewsCategories.find(c => c.id === news.categoryId)!.titleAr
-                                : 'News'
+                                  ? newsCategories.find(c => c.id === news.categoryId)!.nameEn
+                                  : newsCategories.find(c => c.id === news.categoryId)!.nameAr
+                                : isEn ? 'News' : 'أخبار'
                               }
                             </span>
                           </div>
@@ -359,7 +429,7 @@ export default function NewsPage() {
                             </div>
                             <div className="flex items-center gap-1">
                               <Eye className="w-3 h-3" />
-                              <span>{Math.floor(Math.random() * 1000) + 100}</span>
+                              <span>{news.pageViews || 0}</span>
                             </div>
                           </div>
                         </div>
@@ -404,10 +474,10 @@ export default function NewsPage() {
                                   <Calendar className="w-4 h-4" />
                                   <span>{new Date(news.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <Eye className="w-4 h-4" />
-                                  <span>{Math.floor(Math.random() * 1000) + 100} {isEn ? 'views' : 'مشاهدة'}</span>
-                                </div>
+                              <div className="flex items-center gap-1">
+                                <Eye className="w-4 h-4" />
+                                <span>{news.pageViews || 0} {isEn ? 'views' : 'مشاهدة'}</span>
+                              </div>
                               </div>
                               <Button variant="outline" size="sm" className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-950/30 dark:to-yellow-950/30 border-orange-200 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900/50">
                                 {isEn ? "Read Article" : "قراءة المقال"}
