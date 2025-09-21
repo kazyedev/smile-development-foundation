@@ -3,9 +3,15 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Heart, Users, Calendar, Clock, MapPin, Mail, Phone, ArrowRight, CheckCircle, Star, Award, Globe, HandHeart } from "lucide-react";
+import { Heart, Users, Calendar, Clock, MapPin, Mail, Phone, ArrowRight, CheckCircle, Star, Award, Globe, HandHeart, Upload, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export default function BecomeAVolunteerPage() {
   const params = useParams<{ locale: string }>();
@@ -22,8 +28,10 @@ export default function BecomeAVolunteerPage() {
     experience: "",
     motivation: ""
   });
+  const [cvFile, setCvFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [cvError, setCvError] = useState<string | null>(null);
 
   const volunteerAreas = [
     {
@@ -102,15 +110,132 @@ export default function BecomeAVolunteerPage() {
     }));
   };
 
+  const allowedMimeTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.oasis.opendocument.text',
+    'application/rtf',
+    'text/plain',
+    'text/html',
+    'text/markdown',
+    'application/vnd.ms-works',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.oasis.opendocument.presentation',
+    'image/jpeg',
+    'image/png',
+    'application/zip',
+    'application/x-rar-compressed',
+    'application/x-7z-compressed'
+  ];
+
+  const handleCvFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setCvError(null);
+
+    if (!file) {
+      setCvFile(null);
+      return;
+    }
+
+    // Validate file type
+    if (!allowedMimeTypes.includes(file.type)) {
+      setCvError(isEn 
+        ? 'Please upload a valid document file (PDF, Word, etc.)'
+        : 'يرجى تحميل ملف وثيقة صالح (PDF، Word، إلخ)'
+      );
+      return;
+    }
+
+    // Validate file size (5MB = 5 * 1024 * 1024 bytes)
+    if (file.size > 5 * 1024 * 1024) {
+      setCvError(isEn 
+        ? 'File size must be less than 5MB'
+        : 'يجب أن يكون حجم الملف أقل من 5 ميجابايت'
+      );
+      return;
+    }
+
+    setCvFile(file);
+  };
+
+  const removeCvFile = () => {
+    setCvFile(null);
+    setCvError(null);
+    // Reset file input
+    const fileInput = document.getElementById('cv-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setCvError(null);
     
-    // Simulate API call
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      let cvUrl = '';
+      
+      // Upload CV file to Supabase if provided
+      if (cvFile) {
+        const fileExt = cvFile.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('volunteer_request_attachments')
+          .upload(fileName, cvFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
+        
+        if (uploadError) {
+          throw new Error(uploadError.message);
+        }
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('volunteer_request_attachments')
+          .getPublicUrl(fileName);
+        
+        cvUrl = publicUrl;
+      }
+      
+      // Prepare form data for API
+      const requestData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        age: parseInt(formData.age),
+        interests: formData.interests,
+        availability: formData.availability,
+        experience: formData.experience,
+        motivation: formData.motivation,
+        cvUrl: cvUrl,
+        isEnglish: isEn,
+        isArabic: !isEn
+      };
+      
+      // Submit to API
+      const response = await fetch('/api/volunteer-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit application');
+      }
+      
       setSubmitted(true);
-    }, 2000);
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      setCvError(error instanceof Error ? error.message : 'An error occurred while submitting your application');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -206,65 +331,6 @@ export default function BecomeAVolunteerPage() {
         </div>
       </section>
 
-      {/* Volunteer Areas */}
-      <section className="py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-            viewport={{once:true}}
-          >
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              {isEn ? "Volunteer Opportunities" : "فرص التطوع"}
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              {isEn
-                ? "Choose the area that matches your interests and skills. We have opportunities for everyone!"
-                : "اختر المجال الذي يناسب اهتماماتك ومهاراتك. لدينا فرص للجميع!"
-              }
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {volunteerAreas.map((area, index) => (
-              <motion.div
-                key={area.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-background border border-border rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group cursor-pointer"
-                onClick={() => handleInterestToggle(area.id)}
-                viewport={{once:true}}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="text-4xl">{area.icon}</div>
-                  <div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center transition-colors ${
-                    formData.interests.includes(area.id)
-                      ? 'bg-amber-500 border-amber-500'
-                      : 'border-border group-hover:border-amber-500'
-                  }`}>
-                    {formData.interests.includes(area.id) && (
-                      <CheckCircle className="w-4 h-4 text-white" />
-                    )}
-                  </div>
-                </div>
-                <h3 className="font-bold text-lg mb-2">{area.title}</h3>
-                <p className="text-muted-foreground text-sm mb-4">{area.description}</p>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-amber-600 font-medium">
-                    {area.spots} {isEn ? "spots available" : "مكان متاح"}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {isEn ? "Click to select" : "انقر للاختيار"}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Benefits */}
       <section className="py-16 px-6 bg-gradient-to-r from-amber-50/50 to-orange-50/50 dark:from-amber-950/10 dark:to-orange-950/10">
@@ -412,6 +478,44 @@ export default function BecomeAVolunteerPage() {
                     ).join(', ')}`
                   }
                 </div>
+
+                {/* Volunteer Areas Cards - moved inside form */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {volunteerAreas.map((area, index) => (
+                    <motion.div
+                      key={area.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className="bg-background border border-border rounded-2xl p-6 hover:shadow-lg transition-all duration-300 group cursor-pointer"
+                      onClick={() => handleInterestToggle(area.id)}
+                      viewport={{once:true}}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="text-4xl">{area.icon}</div>
+                        <div className={`w-6 h-6 border-2 rounded-full flex items-center justify-center transition-colors ${
+                          formData.interests.includes(area.id)
+                            ? 'bg-amber-500 border-amber-500'
+                            : 'border-border group-hover:border-amber-500'
+                        }`}>
+                          {formData.interests.includes(area.id) && (
+                            <CheckCircle className="w-4 h-4 text-white" />
+                          )}
+                        </div>
+                      </div>
+                      <h3 className="font-bold text-lg mb-2">{area.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-4">{area.description}</p>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-amber-600 font-medium">
+                          {area.spots} {isEn ? "spots available" : "مكان متاح"}
+                        </span>
+                        <span className="text-muted-foreground">
+                          {isEn ? "Click to select" : "انقر للاختيار"}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
               <div>
@@ -457,6 +561,71 @@ export default function BecomeAVolunteerPage() {
                   placeholder={isEn ? "Share your motivation for volunteering with us..." : "شاركنا دافعك للتطوع معنا..."}
                   required
                 />
+              </div>
+
+              {/* CV Upload */}
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  {isEn ? "Upload CV (Optional)" : "رفع السيرة الذاتية (اختياري)"}
+                </label>
+                <p className="text-muted-foreground text-xs mb-3">
+                  {isEn
+                    ? "Accepted formats: PDF, Word documents, images, archives, text files. Maximum size: 5MB"
+                    : "الصيغ المقبولة: PDF، ملفات Word، الصور، الأرشيف، الملفات النصية. الحد الأقصى للحجم: 5 ميجابايت"
+                  }
+                </p>
+                <div className={`border-2 border-dashed border-border rounded-lg p-6 transition-all duration-300 hover:border-amber-500 ${
+                  cvError ? 'border-red-500 bg-red-50 dark:bg-red-950' : ''
+                } ${
+                  cvFile ? 'border-amber-500 bg-amber-50 dark:bg-amber-950' : ''
+                }`}>
+                  {cvFile ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <FileText className="w-8 h-8 text-amber-500" />
+                        <div>
+                          <p className="font-medium">{cvFile.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {(cvFile.size / (1024 * 1024)).toFixed(2)} MB
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeCvFile}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                      <div>
+                        <label htmlFor="cv-upload" className="cursor-pointer">
+                          <span className="text-amber-600 hover:text-amber-700 font-medium">
+                            {isEn ? "Click to browse" : "انقر للتصفح"}
+                          </span>
+                          <span className="text-muted-foreground ml-1">
+                            {isEn ? "or drag and drop your CV here" : "أو اسحب وأفلت سيرتك الذاتية هنا"}
+                          </span>
+                        </label>
+                        <input
+                          id="cv-upload"
+                          type="file"
+                          className="hidden"
+                          onChange={handleCvFileChange}
+                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.zip,.rar,.txt,.rtf"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {cvError && (
+                  <p className="text-red-600 text-sm mt-2">{cvError}</p>
+                )}
               </div>
 
               <Button

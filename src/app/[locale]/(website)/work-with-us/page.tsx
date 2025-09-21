@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Briefcase, MapPin, Clock, DollarSign, Users, Star, ArrowRight, Filter, Search, Building, Calendar, CheckCircle, Mail, Phone } from "lucide-react";
+import { Briefcase, MapPin, Clock, DollarSign, Users, Star, ArrowRight, Filter, Search, Building, Calendar, CheckCircle, Mail, Phone, Upload, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 interface Job {
-  id: string;
+  id: number;
   titleEn: string;
   titleAr: string;
   departmentEn: string;
@@ -17,11 +23,9 @@ interface Job {
   locationAr: string;
   type: "full-time" | "part-time" | "contract" | "internship";
   experience: "entry" | "mid" | "senior";
-  salary: {
-    min: number;
-    max: number;
-    currency: string;
-  };
+  salaryMin: number;
+  salaryMax: number;
+  salaryCurrency: string;
   descriptionEn: string;
   descriptionAr: string;
   responsibilitiesEn: string[];
@@ -30,8 +34,9 @@ interface Job {
   requirementsAr: string[];
   benefitsEn: string[];
   benefitsAr: string[];
-  postedDate: Date;
+  postedDate: string;
   urgent: boolean;
+  isPublished: boolean;
 }
 
 export default function WorkWithUsPage() {
@@ -44,220 +49,171 @@ export default function WorkWithUsPage() {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [showApplication, setShowApplication] = useState(false);
+  
+  // Jobs state
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Application form state
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    yearsOfExperience: "",
+    coverLetter: ""
+  });
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [cvError, setCvError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const mockJobs: Job[] = [
-    {
-      id: "1",
-      titleEn: "Project Manager",
-      titleAr: "مدير مشروع",
-      departmentEn: "Operations",
-      departmentAr: "العمليات",
-      locationEn: "Marib, Yemen",
-      locationAr: "مأرب، اليمن",
-      type: "full-time",
-      experience: "mid",
-      salary: { min: 15000, max: 25000, currency: "YER" },
-      descriptionEn: "Lead and manage development projects from conception to completion, ensuring timely delivery and quality outcomes for our community initiatives.",
-      descriptionAr: "قيادة وإدارة مشاريع التنمية من المفهوم إلى الانتهاء، مما يضمن التسليم في الوقت المناسب ونتائج عالية الجودة لمبادراتنا المجتمعية.",
-      responsibilitiesEn: [
-        "Oversee project planning and execution",
-        "Coordinate with team members and stakeholders",
-        "Monitor project progress and budget",
-        "Ensure quality deliverables"
-      ],
-      responsibilitiesAr: [
-        "الإشراف على تخطيط المشاريع وتنفيذها",
-        "التنسيق مع أعضاء الفريق وأصحاب المصلحة",
-        "مراقبة تقدم المشروع والميزانية",
-        "ضمان المخرجات عالية الجودة"
-      ],
-      requirementsEn: [
-        "Bachelor's degree in Project Management or related field",
-        "3+ years of project management experience",
-        "Strong leadership and communication skills",
-        "Proficiency in project management tools"
-      ],
-      requirementsAr: [
-        "درجة البكالوريوس في إدارة المشاريع أو مجال ذي صلة",
-        "خبرة 3+ سنوات في إدارة المشاريع",
-        "مهارات قيادية وتواصل قوية",
-        "إتقان أدوات إدارة المشاريع"
-      ],
-      benefitsEn: [
-        "Competitive salary",
-        "Health insurance",
-        "Professional development opportunities",
-        "Flexible working hours"
-      ],
-      benefitsAr: [
-        "راتب تنافسي",
-        "تأمين صحي",
-        "فرص التطوير المهني",
-        "ساعات عمل مرنة"
-      ],
-      postedDate: new Date("2024-01-15"),
-      urgent: true
-    },
-    {
-      id: "2",
-      titleEn: "Social Media Manager",
-      titleAr: "مدير وسائل التواصل الاجتماعي",
-      departmentEn: "Marketing",
-      departmentAr: "التسويق",
-      locationEn: "Remote",
-      locationAr: "عن بُعد",
-      type: "full-time",
-      experience: "entry",
-      salary: { min: 8000, max: 12000, currency: "YER" },
-      descriptionEn: "Manage our social media presence and create engaging content to promote our mission and connect with our community.",
-      descriptionAr: "إدارة حضورنا على وسائل التواصل الاجتماعي وإنشاء محتوى جذاب للترويج لمهمتنا والتواصل مع مجتمعنا.",
-      responsibilitiesEn: [
-        "Create and curate social media content",
-        "Manage social media accounts",
-        "Engage with followers and community",
-        "Analyze social media metrics"
-      ],
-      responsibilitiesAr: [
-        "إنشاء وتنسيق محتوى وسائل التواصل الاجتماعي",
-        "إدارة حسابات وسائل التواصل الاجتماعي",
-        "التفاعل مع المتابعين والمجتمع",
-        "تحليل مقاييس وسائل التواصل الاجتماعي"
-      ],
-      requirementsEn: [
-        "Bachelor's degree in Marketing or Communications",
-        "1+ years of social media experience",
-        "Creative content creation skills",
-        "Knowledge of social media platforms"
-      ],
-      requirementsAr: [
-        "درجة البكالوريوس في التسويق أو الاتصالات",
-        "خبرة سنة+ في وسائل التواصل الاجتماعي",
-        "مهارات إبداعية في إنشاء المحتوى",
-        "معرفة بمنصات وسائل التواصل الاجتماعي"
-      ],
-      benefitsEn: [
-        "Remote work flexibility",
-        "Creative freedom",
-        "Training opportunities",
-        "Health insurance"
-      ],
-      benefitsAr: [
-        "مرونة العمل عن بُعد",
-        "حرية إبداعية",
-        "فرص التدريب",
-        "تأمين صحي"
-      ],
-      postedDate: new Date("2024-01-10"),
-      urgent: false
-    },
-    {
-      id: "3",
-      titleEn: "Program Coordinator",
-      titleAr: "منسق برنامج",
-      departmentEn: "Programs",
-      departmentAr: "البرامج",
-      locationEn: "Marib, Yemen",
-      locationAr: "مأرب، اليمن",
-      type: "full-time",
-      experience: "mid",
-      salary: { min: 12000, max: 18000, currency: "YER" },
-      descriptionEn: "Coordinate and support program implementation activities, working closely with beneficiaries and partner organizations.",
-      descriptionAr: "تنسيق ودعم أنشطة تنفيذ البرامج، والعمل بشكل وثيق مع المستفيدين والمنظمات الشريكة.",
-      responsibilitiesEn: [
-        "Coordinate program activities",
-        "Support beneficiaries and partners",
-        "Monitor program progress",
-        "Prepare reports and documentation"
-      ],
-      responsibilitiesAr: [
-        "تنسيق أنشطة البرنامج",
-        "دعم المستفيدين والشركاء",
-        "مراقبة تقدم البرنامج",
-        "إعداد التقارير والوثائق"
-      ],
-      requirementsEn: [
-        "Bachelor's degree in Social Work or related field",
-        "2+ years of program coordination experience",
-        "Strong organizational skills",
-        "Fluency in Arabic and English"
-      ],
-      requirementsAr: [
-        "درجة البكالوريوس في الخدمة الاجتماعية أو مجال ذي صلة",
-        "خبرة 2+ سنوات في تنسيق البرامج",
-        "مهارات تنظيمية قوية",
-        "إتقان اللغة العربية والإنجليزية"
-      ],
-      benefitsEn: [
-        "Meaningful work",
-        "Professional development",
-        "Health insurance",
-        "Team collaboration"
-      ],
-      benefitsAr: [
-        "عمل ذو معنى",
-        "التطوير المهني",
-        "تأمين صحي",
-        "تعاون الفريق"
-      ],
-      postedDate: new Date("2024-01-08"),
-      urgent: false
-    },
-    {
-      id: "4",
-      titleEn: "Finance Intern",
-      titleAr: "متدرب مالية",
-      departmentEn: "Finance",
-      departmentAr: "المالية",
-      locationEn: "Marib, Yemen",
-      locationAr: "مأرب، اليمن",
-      type: "internship",
-      experience: "entry",
-      salary: { min: 3000, max: 5000, currency: "YER" },
-      descriptionEn: "Support the finance team with daily operations, reporting, and analysis while gaining valuable experience in non-profit financial management.",
-      descriptionAr: "دعم فريق المالية في العمليات اليومية والتقارير والتحليل مع اكتساب خبرة قيمة في الإدارة المالية للمنظمات غير الربحية.",
-      responsibilitiesEn: [
-        "Assist with financial data entry",
-        "Support budget preparation",
-        "Help with financial reporting",
-        "Learn financial analysis techniques"
-      ],
-      responsibilitiesAr: [
-        "المساعدة في إدخال البيانات المالية",
-        "دعم إعداد الميزانية",
-        "المساعدة في التقارير المالية",
-        "تعلم تقنيات التحليل المالي"
-      ],
-      requirementsEn: [
-        "Currently pursuing degree in Finance or Accounting",
-        "Basic knowledge of Excel",
-        "Attention to detail",
-        "Eagerness to learn"
-      ],
-      requirementsAr: [
-        "يدرس حاليًا درجة في المالية أو المحاسبة",
-        "معرفة أساسية بـ Excel",
-        "الاهتمام بالتفاصيل",
-        "حرص على التعلم"
-      ],
-      benefitsEn: [
-        "Learning opportunity",
-        "Mentorship",
-        "Certificate of completion",
-        "Networking"
-      ],
-      benefitsAr: [
-        "فرصة التعلم",
-        "الإرشاد",
-        "شهادة إتمام",
-        "التشبيك"
-      ],
-      postedDate: new Date("2024-01-12"),
-      urgent: false
-    }
+  // Fetch jobs from API
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/jobs');
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setJobs(result.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // CV file validation
+  const allowedMimeTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.oasis.opendocument.text',
+    'application/rtf',
+    'text/plain',
+    'text/html',
+    'text/markdown',
+    'application/vnd.ms-works',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.oasis.opendocument.presentation',
+    'image/jpeg',
+    'image/png',
+    'application/zip',
+    'application/x-rar-compressed',
+    'application/x-7z-compressed'
   ];
 
+  const handleCvFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setCvError(null);
+
+    if (!file) {
+      setCvFile(null);
+      return;
+    }
+
+    // Validate file type
+    if (!allowedMimeTypes.includes(file.type)) {
+      setCvError(isEn 
+        ? 'Please upload a valid document file (PDF, Word, etc.)'
+        : 'يرجى تحميل ملف وثيقة صالح (PDF، Word، إلخ)'
+      );
+      return;
+    }
+
+    // Validate file size (5MB = 5 * 1024 * 1024 bytes)
+    if (file.size > 5 * 1024 * 1024) {
+      setCvError(isEn 
+        ? 'File size must be less than 5MB'
+        : 'يجب أن يكون حجم الملف أقل من 5 ميجابايت'
+      );
+      return;
+    }
+
+    setCvFile(file);
+  };
+
+  const removeCvFile = () => {
+    setCvFile(null);
+    setCvError(null);
+    const fileInput = document.getElementById('cv-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedJob) return;
+
+    setSubmitting(true);
+    setCvError(null);
+    
+    try {
+      let cvUrl = '';
+      
+      // Upload CV file to Supabase if provided
+      if (cvFile) {
+        const fileExt = cvFile.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('job_applies_attachments')
+          .upload(fileName, cvFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
+        
+        if (uploadError) {
+          throw new Error(uploadError.message);
+        }
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('job_applies_attachments')
+          .getPublicUrl(fileName);
+        
+        cvUrl = publicUrl;
+      }
+      
+      // Submit application to API
+      const response = await fetch('/api/jobs/apply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jobId: selectedJob.id,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          yearsOfExperience: parseInt(formData.yearsOfExperience),
+          coverLetter: formData.coverLetter,
+          cvUrl: cvUrl
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to submit application');
+      }
+      
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      setCvError(error instanceof Error ? error.message : 'An error occurred while submitting your application');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   // Filter jobs
-  const filteredJobs = mockJobs.filter(job => {
+  const filteredJobs = jobs.filter(job => {
     const matchesSearch = searchTerm === "" || 
       (isEn ? job.titleEn : job.titleAr).toLowerCase().includes(searchTerm.toLowerCase()) ||
       (isEn ? job.departmentEn : job.departmentAr).toLowerCase().includes(searchTerm.toLowerCase());
@@ -272,7 +228,7 @@ export default function WorkWithUsPage() {
 
   // Get unique departments
   const departments = Array.from(new Set(
-    mockJobs.map(job => isEn ? job.departmentEn : job.departmentAr)
+    jobs.map(job => isEn ? job.departmentEn : job.departmentAr)
   ));
 
   const getJobTypeLabel = (type: string) => {
@@ -293,6 +249,43 @@ export default function WorkWithUsPage() {
     };
     return isEn ? levels[exp]?.en || exp : levels[exp]?.ar || exp;
   };
+
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center px-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-2xl"
+        >
+          <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
+          </div>
+          <h1 className="text-3xl lg:text-4xl font-bold mb-4">
+            {isEn ? "Application Submitted Successfully!" : "تم إرسال الطلب بنجاح!"}
+          </h1>
+          <p className="text-muted-foreground text-lg mb-8">
+            {isEn
+              ? "We've received your job application and will review it carefully. We'll contact you within 5 business days if you're selected for an interview."
+              : "لقد تلقينا طلب التوظيف الخاص بك وسنراجعه بعناية. سنتواصل معك خلال 5 أيام عمل إذا تم اختيارك للمقابلة."
+            }
+          </p>
+          <Button asChild size="lg">
+            <button onClick={() => {
+              setSubmitted(false);
+              setShowApplication(false);
+              setFormData({ name: "", email: "", phone: "", yearsOfExperience: "", coverLetter: "" });
+              setCvFile(null);
+              setCvError(null);
+            }}>
+              {isEn ? "Back to Jobs" : "العودة للوظائف"}
+            </button>
+          </Button>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (showApplication && selectedJob) {
     return (
@@ -322,19 +315,32 @@ export default function WorkWithUsPage() {
                 </p>
               </div>
 
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       {isEn ? "Full Name" : "الاسم الكامل"} *
                     </label>
-                    <Input placeholder={isEn ? "Your full name" : "اسمك الكامل"} className="h-12" required />
+                    <Input 
+                      value={formData.name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder={isEn ? "Your full name" : "اسمك الكامل"} 
+                      className="h-12" 
+                      required 
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       {isEn ? "Email Address" : "البريد الإلكتروني"} *
                     </label>
-                    <Input type="email" placeholder="name@example.com" className="h-12" required />
+                    <Input 
+                      type="email" 
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="name@example.com" 
+                      className="h-12" 
+                      required 
+                    />
                   </div>
                 </div>
 
@@ -343,13 +349,26 @@ export default function WorkWithUsPage() {
                     <label className="block text-sm font-medium mb-2">
                       {isEn ? "Phone Number" : "رقم الهاتف"} *
                     </label>
-                    <Input placeholder="+967 7X XXX XXXX" className="h-12" required />
+                    <Input 
+                      value={formData.phone}
+                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="+967 7X XXX XXXX" 
+                      className="h-12" 
+                      required 
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       {isEn ? "Years of Experience" : "سنوات الخبرة"} *
                     </label>
-                    <Input type="number" placeholder="5" className="h-12" required />
+                    <Input 
+                      type="number" 
+                      value={formData.yearsOfExperience}
+                      onChange={(e) => setFormData(prev => ({ ...prev, yearsOfExperience: e.target.value }))}
+                      placeholder="5" 
+                      className="h-12" 
+                      required 
+                    />
                   </div>
                 </div>
 
@@ -359,32 +378,96 @@ export default function WorkWithUsPage() {
                   </label>
                   <textarea
                     rows={6}
+                    value={formData.coverLetter}
+                    onChange={(e) => setFormData(prev => ({ ...prev, coverLetter: e.target.value }))}
                     className="w-full rounded-lg border border-border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground resize-none"
                     placeholder={isEn ? "Tell us why you're perfect for this role..." : "أخبرنا لماذا أنت مناسب لهذه الوظيفة..."}
                     required
                   />
                 </div>
 
+                {/* CV Upload */}
                 <div>
                   <label className="block text-sm font-medium mb-2">
-                    {isEn ? "Resume/CV" : "السيرة الذاتية"} *
+                    {isEn ? "Resume/CV (Optional)" : "السيرة الذاتية (اختياري)"}
                   </label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-                    <div className="text-muted-foreground">
-                      <Briefcase className="w-12 h-12 mx-auto mb-4" />
-                      <p>{isEn ? "Click to upload your resume or drag and drop" : "انقر لتحميل سيرتك الذاتية أو اسحبها وأفلتها"}</p>
-                      <p className="text-sm mt-2">{isEn ? "PDF, DOC, or DOCX (max 5MB)" : "PDF، DOC، أو DOCX (حد أقصى 5 ميجابايت)"}</p>
-                    </div>
+                  <p className="text-muted-foreground text-xs mb-3">
+                    {isEn
+                      ? "Accepted formats: PDF, Word documents, images, archives, text files. Maximum size: 5MB"
+                      : "الصيغ المقبولة: PDF، ملفات Word، الصور، الأرشيف، الملفات النصية. الحد الأقصى للحجم: 5 ميجابايت"
+                    }
+                  </p>
+                  <div className={`border-2 border-dashed border-border rounded-lg p-6 transition-all duration-300 hover:border-amber-500 ${
+                    cvError ? 'border-red-500 bg-red-50 dark:bg-red-950' : ''
+                  } ${
+                    cvFile ? 'border-amber-500 bg-amber-50 dark:bg-amber-950' : ''
+                  }`}>
+                    {cvFile ? (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <FileText className="w-8 h-8 text-amber-500" />
+                          <div>
+                            <p className="font-medium">{cvFile.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {(cvFile.size / (1024 * 1024)).toFixed(2)} MB
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={removeCvFile}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                        <div>
+                          <label htmlFor="cv-upload" className="cursor-pointer">
+                            <span className="text-amber-600 hover:text-amber-700 font-medium">
+                              {isEn ? "Click to browse" : "انقر للتصفح"}
+                            </span>
+                            <span className="text-muted-foreground ml-1">
+                              {isEn ? "or drag and drop your CV here" : "أو اسحب وأفلت سيرتك الذاتية هنا"}
+                            </span>
+                          </label>
+                          <input
+                            id="cv-upload"
+                            type="file"
+                            className="hidden"
+                            onChange={handleCvFileChange}
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.zip,.rar,.txt,.rtf"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
+                  {cvError && (
+                    <p className="text-red-600 text-sm mt-2">{cvError}</p>
+                  )}
                 </div>
 
                 <Button
                   type="submit"
+                  disabled={submitting}
                   size="lg"
                   className="w-full bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 h-12"
                 >
-                  {isEn ? "Submit Application" : "إرسال الطلب"}
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  {submitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                      {isEn ? "Submitting..." : "جاري الإرسال..."}
+                    </>
+                  ) : (
+                    <>
+                      {isEn ? "Submit Application" : "إرسال الطلب"}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </>
+                  )}
                 </Button>
               </form>
             </div>
@@ -447,7 +530,7 @@ export default function WorkWithUsPage() {
                   <div className="flex flex-col gap-3">
                     <div className="text-right">
                       <div className="text-2xl font-bold text-brand-primary">
-                        {selectedJob.salary.min.toLocaleString()} - {selectedJob.salary.max.toLocaleString()} {selectedJob.salary.currency}
+                        {selectedJob.salaryMin?.toLocaleString() || 'N/A'} - {selectedJob.salaryMax?.toLocaleString() || 'N/A'} {selectedJob.salaryCurrency || 'YER'}
                       </div>
                       <div className="text-sm text-muted-foreground">{isEn ? "per month" : "شهرياً"}</div>
                     </div>
@@ -475,37 +558,52 @@ export default function WorkWithUsPage() {
                 <div>
                   <h2 className="text-xl font-bold mb-4">{isEn ? "Responsibilities" : "المسؤوليات"}</h2>
                   <ul className="space-y-3">
-                    {(isEn ? selectedJob.responsibilitiesEn : selectedJob.responsibilitiesAr).map((resp, index) => (
+                    {((isEn ? selectedJob.responsibilitiesEn : selectedJob.responsibilitiesAr) || []).map((resp, index) => (
                       <li key={index} className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-brand-primary flex-shrink-0 mt-0.5" />
                         <span className="text-muted-foreground">{resp}</span>
                       </li>
                     ))}
                   </ul>
+                  {(!selectedJob.responsibilitiesEn || selectedJob.responsibilitiesEn.length === 0) && (!selectedJob.responsibilitiesAr || selectedJob.responsibilitiesAr.length === 0) && (
+                    <p className="text-muted-foreground italic">
+                      {isEn ? "No responsibilities listed" : "لم يتم إدراج مسؤوليات"}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <h2 className="text-xl font-bold mb-4">{isEn ? "Requirements" : "المتطلبات"}</h2>
                   <ul className="space-y-3">
-                    {(isEn ? selectedJob.requirementsEn : selectedJob.requirementsAr).map((req, index) => (
+                    {((isEn ? selectedJob.requirementsEn : selectedJob.requirementsAr) || []).map((req, index) => (
                       <li key={index} className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-brand-secondary flex-shrink-0 mt-0.5" />
                         <span className="text-muted-foreground">{req}</span>
                       </li>
                     ))}
                   </ul>
+                  {(!selectedJob.requirementsEn || selectedJob.requirementsEn.length === 0) && (!selectedJob.requirementsAr || selectedJob.requirementsAr.length === 0) && (
+                    <p className="text-muted-foreground italic">
+                      {isEn ? "No requirements listed" : "لم يتم إدراج متطلبات"}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <h2 className="text-xl font-bold mb-4">{isEn ? "Benefits" : "المزايا"}</h2>
                   <ul className="space-y-3">
-                    {(isEn ? selectedJob.benefitsEn : selectedJob.benefitsAr).map((benefit, index) => (
+                    {((isEn ? selectedJob.benefitsEn : selectedJob.benefitsAr) || []).map((benefit, index) => (
                       <li key={index} className="flex items-start gap-3">
                         <Star className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                         <span className="text-muted-foreground">{benefit}</span>
                       </li>
                     ))}
                   </ul>
+                  {(!selectedJob.benefitsEn || selectedJob.benefitsEn.length === 0) && (!selectedJob.benefitsAr || selectedJob.benefitsAr.length === 0) && (
+                    <p className="text-muted-foreground italic">
+                      {isEn ? "No benefits listed" : "لم يتم إدراج مزايا"}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -633,8 +731,8 @@ export default function WorkWithUsPage() {
             className="mt-6 text-sm text-muted-foreground"
           >
             {isEn 
-              ? `Showing ${filteredJobs.length} of ${mockJobs.length} jobs`
-              : `عرض ${filteredJobs.length} من ${mockJobs.length} وظيفة`
+              ? `Showing ${filteredJobs.length} of ${jobs.length} jobs`
+              : `عرض ${filteredJobs.length} من ${jobs.length} وظيفة`
             }
           </motion.div>
         </div>
@@ -643,7 +741,16 @@ export default function WorkWithUsPage() {
       {/* Jobs List */}
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
-          {filteredJobs.length === 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 border-2 border-brand-primary/30 border-t-brand-primary rounded-full animate-spin" />
+                <span className="text-muted-foreground">
+                  {isEn ? "Loading jobs..." : "جاري تحميل الوظائف..."}
+                </span>
+              </div>
+            </div>
+          ) : filteredJobs.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -701,7 +808,7 @@ export default function WorkWithUsPage() {
                         </div>
                         <div className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          <span>{job.postedDate.toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
+                          <span>{new Date(job.postedDate).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
                         </div>
                       </div>
                       
@@ -713,7 +820,7 @@ export default function WorkWithUsPage() {
                     <div className="flex flex-col items-end gap-3">
                       <div className="text-right">
                         <div className="text-lg font-bold text-brand-primary">
-                          {job.salary.min.toLocaleString()} - {job.salary.max.toLocaleString()} {job.salary.currency}
+                          {job.salaryMin?.toLocaleString() || 'N/A'} - {job.salaryMax?.toLocaleString() || 'N/A'} {job.salaryCurrency || 'YER'}
                         </div>
                         <div className="text-sm text-muted-foreground">{isEn ? "per month" : "شهرياً"}</div>
                       </div>
