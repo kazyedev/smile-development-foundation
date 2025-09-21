@@ -13,7 +13,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // JSON Schema types for complex fields
-export const StaticSchema = z.object({
+export const ProgramStaticSchema = z.object({
   icon: z.string().optional(),
   titleEn: z.string(),
   titleAr: z.string(),
@@ -44,7 +44,7 @@ export const programs = pgTable("programs", {
   aboutAr: text("about_ar"),
   goalsEn: text("goals_en").array(),
   goalsAr: text("goals_ar").array(),
-  statics: jsonb("statics").$type<z.infer<typeof StaticSchema>[]>().default([]),
+  statics: jsonb("statics").$type<z.infer<typeof ProgramStaticSchema>[]>().default([]),
   icon: varchar("icon", { length: 100 }),
   color: varchar("color", { length: 20 }),
   implementationLocationEn: varchar("implementation_location_en", { length: 500 }),
@@ -78,7 +78,7 @@ export const insertProgramSchema = createInsertSchema(programs, {
   descriptionAr: z.string().min(1),
   slugEn: z.string().min(1).max(200),
   slugAr: z.string().min(1).max(200),
-  statics: z.array(StaticSchema).optional(),
+  statics: z.array(ProgramStaticSchema).optional(),
   fundingProviders: z.array(ProviderDonorPartnerSchema).optional(),
   donors: z.array(ProviderDonorPartnerSchema).optional(),
   partners: z.array(ProviderDonorPartnerSchema).optional(),
@@ -90,6 +90,6 @@ export const selectProgramSchema = createSelectSchema(programs);
 // Types
 export type Program = typeof programs.$inferSelect;
 export type NewProgram = typeof programs.$inferInsert;
-export type ProgramStatic = z.infer<typeof StaticSchema>;
+export type ProgramStatic = z.infer<typeof ProgramStaticSchema>;
 export type ProgramProviderDonorPartner = z.infer<typeof ProviderDonorPartnerSchema>;
 export type ProgramSlide = z.infer<typeof SlideSchema>;

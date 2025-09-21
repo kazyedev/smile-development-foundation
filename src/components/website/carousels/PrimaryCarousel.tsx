@@ -2,13 +2,43 @@
 import { PrimaryCarouselCard } from "@/types/primaryCarouselCard";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LucideArrowLeft, LucideArrowRight } from "lucide-react";
+import { LucideArrowLeft, LucideArrowRight, Loader2 } from "lucide-react";
+import { useHeroSlides } from "@/hooks/useHeroSlides";
+import PrimaryCarouselSkeleton from "./PrimaryCarouselSkeleton";
 
-export default function PrimaryCarousel({ locale, cards }: { locale: string, cards: PrimaryCarouselCard[] }) {
+// Build a locale-aware URL from a given path
+function buildLocalizedUrl(path: string, locale: string) {
+  try {
+    // Leave absolute URLs untouched
+    if (/^https?:\/\//i.test(path)) return path;
+
+    const normalized = path.startsWith("/") ? path : `/${path}`;
+    const hasEn = normalized.startsWith("/en/") || normalized === "/en";
+    const hasAr = normalized.startsWith("/ar/") || normalized === "/ar";
+
+    // If already prefixed with a locale - replace with current locale if mismatched
+    if (hasEn || hasAr) {
+      const targetPrefix = `/${locale}`;
+      const stripped = normalized.replace(/^\/(en|ar)(?=\/|$)/, targetPrefix);
+      return stripped;
+    }
+
+    // Otherwise prefix with current locale
+    return `/${locale}${normalized}`;
+  } catch {
+    // Fallback to original path if anything goes wrong
+    return path;
+  }
+}
+
+export default function PrimaryCarousel({ locale }: { locale: string }) {
   const isLocaleEnglish = locale === "en";
   const isRTL = !isLocaleEnglish;
   const [currentCard, setCurrentCard] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Fetch dynamic slides from API - no fallback to local data
+  const { slides: cards, loading, error } = useHeroSlides(locale, 10);
 
   // Helper function to get the correct index with wrapping
   const getCardIndex = (offset: number) => {
@@ -66,8 +96,26 @@ export default function PrimaryCarousel({ locale, cards }: { locale: string, car
     return () => clearInterval(interval);
   }, [currentCard, cards, isTransitioning]);
 
+  // Show loading skeleton while fetching data
+  if (loading) {
+    return <PrimaryCarouselSkeleton locale={locale} />;
+  }
+
   if (!cards || cards.length === 0) {
-    return <div className="w-full h-screen bg-gray-200 flex items-center justify-center">No cards available</div>;
+    return (
+      <div className="w-full h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-white text-xl mb-2">
+            {isLocaleEnglish ? 'No slides available' : 'لا توجد شرائح متاحة'}
+          </p>
+          {error && (
+            <p className="text-red-400 text-sm">
+              {isLocaleEnglish ? 'Error loading slides' : 'خطأ في تحميل الشرائح'}
+            </p>
+          )}
+        </div>
+      </div>
+    );
   }
 
   const currentCardData = cards[currentIndex];
@@ -139,7 +187,7 @@ export default function PrimaryCarousel({ locale, cards }: { locale: string, car
             
             <Link 
               key={`link-${currentCard}`}
-              href={isLocaleEnglish ? currentCardData.linkUrlEn : currentCardData.linkUrlAr} 
+              href={buildLocalizedUrl(isLocaleEnglish ? currentCardData.linkUrlEn : currentCardData.linkUrlAr, locale)} 
               className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-lg hover:bg-white/30 transition-all duration-300 text-sm md:text-base font-medium transform hover:scale-105"
               style={{
                 animation: `fadeInUp 700ms ease-in-out 450ms`,

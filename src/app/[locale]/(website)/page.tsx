@@ -8,7 +8,6 @@ import VideosSection from "@/components/website/sections/VideosSection";
 import StaticSection from "@/components/website/sections/StaticSection";
 import NewsSection from "@/components/website/sections/NewsSection";
 import PrimaryCarousel from "@/components/website/carousels/PrimaryCarousel";
-import { mockPrimaryCarouselCards } from "@/data/mockPrimaryCarouselCards";
 import WhoWeAreSection from "@/components/website/sections/WhoWeAreSection";
 import { mockWhoWeAreSection } from "@/data/mockWhoWeAreSection";
 import { Metadata } from 'next';
@@ -179,7 +178,7 @@ export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
   return (
     <main className="flex flex-col gap-4 ">
-      <PrimaryCarousel locale={locale} cards={mockPrimaryCarouselCards} />
+      <PrimaryCarousel locale={locale} />
       {/* <HeroSection /> */}
       {/* <AboutSection locale={locale} /> */}
       <WhoWeAreSection {...mockWhoWeAreSection} locale={locale} />

@@ -9,7 +9,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // JSON Schema types for complex fields
-export const StaticSchema = z.object({
+export const FoundationStaticSchema = z.object({
   icon: z.string(),
   titleEn: z.string(),
   titleAr: z.string(),
@@ -44,7 +44,7 @@ export const foundationProfiles = pgTable("foundation_profiles", {
   youtube: varchar("youtube", { length: 500 }),
   telegram: varchar("telegram", { length: 500 }),
   bankAccounts: jsonb("bank_accounts").$type<z.infer<typeof BankAccountSchema>[]>().default([]),
-  statics: jsonb("statics").$type<z.infer<typeof StaticSchema>[]>().default([]),
+  statics: jsonb("statics").$type<z.infer<typeof FoundationStaticSchema>[]>().default([]),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
@@ -64,7 +64,7 @@ export const insertFoundationProfileSchema = createInsertSchema(foundationProfil
   youtube: z.string().url().optional(),
   telegram: z.string().url().optional(),
   bankAccounts: z.array(BankAccountSchema).optional(),
-  statics: z.array(StaticSchema).optional(),
+  statics: z.array(FoundationStaticSchema).optional(),
 });
 
 export const selectFoundationProfileSchema = createSelectSchema(foundationProfiles);
@@ -72,5 +72,5 @@ export const selectFoundationProfileSchema = createSelectSchema(foundationProfil
 // Types
 export type FoundationProfile = typeof foundationProfiles.$inferSelect;
 export type NewFoundationProfile = typeof foundationProfiles.$inferInsert;
-export type FoundationProfileStatic = z.infer<typeof StaticSchema>;
+export type FoundationProfileStatic = z.infer<typeof FoundationStaticSchema>;
 export type FoundationProfileBankAccount = z.infer<typeof BankAccountSchema>;
