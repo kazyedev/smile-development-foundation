@@ -1,15 +1,15 @@
 "use client";
 
-import { Story } from "@/types/successStory";
-import SuccessStoryCard from "../SuccessStoryCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Heart, Star, Quote, MapPin, User, Play, ArrowRight, Sparkles, Award, Users } from "lucide-react";
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
+import { useHomepageData, type HomepageSuccessStory } from "@/hooks/useHomepageData";
+import { SuccessStoriesSkeletonSection } from "../skeletons/HomepageSectionSkeleton";
 
-const mockSuccessStories: Story[] = [
+const mockSuccessStories: any[] = [
   {
     isEnglish: true,
     isArabic: true,
@@ -108,12 +108,21 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
   const isEnglish = locale === "en";
+  const { data, loading, error } = useHomepageData(locale);
+  
+  if (loading) {
+    return <SuccessStoriesSkeletonSection />;
+  }
+  
+  if (error || !data?.successStories || data.successStories.length === 0) {
+    return null; // Don't render section if no data
+  }
 
   const handleStoryClick = (index: number) => {
     setActiveStory(index);
   };
 
-  const currentStory = mockSuccessStories[activeStory];
+  const currentStory = data.successStories[activeStory];
 
   // Set animation flag when component comes into view
   if (isInView && !hasAnimated) {
@@ -249,7 +258,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
               
               {/* Tags */}
               <div className="flex gap-2 mb-8">
-                {(isEnglish ? currentStory.tagsEn : currentStory.tagsAr).map((tag) => (
+                {(isEnglish ? currentStory.tagsEn || [] : currentStory.tagsAr || []).map((tag) => (
                   <span 
                     key={tag} 
                     className="px-3 py-1 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 text-brand-primary rounded-full text-sm font-medium"
@@ -260,7 +269,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
       </div>
       
               {/* Read More Button */}
-              <Link href={`/${locale}/media/success-stories/${isEnglish ? currentStory.slugEn : currentStory.slugAr}`}>
+              <Link href={`/${locale}/success-stories/${isEnglish ? currentStory.slugEn : currentStory.slugAr}`}>
                 <Button className="group bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary/90 hover:to-brand-secondary/90 text-white">
                   {isEnglish ? "Read Full Story" : "قراءة القصة كاملة"}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -271,7 +280,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
 
           {/* Story Navigation */}
           <div className="flex justify-center gap-4 mb-16">
-            {mockSuccessStories.map((story, index) => (
+            {data.successStories.map((story, index) => (
               <motion.button
                 key={index}
                 onClick={() => handleStoryClick(index)}
@@ -346,7 +355,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
           transition={{ delay: 0.8, duration: 0.6 }}
           className="text-center"
         >
-          <Link href={`/${locale}/media/success-stories`}>
+          <Link href={`/${locale}/success-stories`}>
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"

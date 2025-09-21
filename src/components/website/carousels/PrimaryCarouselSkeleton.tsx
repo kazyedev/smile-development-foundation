@@ -76,20 +76,25 @@ export default function PrimaryCarouselSkeleton({ locale }: { locale: string }) 
         </div>
       </div>
 
-      {/* Floating dots animation */}
+      {/* Floating dots animation (deterministic positions to avoid hydration mismatch) */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-white/10 rounded-full animate-ping"
-            style={{
-              top: `${20 + Math.random() * 60}%`,
-              left: `${10 + Math.random() * 80}%`,
-              animationDelay: `${i * 0.5}s`,
-              animationDuration: '3s',
-            }}
-          />
-        ))}
+        {Array.from({ length: 6 }).map((_, i) => {
+          // Deterministic pseudo positions based on index
+          const top = 20 + ((i * 9) % 60);
+          const left = 10 + ((i * 17) % 80);
+          return (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-white/10 rounded-full animate-ping"
+              style={{
+                top: `${top}%`,
+                left: `${left}%`,
+                animationDelay: `${i * 0.5}s`,
+                animationDuration: '3s',
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* Shimmer effect overlay */}

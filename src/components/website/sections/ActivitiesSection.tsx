@@ -1,10 +1,12 @@
-import { Activity } from "@/types/activity";
-import ActivityCard from "../ActivityCard";
+'use client';
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Activity as ActivityIcon, Calendar, ChevronRight, Sparkles, Timer, TrendingUp } from "lucide-react";
+import { useHomepageData, type HomepageActivity } from "@/hooks/useHomepageData";
+import { ActivitiesSkeletonSection } from "../skeletons/HomepageSectionSkeleton";
 
-const mockActivities: Activity[] = [
+const mockActivities: any[] = [
   {
     id: 1,
     isEnglish: true,
@@ -83,6 +85,16 @@ const mockActivities: Activity[] = [
 
 export default function ActivitiesSection({ locale }: { locale: string }) {
   const isEnglish = locale === "en";
+  const { data, loading, error } = useHomepageData(locale);
+  
+  // Ensure hooks order is stable: do early returns AFTER all hooks
+  if (loading) {
+    return <ActivitiesSkeletonSection />;
+  }
+  
+  if (error || !data?.activities || data.activities.length === 0) {
+    return null; // Don't render section if no data
+  }
   
   return (
     <section className="relative py-20 bg-background">
@@ -116,22 +128,17 @@ export default function ActivitiesSection({ locale }: { locale: string }) {
           
           {/* Activities */}
           <div className="space-y-16">
-            {mockActivities.slice(0, 3).map((activity, index) => {
+            {data.activities.map((activity, index) => {
               const isEven = index % 2 === 0;
-              const formatDate = (date: Date) => {
-                if (isEnglish) {
-                  return date.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric',
-                    year: 'numeric'
-                  });
-                } else {
-                  return date.toLocaleDateString('ar-EG', { 
-                    month: 'short', 
-                    day: 'numeric',
-                    year: 'numeric'
-                  });
-                }
+              const formatDate = (dateInput: string | Date | null | undefined) => {
+                if (!dateInput) return '';
+                const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+                const locale = isEnglish ? 'en-US' : 'ar-EG';
+                return date.toLocaleDateString(locale, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                });
               };
               
               return (
@@ -160,7 +167,7 @@ export default function ActivitiesSection({ locale }: { locale: string }) {
                       
                       {/* Tags */}
                       <div className={`flex gap-2 mb-4 ${isEven ? 'lg:justify-end' : 'lg:justify-start'} justify-center`}>
-                        {(isEnglish ? activity.tagsEn : activity.tagsAr).slice(0, 2).map((tag) => (
+                        {(isEnglish ? activity.tagsEn || [] : activity.tagsAr || []).slice(0, 2).map((tag) => (
                           <span 
                             key={tag} 
                             className="px-3 py-1 bg-brand-secondary/10 dark:bg-brand-secondary/20 text-brand-secondary text-xs rounded-full"

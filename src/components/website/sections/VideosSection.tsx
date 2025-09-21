@@ -1,22 +1,29 @@
 "use client";
 
-import { Video } from "@/types/video";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { mockVideos } from "@/data/mockVideos";
 import { Play, Film, Camera, Eye } from "lucide-react";
 import Image from "next/image";
-
-// mockVideos imported from shared data
+import { useHomepageData, type HomepageVideo } from "@/hooks/useHomepageData";
+import { VideosSkeletonSection } from "../skeletons/HomepageSectionSkeleton";
 
 export default function VideosSection({ locale }: { locale: string }) {
-  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const isEnglish = locale === "en";
+  const { data, loading, error } = useHomepageData(locale);
+  const [activeVideo, setActiveVideo] = useState<HomepageVideo | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  if (loading) {
+    return <VideosSkeletonSection />;
+  }
+  
+  if (error || !data?.videos || data.videos.length === 0) {
+    return null; // Don't render section if no data
+  }
 
-  const handleVideoSelect = (video: Video) => {
+  const handleVideoSelect = (video: HomepageVideo) => {
     setActiveVideo(video);
     setIsPlaying(false);
   };
@@ -44,7 +51,7 @@ export default function VideosSection({ locale }: { locale: string }) {
     return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
   };
 
-  const selectedVideo = activeVideo || mockVideos[0];
+  const selectedVideo = activeVideo || data.videos[0];
 
   return (
     <section className="relative py-20 bg-gradient-to-b from-background to-black/5 dark:to-black/20 overflow-hidden">
@@ -117,21 +124,25 @@ export default function VideosSection({ locale }: { locale: string }) {
                 <h3 className="text-xl lg:text-2xl font-bold mb-3">
                   {isEnglish ? selectedVideo.titleEn : selectedVideo.titleAr}
                 </h3>
-                <p className="text-gray-300 mb-4 line-clamp-2">
-                  {isEnglish ? selectedVideo.descriptionEn : selectedVideo.descriptionAr}
-                </p>
+                {(selectedVideo.descriptionEn || selectedVideo.descriptionAr) && (
+                  <p className="text-gray-300 mb-4 line-clamp-2">
+                    {isEnglish ? selectedVideo.descriptionEn : selectedVideo.descriptionAr}
+                  </p>
+                )}
                 
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
+                <div className="flex items-center gap-4 text-sm text-gray-400">
                   <div className="flex items-center gap-2">
                     <Eye className="w-4 h-4" />
                     {formatViews(selectedVideo.views)}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Camera className="w-4 h-4" />
-                    {isEnglish ? selectedVideo.locationEn : selectedVideo.locationAr}
-                  </div>
+                  {(selectedVideo.locationEn || selectedVideo.locationAr) && (
+                    <div className="flex items-center gap-2">
+                      <Camera className="w-4 h-4" />
+                      {isEnglish ? selectedVideo.locationEn : selectedVideo.locationAr}
+                    </div>
+                  )}
                   <div className="flex gap-2">
-                    {(isEnglish ? selectedVideo.tagsEn : selectedVideo.tagsAr).slice(0, 2).map((tag) => (
+                    {(isEnglish ? selectedVideo.tagsEn || [] : selectedVideo.tagsAr || []).slice(0, 2).map((tag) => (
                       <span key={tag} className="px-2 py-1 bg-white/10 rounded-full text-xs">
                         #{tag}
                       </span>
@@ -155,7 +166,7 @@ export default function VideosSection({ locale }: { locale: string }) {
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {mockVideos.map((video, index) => (
+            {data.videos.map((video, index) => (
               <motion.div
                 key={video.slugEn}
                 initial={{ opacity: 0, y: 20 }}
@@ -189,7 +200,9 @@ export default function VideosSection({ locale }: { locale: string }) {
                     <Eye className="w-3 h-3" />
                     {formatViews(video.views)}
                   </div>
-                  <span>{isEnglish ? video.locationEn : video.locationAr}</span>
+                  {(video.locationEn || video.locationAr) && (
+                    <span>{isEnglish ? video.locationEn : video.locationAr}</span>
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -231,7 +244,7 @@ export default function VideosSection({ locale }: { locale: string }) {
          */}
         {/* Call to Action */}
         <div className="text-center">
-        <Link href={`/${locale}/media/videos`}>
+        <Link href={`/${locale}/videos`}>
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-brand-primary to-brand-primary/90 hover:from-brand-primary/90 hover:to-brand-primary text-white shadow-lg hover:shadow-xl transition-all duration-300 group"

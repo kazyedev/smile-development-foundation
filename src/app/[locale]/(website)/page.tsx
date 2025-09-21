@@ -177,7 +177,7 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
   return (
-    <main className="flex flex-col gap-4 ">
+    <main className="flex flex-col gap-4">
       <PrimaryCarousel locale={locale} />
       {/* <HeroSection /> */}
       {/* <AboutSection locale={locale} /> */}

@@ -1,14 +1,14 @@
 "use client";
 
-import { News } from "@/types/news";
-import NewsCard from "../NewsCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Newspaper, Clock, Eye, Calendar, ArrowRight, Zap, TrendingUp } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useHomepageData, type HomepageNews } from "@/hooks/useHomepageData";
+import { NewsSkeletonSection } from "../skeletons/HomepageSectionSkeleton";
 
-const mockNews: News[] = [
+const mockNews: any[] = [
   {
     id: 1,
     isEnglish: true,
@@ -98,11 +98,25 @@ export default function NewsSection({ locale }: { locale: string }) {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
   const isEnglish = locale === "en";
+  const { data, loading, error } = useHomepageData(locale);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Debug logging
+  console.log('NewsSection Debug:', { loading, error, data: data?.news, dataLength: data?.news?.length });
+
+  // Ensure hooks order is stable: do early returns AFTER all hooks
+  if (loading) {
+    return <NewsSkeletonSection />;
+  }
+  
+  if (error || !data?.news || data.news.length === 0) {
+    console.log('NewsSection early return:', { error, hasData: !!data, hasNews: !!data?.news, newsLength: data?.news?.length });
+    return null; // Don't render section if no data
+  }
 
   // Set animation flag when component comes into view
   if (isInView && !hasAnimated) {
@@ -117,7 +131,8 @@ export default function NewsSection({ locale }: { locale: string }) {
     });
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (dateInput: Date | string) => {
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
     return date.toLocaleDateString(isEnglish ? 'en-US' : 'ar-EG', { 
       weekday: 'long',
       year: 'numeric', 
@@ -126,7 +141,8 @@ export default function NewsSection({ locale }: { locale: string }) {
     });
   };
 
-  const formatNewsDate = (date: Date) => {
+  const formatNewsDate = (dateString: string) => {
+    const date = new Date(dateString);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -143,10 +159,24 @@ export default function NewsSection({ locale }: { locale: string }) {
     }
   };
 
-  const featuredNews = mockNews[0];
-  const sideNews = mockNews.slice(1);
+  const featuredNews = data.news[0];
+  const sideNews = data.news.slice(1);
+
+  // Debug render test - remove after fixing
+  console.log('NewsSection render check:', { 
+    hasData: !!data, 
+    newsCount: data?.news?.length, 
+    featuredTitle: featuredNews?.titleEn,
+    isInView, 
+    hasAnimated 
+  });
 
   return (
+    <>
+      {/* Temporary debug element */}
+      <div className="bg-red-500 text-white p-4 text-center font-bold">
+        NEWS SECTION DEBUG - Data loaded: {data?.news?.length || 0} items
+      </div>
     <section ref={sectionRef} className="relative py-20 bg-gradient-to-b from-background to-muted/20 dark:to-muted/10">
       {/* Newspaper Pattern Background */}
       <div className="absolute inset-0 opacity-5 dark:opacity-3">
@@ -192,7 +222,7 @@ export default function NewsSection({ locale }: { locale: string }) {
         <motion.div 
           className="text-center mb-12"
           initial={{ opacity: 0, y: 30 }}
-          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 dark:from-brand-primary/20 dark:to-brand-secondary/20 text-brand-primary rounded-full text-sm font-medium mb-6">
@@ -232,7 +262,7 @@ export default function NewsSection({ locale }: { locale: string }) {
             {/* Featured Article */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
-              animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="lg:col-span-2"
             >
@@ -255,7 +285,7 @@ export default function NewsSection({ locale }: { locale: string }) {
                     <div className="flex items-center gap-4 text-sm mb-3 opacity-90">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {formatNewsDate(featuredNews.publishedAt)}
+                        {featuredNews.publishedAt && formatNewsDate(featuredNews.publishedAt)}
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
@@ -263,7 +293,7 @@ export default function NewsSection({ locale }: { locale: string }) {
                       </div>
                       <div className="flex items-center gap-1">
                         <Eye className="w-4 h-4" />
-                        {featuredNews.pageViews.toLocaleString()}
+                        {featuredNews.pageViews.toLocaleString(isEnglish ? 'en-US' : 'ar-EG')}
                       </div>
                     </div>
                     
@@ -292,7 +322,7 @@ export default function NewsSection({ locale }: { locale: string }) {
                 <motion.div
                   key={news.id}
                   initial={{ opacity: 0, x: 30 }}
-                  animate={hasAnimated ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.6 + (index * 0.1), duration: 0.6 }}
                   className="group"
                 >
@@ -310,7 +340,7 @@ export default function NewsSection({ locale }: { locale: string }) {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                             <Calendar className="w-3 h-3" />
-                            {formatNewsDate(news.publishedAt)}
+                            {news.publishedAt && formatNewsDate(news.publishedAt)}
                           </div>
                           
                           <h4 className="font-semibold text-sm leading-tight line-clamp-2 mb-2 group-hover:text-brand-primary transition-colors">
@@ -340,7 +370,7 @@ export default function NewsSection({ locale }: { locale: string }) {
         {/* Call to Action */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
           className="text-center"
         >
@@ -357,5 +387,6 @@ export default function NewsSection({ locale }: { locale: string }) {
         </motion.div>
       </div>
     </section>
+    </>
   );
 }

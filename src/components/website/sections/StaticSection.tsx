@@ -251,7 +251,7 @@ export default function StaticSection({ locale }: { locale: string }) {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="text-2xl font-bold text-brand-secondary mb-1">
-                          {count.toLocaleString()}
+                          {count.toLocaleString(isEnglish ? 'en-US' : 'ar-EG')}
                         </div>
                         <div className="text-sm font-medium text-foreground mb-1 truncate">
                           {isEnglish ? stat.titleEn : stat.titleAr}

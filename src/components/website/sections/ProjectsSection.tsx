@@ -1,9 +1,59 @@
-import { Project } from "@/types/project";
-import ProjectCard from "../ProjectCard";
+'use client';
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, Target, Users, Lightbulb } from "lucide-react";
-const mockProjects: Project[] = [
+import { useHomepageData, type HomepageProject } from "@/hooks/useHomepageData";
+import { ProjectsSkeletonSection } from "../skeletons/HomepageSectionSkeleton";
+
+// Simple Project Card component
+function SimpleProjectCard({ project, locale }: { project: HomepageProject; locale: string }) {
+  const isEnglish = locale === "en";
+  
+  return (
+    <div className="group">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        <div className="relative aspect-[4/3] overflow-hidden">
+          <img 
+            src={project.featuredImageUrl}
+            alt={isEnglish ? project.titleEn : project.titleAr}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div 
+            className="absolute top-4 left-4 w-4 h-4 rounded-full"
+            style={{ backgroundColor: project.color }}
+          />
+        </div>
+        
+        <div className="p-6">
+          <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-brand-primary transition-colors line-clamp-2">
+            {isEnglish ? project.titleEn : project.titleAr}
+          </h3>
+          
+          <p className="text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
+            {isEnglish ? project.descriptionEn : project.descriptionAr}
+          </p>
+          
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">
+              {project.pageViews.toLocaleString(isEnglish ? 'en-US' : 'ar-EG')} {isEnglish ? 'views' : 'مشاهدة'}
+            </span>
+            
+            <Link href={`/${locale}/projects/${isEnglish ? project.slugEn : project.slugAr}`}>
+              <Button size="sm" className="group/btn">
+                {isEnglish ? "Learn More" : "اعرف أكثر"}
+                <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const mockProjects: any[] = [
   {
     id: 1,
     isEnglish: true,
@@ -186,6 +236,16 @@ const mockProjects: Project[] = [
 
 export default function ProjectsSection({ locale }: { locale: string }) {
   const isEnglish = locale === "en";
+  const { data, loading, error } = useHomepageData(locale);
+  
+  // Ensure hooks order is stable: do early returns AFTER all hooks
+  if (loading) {
+    return <ProjectsSkeletonSection />;
+  }
+  
+  if (error || !data?.projects || data.projects.length === 0) {
+    return null; // Don't render section if no data
+  }
   
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-background via-brand-primary/5 to-brand-secondary/10 dark:from-background dark:via-brand-primary/10 dark:to-brand-secondary/5">
@@ -250,13 +310,13 @@ export default function ProjectsSection({ locale }: { locale: string }) {
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-          {mockProjects.slice(0, 3).map((project, index) => (
+          {data.projects.map((project, index) => (
             <div 
               key={project.id} 
               className="group"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <ProjectCard project={project} locale={locale} />
+              <SimpleProjectCard project={project} locale={locale} />
             </div>
           ))}
         </div>
