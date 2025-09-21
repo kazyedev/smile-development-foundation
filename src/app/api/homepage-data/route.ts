@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
           locale === 'en' ? eq(news.isEnglish, true) : eq(news.isArabic, true)
         ))
         .orderBy(desc(news.publishedAt))
-        .limit(3),
+        .limit(5),
     ]);
 
     return NextResponse.json({
