@@ -8,89 +8,6 @@ import { motion, useInView } from "framer-motion";
 import { useHomepageData, type HomepageNews } from "@/hooks/useHomepageData";
 import { NewsSkeletonSection } from "../skeletons/HomepageSectionSkeleton";
 
-const mockNews: any[] = [
-  {
-    id: 1,
-    isEnglish: true,
-    isArabic: true,
-    includeInSitemapEn: true,
-    includeInSitemapAr: true,
-    titleEn: "Foundation Launches New Clean Water Initiative in Rural Yemen",
-    titleAr: "المؤسسة تطلق مبادرة جديدة للمياه النظيفة في ريف اليمن",
-    featuredImageUrl: "/assets/hero-1.jpg",
-    otherImagesUrl: ["/assets/hero-2.jpg"],
-    contentEn: "We are proud to announce the launch of our latest clean water initiative that will bring safe drinking water to over 10,000 residents in rural communities across Upper Yemen. This comprehensive program includes the installation of new water treatment facilities, community education workshops, and sustainable maintenance training for local residents.",
-    contentAr: "نحن فخورون بالإعلان عن إطلاق مبادرتنا الأحدث للمياه النظيفة التي ستجلب مياه الشرب الآمنة لأكثر من 10,000 نسمة في المجتمعات الريفية عبر مجمع اليمن. يشمل هذا البرنامج الشامل تركيب مرافق معالجة المياه الجديدة وورش التوعية المجتمعية وتدريب الصيانة المستدامة للسكان المحليين.",
-    categoryId: 1,
-    slugEn: "foundation-launches-clean-water-initiative-rural-Yemen",
-    slugAr: "المؤسسة-تطلق-مبادرة-المياه-النظيفة-ريف-اليمن",
-    keywordsEn: ["clean water", "rural development", "community health", "Upper Yemen"],
-    keywordsAr: ["مياه نظيفة", "تنمية ريفية", "صحة مجتمعية", "مجمع اليمن"],
-    tagsEn: ["Water", "Health"],
-    tagsAr: ["مياه", "صحة"],
-    readTime: 8,
-    pageViews: 2450,
-    authorId: 1,
-    isPublished: true,
-    publishedAt: new Date("2024-06-25"),
-    createdAt: new Date("2024-06-20"),
-    updatedAt: new Date("2024-06-24"),
-  },
-  {
-    id: 2,
-    isEnglish: true,
-    isArabic: true,
-    includeInSitemapEn: true,
-    includeInSitemapAr: true,
-    titleEn: "Youth Leadership Program Graduates 150 Future Leaders",
-    titleAr: "برنامج القيادة الشبابية يخرج 150 قائدًا مستقبليًا",
-    featuredImageUrl: "/assets/hero-2.jpg",
-    otherImagesUrl: ["/assets/hero-3.jpg", "/assets/hero-1.jpg"],
-    contentEn: "Our annual Youth Leadership Program has successfully graduated 150 young individuals who are now equipped with the skills and knowledge to lead positive change in their communities. The program included leadership training, project management workshops, and community service initiatives that have already begun making an impact.",
-    contentAr: "نجح برنامج القيادة الشبابية السنوي في تخريج 150 شابًا مزودين الآن بالمهارات والمعرفة لقيادة التغيير الإيجابي في مجتمعاتهم. شمل البرنامج تدريب القيادة وورش إدارة المشاريع ومبادرات الخدمة المجتمعية التي بدأت بالفعل في إحداث تأثير.",
-    categoryId: 2,
-    slugEn: "youth-leadership-program-graduates-150-future-leaders",
-    slugAr: "برنامج-القيادة-الشبابية-يخرج-150-قائد-مستقبلي",
-    keywordsEn: ["youth", "leadership", "graduation", "community impact"],
-    keywordsAr: ["شباب", "قيادة", "تخرج", "تأثير مجتمعي"],
-    tagsEn: ["Youth", "Leadership"],
-    tagsAr: ["شباب", "قيادة"],
-    readTime: 6,
-    pageViews: 1875,
-    authorId: 2,
-    isPublished: true,
-    publishedAt: new Date("2024-07-15"),
-    createdAt: new Date("2024-07-10"),
-    updatedAt: new Date("2024-07-14"),
-  },
-  {
-    id: 3,
-    isEnglish: true,
-    isArabic: true,
-    includeInSitemapEn: true,
-    includeInSitemapAr: true,
-    titleEn: "Medical Mission Provides Free Healthcare to 3,000 Patients",
-    titleAr: "البعثة الطبية تقدم رعاية صحية مجانية لـ 3,000 مريض",
-    featuredImageUrl: "/assets/hero-3.jpg",
-    otherImagesUrl: [],
-    contentEn: "Our recent medical mission to remote areas in Sinai Peninsula has provided free healthcare services to over 3,000 patients. The mission included general medical checkups, dental care, eye examinations, and distribution of essential medications. Local doctors and international volunteers worked together to ensure comprehensive care for underserved communities.",
-    contentAr: "قدمت بعثتنا الطبية الأخيرة إلى المناطق النائية في شبوة خدمات رعاية صحية مجانية لأكثر من 3,000 مريض. شملت البعثة الفحوصات الطبية العامة ورعاية الأسنان وفحوصات العيون وتوزيع الأدوية الأساسية. عمل الأطباء المحليون والمتطوعون الدوليون معًا لضمان الرعاية الشاملة للمجتمعات المحرومة.",
-    categoryId: 3,
-    slugEn: "medical-mission-provides-free-healthcare-3000-patients",
-    slugAr: "البعثة-الطبية-تقدم-رعاية-صحية-مجانية-3000-مريض",
-    keywordsEn: ["medical mission", "free healthcare", "Sinai", "community service"],
-    keywordsAr: ["بعثة طبية", "رعاية صحية مجانية", "شبوة", "خدمة مجتمعية"],
-    tagsEn: ["Healthcare", "Mission"],
-    tagsAr: ["رعاية صحية", "بعثة"],
-    readTime: 7,
-    pageViews: 3120,
-    authorId: 1,
-    isPublished: true,
-    publishedAt: new Date("2024-08-05"),
-    createdAt: new Date("2024-08-01"),
-    updatedAt: new Date("2024-08-04"),
-  },
-];
 
 export default function NewsSection({ locale }: { locale: string }) {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -162,14 +79,7 @@ export default function NewsSection({ locale }: { locale: string }) {
   const featuredNews = data.news[0];
   const sideNews = data.news.slice(1);
 
-  // Debug render test - remove after fixing
-  console.log('NewsSection render check:', { 
-    hasData: !!data, 
-    newsCount: data?.news?.length, 
-    featuredTitle: featuredNews?.titleEn,
-    isInView, 
-    hasAnimated 
-  });
+
 
   return (
     <>
@@ -186,37 +96,7 @@ export default function NewsSection({ locale }: { locale: string }) {
       </div>
 
       <div className="container mx-auto px-4 relative">
-        {/* Breaking News Ticker */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8"
-        >
-          <div className="bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg shadow-lg">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 font-bold text-sm">
-                <Zap className="w-4 h-4 animate-pulse" />
-                {isEnglish ? "BREAKING" : "عاجل"}
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <motion.div
-                  animate={{ x: [0, -100] }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="whitespace-nowrap text-sm"
-                >
-                  {isEnglish 
-                    ? "Foundation launches new clean water initiative in rural Yemen • Youth Leadership Program graduates 150 future leaders • Medical mission provides free healthcare to 3,000 patients"
-                    : "المؤسسة تطلق مبادرة جديدة للمياه النظيفة في ريف اليمن • برنامج القيادة الشبابية يخرج 150 قائدًا مستقبليًا • البعثة الطبية تقدم رعاية صحية مجانية لـ 3,000 مريض"
-                  }
-                </motion.div>
-              </div>
-              <div className="text-xs opacity-90">
-                {formatTime(currentTime)}
-              </div>
-            </div>
-          </div>
-        </motion.div> */}
+
 
         {/* Header */}
         <motion.div 

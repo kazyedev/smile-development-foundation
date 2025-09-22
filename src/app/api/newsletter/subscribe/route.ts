@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     try {
       // Try to insert the new subscriber
-      const newSubscriber = await db
+      const [newSubscriber] = await db
         .insert(newsletterMembers)
         .values({
           email,
@@ -49,15 +49,19 @@ export async function POST(request: NextRequest) {
           success: true,
           message: 'Successfully subscribed to newsletter',
           data: {
-            id: newSubscriber[0].id,
-            email: newSubscriber[0].email,
+            id: newSubscriber.id,
+            email: newSubscriber.email,
           },
         },
         { status: 201 }
       );
     } catch (dbError: any) {
+      console.error('Database error:', dbError);
+      
       // Check if the error is due to unique constraint violation (email already exists)
-      if (dbError.code === '23505' || dbError.constraint === 'newsletter_members_email_unique') {
+      if (dbError.code === '23505' || 
+          (dbError.constraint && dbError.constraint.includes('newsletter_members_email')) ||
+          (dbError.message && dbError.message.toLowerCase().includes('unique'))) {
         // Email already exists - return success message anyway
         return NextResponse.json(
           {

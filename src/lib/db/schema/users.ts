@@ -30,7 +30,7 @@ export const userSectionEnum = pgEnum("user_section", [
   "news_categories",
   "email_newsletters",
   "videos",
-  "photos",
+  "images",
   "publications",
   "reports",
   "success_stories",

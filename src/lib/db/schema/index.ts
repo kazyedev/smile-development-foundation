@@ -5,6 +5,7 @@ export * from "./images";
 export * from "./mediaCategories";
 export * from "./activities";
 export * from "./bankAccounts";
+export * from "./donations";
 export * from "./directorMembers";
 export * from "./faqs";
 export * from "./foundationProfiles";
@@ -38,6 +39,7 @@ import { images } from "./images";
 import { mediaCategories } from "./mediaCategories";
 import { activities } from "./activities";
 import { bankAccounts } from "./bankAccounts";
+import { donations } from "./donations";
 import { directorMembers } from "./directorMembers";
 import { faqs } from "./faqs";
 import { foundationProfiles } from "./foundationProfiles";
@@ -71,6 +73,7 @@ export const schema = {
   mediaCategories,
   activities,
   bankAccounts,
+  donations,
   directorMembers,
   faqs,
   foundationProfiles,

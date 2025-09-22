@@ -46,14 +46,19 @@ export default function Footer({ locale }: { locale: string }) {
 
       const data = await response.json();
 
-      if (data.success) {
+      // Treat unique constraint conflicts as success (backend should already do this, but this is a safe fallback)
+      const errMsg = typeof data?.error === 'string' ? data.error.toLowerCase() : '';
+      const isUniqueConflict = response.status === 409 || errMsg.includes('unique') || errMsg.includes('duplicate') || data?.code === '23505';
+
+      if (data.success || isUniqueConflict) {
         setIsSubscribed(true);
         setEmail("");
         // Reset success state after 4 seconds
         setTimeout(() => setIsSubscribed(false), 4000);
-      } else {
-        setError(data.error || (isEnglish ? "Failed to subscribe. Please try again." : "فشل في الاشتراك. يرجى المحاولة مرة أخرى."));
+        return;
       }
+
+      setError(data.error || (isEnglish ? "Failed to subscribe. Please try again." : "فشل في الاشتراك. يرجى المحاولة مرة أخرى."));
     } catch (error) {
       console.error('Newsletter subscription error:', error);
       setError(isEnglish ? "Network error. Please check your connection and try again." : "خطأ في الشبكة. يرجى التحقق من الاتصال والمحاولة مرة أخرى.");

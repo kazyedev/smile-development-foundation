@@ -3,9 +3,13 @@ import {
   serial,
   timestamp,
   varchar,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Currency enum
+export const currencyEnum = pgEnum('currency_type', ['USD', 'SAR', 'AED', 'YER']);
 
 export const bankAccounts = pgTable("bank_accounts", {
   id: serial("id").primaryKey(),
@@ -15,7 +19,7 @@ export const bankAccounts = pgTable("bank_accounts", {
   accountNumber: varchar("account_number", { length: 100 }).notNull(),
   accountNameEn: varchar("account_name_en", { length: 200 }).notNull(),
   accountNameAr: varchar("account_name_ar", { length: 200 }).notNull(),
-  accountCurrency: varchar("account_currency", { length: 10 }).notNull(),
+  accountCurrency: currencyEnum("account_currency").notNull().default('USD'),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
@@ -28,7 +32,7 @@ export const insertBankAccountSchema = createInsertSchema(bankAccounts, {
   accountNumber: z.string().min(1).max(100),
   accountNameEn: z.string().min(1).max(200),
   accountNameAr: z.string().min(1).max(200),
-  accountCurrency: z.string().min(1).max(10),
+  accountCurrency: z.enum(['USD', 'SAR', 'AED', 'YER']),
 });
 
 export const selectBankAccountSchema = createSelectSchema(bankAccounts);

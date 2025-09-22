@@ -1,11 +1,17 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Heart, DollarSign, Users, Droplets, GraduationCap, Stethoscope, Shield, CreditCard, Building, ArrowRight, CheckCircle, AlertCircle, Gift, Star, TrendingUp, Calendar } from "lucide-react";
+import { Heart, DollarSign, Users, UtensilsCrossed, GraduationCap, Stethoscope, Shield, CreditCard, Building, ArrowRight, CheckCircle, AlertCircle, Gift, Star, TrendingUp, Calendar, Upload, FileText, Banknote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export default function DonatePage() {
   const params = useParams<{ locale: string }>();
@@ -13,115 +19,281 @@ export default function DonatePage() {
   const isEn = locale === "en";
 
   const [amount, setAmount] = useState<number | "">(100);
+  const [currency, setCurrency] = useState<"USD" | "SAR" | "AED" | "YER">("USD");
   const [frequency, setFrequency] = useState<"once" | "monthly">("once");
-  const [method, setMethod] = useState<"card" | "bank" | "paypal">("card");
+  const [method, setMethod] = useState<"stripe" | "cash_transfer" | "bank_deposit">("stripe");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
+  const [transferFile, setTransferFile] = useState<File | null>(null);
+  const [depositFile, setDepositFile] = useState<File | null>(null);
+  const [selectedBankAccount, setSelectedBankAccount] = useState<number | null>(null);
+  const [bankAccounts, setBankAccounts] = useState<any[]>([]);
+  const [loadingBankAccounts, setLoadingBankAccounts] = useState(false);
+  const [bankAccountsError, setBankAccountsError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<null | { ok: boolean; msg: string }>(null);
   const [redirecting, setRedirecting] = useState(false);
 
   const preset = [50, 100, 250, 500, 1000, 2000];
 
+  // Fetch bank accounts when currency changes or bank_deposit method is selected
+  useEffect(() => {
+    if (method === 'bank_deposit') {
+      fetchBankAccounts();
+    } else {
+      setBankAccounts([]);
+      setSelectedBankAccount(null);
+    }
+  }, [currency, method]);
+
+  const fetchBankAccounts = async () => {
+    setLoadingBankAccounts(true);
+    setBankAccountsError(null);
+    try {
+      const response = await fetch(`/api/bank-accounts?currency=${currency}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setBankAccounts(data.data || []);
+      } else {
+        setBankAccountsError(data.error || 'Failed to load bank accounts');
+        setBankAccounts([]);
+      }
+    } catch (error) {
+      console.error('Error fetching bank accounts:', error);
+      setBankAccountsError('Network error while loading bank accounts');
+      setBankAccounts([]);
+    } finally {
+      setLoadingBankAccounts(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus(null);
+    
+    // Validation
     if (!amount || Number(amount) <= 0 || !email) {
       setStatus({ ok: false, msg: isEn ? "Please enter a valid amount and email." : "الرجاء إدخال مبلغ صحيح والبريد الإلكتروني." });
       return;
     }
+    
+    if (method === 'cash_transfer' && !transferFile) {
+      setStatus({ ok: false, msg: isEn ? "Please upload transfer receipt." : "يرجى رفع إيصال التحويل." });
+      return;
+    }
+    
+    if (method === 'bank_deposit' && !depositFile) {
+      setStatus({ ok: false, msg: isEn ? "Please upload deposit certificate." : "يرجى رفع شهادة الإيداع." });
+      return;
+    }
+    
+    if (method === 'bank_deposit' && !selectedBankAccount) {
+      setStatus({ ok: false, msg: isEn ? "Please select a bank account." : "يرجى اختيار حساب بنكي." });
+      return;
+    }
+    
     setSubmitting(true);
+    
     try {
-      const res = await fetch('/api/donate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: Number(amount), currency: 'YER', frequency, name, email, note }),
+      if (method === 'stripe') {
+        // Handle Stripe payments
+        const res = await fetch('/api/donate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: Number(amount), currency, frequency, name, email, note }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.url) throw new Error('Stripe error');
+        setRedirecting(true);
+        window.location.href = data.url as string;
+      } else {
+        // Handle Cash Transfer and Bank Deposit with file uploads
+        let transferAttachmentUrl = '';
+        let depositAttachmentUrl = '';
+        
+        // Upload transfer file if provided
+        if (transferFile && method === 'cash_transfer') {
+          const fileExt = transferFile.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+          
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('cash_transfers_attachments')
+            .upload(fileName, transferFile, {
+              cacheControl: '3600',
+              upsert: false
+            });
+          
+          if (uploadError) {
+            throw new Error(uploadError.message);
+          }
+          
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('cash_transfers_attachments')
+            .getPublicUrl(fileName);
+          
+          transferAttachmentUrl = publicUrl;
+        }
+        
+        // Upload deposit file if provided
+        if (depositFile && method === 'bank_deposit') {
+          const fileExt = depositFile.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+          
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('bank_deposits_attachments')
+            .upload(fileName, depositFile, {
+              cacheControl: '3600',
+              upsert: false
+            });
+          
+          if (uploadError) {
+            throw new Error(uploadError.message);
+          }
+          
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('bank_deposits_attachments')
+            .getPublicUrl(fileName);
+          
+          depositAttachmentUrl = publicUrl;
+        }
+        
+        // Submit donation data to API
+        const donationData = {
+          amount: Number(amount),
+          currency,
+          method,
+          frequency,
+          donorEmail: email,
+          donorName: name || null,
+          donorNote: note || null,
+          bankAccountId: selectedBankAccount,
+          transferAttachmentUrl: transferAttachmentUrl || null,
+          depositAttachmentUrl: depositAttachmentUrl || null,
+        };
+        
+        const res = await fetch('/api/donations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(donationData),
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'Failed to process donation');
+        }
+        
+        // Success - redirect to thank you page
+        setRedirecting(true);
+        
+        // Build query parameters for thank you page
+        const params = new URLSearchParams({
+          amount: amount.toString(),
+          currency,
+          method,
+          frequency,
+          ...(name && { name })
+        });
+        
+        setTimeout(() => {
+          window.location.href = `/${locale}/donate/thank-you?${params.toString()}`;
+        }, 1500);
+      }
+    } catch (error) {
+      console.error('Donation error:', error);
+      setStatus({ 
+        ok: false, 
+        msg: error instanceof Error ? error.message : (isEn ? "Something went wrong. Please try again." : "حدث خطأ ما. حاول مرة أخرى.") 
       });
-      const data = await res.json();
-      if (!res.ok || !data.url) throw new Error('Stripe');
-      setRedirecting(true);
-      window.location.href = data.url as string;
-    } catch {
-      setStatus({ ok: false, msg: isEn ? "Something went wrong. Please try again." : "حدث خطأ ما. حاول مرة أخرى." });
     } finally {
       setSubmitting(false);
     }
   };
 
+  const getCurrencySymbol = (curr: string) => {
+    const symbols = { USD: '$', SAR: 'ر.س', AED: 'د.إ', YER: 'ر.ي' };
+    return symbols[curr as keyof typeof symbols] || '$';
+  };
+
   const getImpactText = (amount: number) => {
+    const mealsPerAmount = Math.floor(amount / 25); // Assuming 25 currency units per family meal for a week
+    
     if (amount >= 2000) {
       return isEn 
-        ? "Can fund a complete water system for a small community"
-        : "يمكن أن يموّل نظام مياه كامل لمجتمع صغير";
+        ? "Can provide nutritious meals for an entire community for a month"
+        : "يمكن أن يوفر وجبات مغذية لمجتمع كامل لمدة شهر";
     } else if (amount >= 1000) {
       return isEn 
-        ? "Can provide educational materials for 20 students"
-        : "يمكن أن يوفر مواد تعليمية لـ 20 طالباً";
+        ? `Can feed ${Math.floor(amount / 25)} families for a week`
+        : `يمكن أن يطعم ${Math.floor(amount / 25)} عائلة لمدة أسبوع`;
     } else if (amount >= 500) {
       return isEn 
-        ? "Can fund medical care for 10 families"
-        : "يمكن أن يموّل الرعاية الطبية لـ 10 عائلات";
+        ? `Can provide food packages for ${Math.floor(amount / 50)} families`
+        : `يمكن أن يوفر طرود غذائية لـ ${Math.floor(amount / 50)} عائلة`;
     } else if (amount >= 250) {
       return isEn 
-        ? "Can provide clean water for 5 families for a month"
-        : "يمكن أن يوفر مياه نظيفة لـ 5 عائلات لمدة شهر";
+        ? "Can provide nutritious meals for 10 families for a week"
+        : "يمكن أن يوفر وجبات مغذية لـ 10 عائلات لمدة أسبوع";
     } else if (amount >= 100) {
       return isEn 
-        ? "Can provide clean water for 2 families for a month"
-        : "يمكن أن يوفر مياه نظيفة لعائلتين لمدة شهر";
+        ? "Can provide meals for 4 families for a week"
+        : "يمكن أن يوفر وجبات لـ 4 عائلات لمدة أسبوع";
     } else if (amount >= 50) {
       return isEn 
-        ? "Can provide clean water for 1 family for 2 weeks"
-        : "يمكن أن يوفر مياه نظيفة لعائلة واحدة لمدة أسبوعين";
+        ? "Can provide meals for 2 families for a week"
+        : "يمكن أن يوفر وجبات لعائلتين لمدة أسبوع";
     } else {
       return isEn 
-        ? "Every donation makes a difference"
-        : "كل تبرع يحدث فرقاً";
+        ? "Every donation helps feed families in need"
+        : "كل تبرع يساعد في إطعام العائلات المحتاجة";
     }
   };
 
   const impactAreas = [
     {
-      icon: Droplets,
-      title: isEn ? "Clean Water" : "مياه نظيفة",
-      description: isEn ? "50 YER provides clean water for a family for 1 week" : "50 ر.ي توفر مياه نظيفة لعائلة لمدة أسبوع",
-      color: "text-blue-600 dark:text-blue-400"
+      icon: UtensilsCrossed,
+      title: isEn ? "Nutritious Meals" : "وجبات مغذية",
+      description: isEn ? "25 USD provides nutritious meals for a family for 1 week" : "25 دولار توفر وجبات مغذية لعائلة لمدة أسبوع",
+      color: "text-orange-600 dark:text-orange-400"
     },
     {
       icon: GraduationCap,
       title: isEn ? "Education" : "التعليم",
-      description: isEn ? "200 YER equips a student with learning materials for a year" : "200 ر.ي تجهز طالباً بمواد تعليمية لسنة",
+      description: isEn ? "200 USD equips a student with learning materials for a year" : "200 دولار تجهز طالباً بمواد تعليمية لسنة",
       color: "text-green-600 dark:text-green-400"
     },
     {
       icon: Stethoscope,
       title: isEn ? "Healthcare" : "الرعاية الصحية",
-      description: isEn ? "150 YER funds a health outreach visit" : "150 ر.ي تموّل زيارة توعوية صحية",
+      description: isEn ? "150 USD funds a health outreach visit" : "150 دولار تموّل زيارة توعوية صحية",
       color: "text-red-600 dark:text-red-400"
     }
   ];
 
   const paymentMethods = [
     {
-      id: 'card',
+      id: 'stripe',
       icon: CreditCard,
       title: isEn ? 'Credit/Debit Card' : 'بطاقة ائتمان/خصم',
       subtitle: isEn ? 'Secure payment via Stripe' : 'دفع آمن عبر Stripe',
       recommended: true
     },
     {
-      id: 'paypal',
-      icon: DollarSign,
-      title: isEn ? 'PayPal' : 'باي بال',
-      subtitle: isEn ? 'Pay with your PayPal account' : 'ادفع بحساب PayPal الخاص بك',
+      id: 'cash_transfer',
+      icon: Banknote,
+      title: isEn ? 'Cash Transfer' : 'تحويل نقدي',
+      subtitle: isEn ? 'Transfer receipt required' : 'إيصال التحويل مطلوب',
       recommended: false
     },
     {
-      id: 'bank',
+      id: 'bank_deposit',
       icon: Building,
-      title: isEn ? 'Bank Transfer' : 'تحويل بنكي',
-      subtitle: isEn ? 'Direct bank transfer' : 'تحويل بنكي مباشر',
+      title: isEn ? 'Bank Deposit' : 'إيداع بنكي',
+      subtitle: isEn ? 'Deposit certificate required' : 'شهادة الإيداع مطلوبة',
       recommended: false
     }
   ];
@@ -131,17 +303,17 @@ export default function DonatePage() {
       name: isEn ? "Ahmed Hassan" : "أحمد حسن",
       location: isEn ? "Marib, Yemen" : "مأرب، اليمن",
       quote: isEn 
-        ? "Seeing my monthly donation help provide clean water to families gives me immense satisfaction."
-        : "رؤية تبرعي الشهري يساعد في توفير المياه النظيفة للعائلات يعطيني رضا هائل.",
-      amount: "200 YER/month"
+        ? "Seeing my monthly donation help provide nutritious meals to families gives me immense satisfaction."
+        : "رؤية تبرعي الشهري يساعد في توفير الوجبات المغذية للعائلات يعطيني رضا هائل.",
+      amount: "50 USD/month"
     },
     {
       name: isEn ? "Fatima Ali" : "فاطمة علي",
-      location: isEn ? "Aden, Yemen" : "الإسكندرية، اليمن",
+      location: isEn ? "Aden, Yemen" : "عدن، اليمن",
       quote: isEn 
-        ? "I love how transparent they are with their spending. My donations are making a real difference."
-        : "أحب مدى شفافيتهم في الإنفاق. تبرعاتي تحدث فرقاً حقيقياً.",
-      amount: "500 YER"
+        ? "Knowing my donations help feed hungry families fills my heart with joy. Every meal matters."
+        : "معرفة أن تبرعاتي تساعد في إطعام العائلات الجائعة تملأ قلبي بالفرح. كل وجبة مهمة.",
+      amount: "100 USD"
     }
   ];
 
@@ -175,8 +347,8 @@ export default function DonatePage() {
             
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
               {isEn
-                ? "Your generous donation helps us deliver clean water, quality education, and essential healthcare to communities in need across the region."
-                : "تبرعكم السخي يساعدنا في توصيل المياه النظيفة والتعليم الجيد والرعاية الصحية الأساسية للمجتمعات المحتاجة عبر المنطقة."
+                ? "Your generous donation helps us provide nutritious meals, quality education, and essential healthcare to families in need across the region."
+                : "تبرعكم السخي يساعدنا في توفير الوجبات المغذية والتعليم الجيد والرعاية الصحية الأساسية للعائلات المحتاجة عبر المنطقة."
               }
             </p>
 
@@ -247,7 +419,7 @@ export default function DonatePage() {
                               : 'border-border hover:border-emerald-300 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10'
                           }`}
                         >
-                          <div className="font-bold text-lg">{value} {isEn ? 'YER' : 'ر.ي'}</div>
+                          <div className="font-bold text-lg">{value} {getCurrencySymbol(currency)}</div>
                           <div className="text-xs text-muted-foreground mt-1">
                             {value >= 500 ? (isEn ? "High Impact" : "تأثير عالي") : 
                              value >= 200 ? (isEn ? "Good Impact" : "تأثير جيد") : 
@@ -267,7 +439,31 @@ export default function DonatePage() {
                         placeholder={isEn ? "Custom amount" : "مبلغ مخصص"}
                         className="h-12 text-lg"
                       />
-                      <span className="text-muted-foreground font-medium">{isEn ? 'YER' : 'ر.ي'}</span>
+                      <span className="text-muted-foreground font-medium">{getCurrencySymbol(currency)}</span>
+                    </div>
+                  </div>
+
+                  {/* Currency Selection */}
+                  <div>
+                    <label className="block text-lg font-semibold mb-4">
+                      {isEn ? "Currency" : "العملة"}
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {["USD", "SAR", "AED", "YER"].map((curr) => (
+                        <button
+                          key={curr}
+                          type="button"
+                          onClick={() => setCurrency(curr as any)}
+                          className={`p-3 rounded-xl border-2 transition-all duration-300 text-center ${
+                            currency === curr 
+                              ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' 
+                              : 'border-border hover:border-emerald-300 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10'
+                          }`}
+                        >
+                          <div className="font-bold text-sm">{curr}</div>
+                          <div className="text-xs text-muted-foreground">{getCurrencySymbol(curr)}</div>
+                        </button>
+                      ))}
                     </div>
                   </div>
 
@@ -425,14 +621,162 @@ export default function DonatePage() {
                       })}
                     </div>
                     
-                    {method === 'bank' && (
-                      <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {/* Cash Transfer File Upload */}
+                    {method === 'cash_transfer' && (
+                      <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                        <p className="text-sm text-amber-700 dark:text-amber-300 mb-3">
                           {isEn 
-                            ? 'Bank transfer details will be provided after submitting the form. You will receive an email with payment instructions.'
-                            : 'سيتم توفير تفاصيل التحويل البنكي بعد إرسال النموذج. ستتلقى بريداً إلكترونياً مع تعليمات الدفع.'
+                            ? 'Please upload your transfer receipt after completing the payment. We will provide transfer details after form submission.'
+                            : 'يرجى رفع إيصال التحويل بعد إتمام الدفع. سنوفر تفاصيل التحويل بعد إرسال النموذج.'
                           }
                         </p>
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium">
+                            {isEn ? "Transfer Receipt" : "إيصال التحويل"} *
+                          </label>
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="file"
+                              accept="image/*,.pdf"
+                              onChange={(e) => setTransferFile(e.target.files?.[0] || null)}
+                              className="hidden"
+                              id="transfer-file"
+                            />
+                            <label
+                              htmlFor="transfer-file"
+                              className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-lg cursor-pointer hover:bg-muted transition-colors"
+                            >
+                              <Upload className="w-4 h-4" />
+                              {isEn ? "Choose File" : "اختر ملف"}
+                            </label>
+                            {transferFile && (
+                              <span className="text-sm text-muted-foreground">
+                                {transferFile.name}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {isEn ? "Supported formats: JPG, PNG, PDF (max 5MB)" : "الصيغ المدعومة: JPG، PNG، PDF (حد أقصى 5 ميجا)"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Bank Deposit File Upload */}
+                    {method === 'bank_deposit' && (
+                      <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">
+                          {isEn 
+                            ? 'Please upload your deposit certificate after making the deposit. Choose from our available bank accounts below.'
+                            : 'يرجى رفع شهادة الإيداع بعد القيام بالإيداع. اختر من حساباتنا البنكية المتاحة أدناه.'
+                          }
+                        </p>
+                        <div className="space-y-4">
+                          {/* Bank Account Selection */}
+                          <div>
+                            <label className="block text-sm font-medium mb-2">
+                              {isEn ? "Select Bank Account" : "اختر الحساب البنكي"} *
+                            </label>
+                            
+                            {loadingBankAccounts ? (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/30 rounded-lg">
+                                <div className="w-4 h-4 border-2 border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin" />
+                                {isEn ? "Loading bank accounts..." : "جاري تحميل الحسابات البنكية..."}
+                              </div>
+                            ) : bankAccountsError ? (
+                              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                                <p className="text-sm text-red-700 dark:text-red-300">
+                                  {isEn ? "Error loading bank accounts:" : "خطأ في تحميل الحسابات البنكية:"} {bankAccountsError}
+                                </p>
+                                <button 
+                                  onClick={fetchBankAccounts}
+                                  className="mt-2 text-sm text-red-600 hover:text-red-700 underline"
+                                >
+                                  {isEn ? "Try again" : "حاول مرة أخرى"}
+                                </button>
+                              </div>
+                            ) : bankAccounts.length === 0 ? (
+                              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                                <p className="text-sm text-amber-700 dark:text-amber-300">
+                                  {isEn 
+                                    ? `No bank accounts available for ${currency} at the moment. Please try a different currency or contact us.`
+                                    : `لا توجد حسابات بنكية متاحة لعملة ${currency} في الوقت الحالي. يرجى تجربة عملة أخرى أو التواصل معنا.`
+                                  }
+                                </p>
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                {bankAccounts.map((account) => (
+                                  <button
+                                    key={account.id}
+                                    type="button"
+                                    onClick={() => setSelectedBankAccount(account.id)}
+                                    className={`w-full p-3 rounded-lg border-2 transition-all duration-300 text-left ${
+                                      selectedBankAccount === account.id
+                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                        : 'border-border hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-900/10'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      {account.bankLogo && (
+                                        <img 
+                                          src={account.bankLogo} 
+                                          alt={isEn ? account.bankNameEn : account.bankNameAr}
+                                          className="w-8 h-8 object-contain rounded"
+                                        />
+                                      )}
+                                      <div className="flex-1">
+                                        <div className="font-semibold text-sm">
+                                          {isEn ? account.bankNameEn : account.bankNameAr}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground">
+                                          {isEn ? account.accountNameEn : account.accountNameAr}
+                                        </div>
+                                        <div className="text-xs font-mono text-muted-foreground">
+                                          {account.accountNumber}
+                                        </div>
+                                      </div>
+                                      <div className="text-xs font-bold text-blue-600">
+                                        {account.accountCurrency}
+                                      </div>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* File Upload */}
+                          <div>
+                            <label className="block text-sm font-medium mb-2">
+                              {isEn ? "Deposit Certificate" : "شهادة الإيداع"} *
+                            </label>
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="file"
+                                accept="image/*,.pdf"
+                                onChange={(e) => setDepositFile(e.target.files?.[0] || null)}
+                                className="hidden"
+                                id="deposit-file"
+                              />
+                              <label
+                                htmlFor="deposit-file"
+                                className="flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-lg cursor-pointer hover:bg-muted transition-colors"
+                              >
+                                <Upload className="w-4 h-4" />
+                                {isEn ? "Choose File" : "اختر ملف"}
+                              </label>
+                              {depositFile && (
+                                <span className="text-sm text-muted-foreground">
+                                  {depositFile.name}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {isEn ? "Supported formats: JPG, PNG, PDF (max 5MB)" : "الصيغ المدعومة: JPG، PNG، PDF (حد أقصى 5 ميجا)"}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -474,14 +818,25 @@ export default function DonatePage() {
                   {/* Submit Button */}
                   <Button
                     type="submit"
-                    disabled={submitting || redirecting || !amount || Number(amount) <= 0 || !email}
+                    disabled={
+                      submitting || 
+                      redirecting || 
+                      !amount || 
+                      Number(amount) <= 0 || 
+                      !email ||
+                      (method === 'cash_transfer' && !transferFile) ||
+                      (method === 'bank_deposit' && (!depositFile || !selectedBankAccount))
+                    }
                     size="lg"
                     className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 group h-14 text-lg"
                   >
                     {redirecting ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3" />
-                        {isEn ? "Redirecting to Stripe..." : "جاري التحويل إلى Stripe..."}
+                        {method === 'stripe' 
+                          ? (isEn ? "Redirecting to Stripe..." : "جاري التحويل إلى Stripe...")
+                          : (isEn ? "Processing donation..." : "جاري معالجة التبرع...")
+                        }
                       </>
                     ) : submitting ? (
                       <>
@@ -491,7 +846,12 @@ export default function DonatePage() {
                     ) : (
                       <>
                         <Heart className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="currentColor" />
-                        {isEn ? "Donate Now" : "تبرع الآن"}
+                        {method === 'stripe'
+                          ? (isEn ? "Donate Now" : "تبرع الآن")
+                          : method === 'cash_transfer'
+                          ? (isEn ? "Submit Cash Transfer" : "إرسال التحويل النقدي")
+                          : (isEn ? "Submit Bank Deposit" : "إرسال الإيداع البنكي")
+                        }
                         <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
@@ -524,13 +884,13 @@ export default function DonatePage() {
                 
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                      <Droplets className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                      <UtensilsCrossed className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                     </div>
                     <div>
-                      <div className="font-bold text-2xl text-blue-600">50K+</div>
+                      <div className="font-bold text-2xl text-orange-600">50K+</div>
                       <div className="text-sm text-muted-foreground">
-                        {isEn ? "People with clean water access" : "شخص حصل على المياه النظيفة"}
+                        {isEn ? "Families received food assistance" : "عائلات حصلت على مساعدات غذائية"}
                       </div>
                     </div>
                   </div>
