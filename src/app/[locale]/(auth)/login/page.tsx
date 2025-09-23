@@ -104,10 +104,12 @@ export default function LoginPage() {
               // Redirect based on user role
               if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
                 router.push(`/${locale}/cms`);
+                router.refresh();
               } else {
-                router.push(`/${locale}`);
+                try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+                router.push(`/${locale}/not-authorized`);
+                router.refresh();
               }
-              router.refresh();
             }
           }
         }
@@ -181,19 +183,27 @@ export default function LoginPage() {
               // Redirect based on user role
               if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
                 router.push(`/${locale}/cms`);
+                router.refresh();
               } else {
-                router.push(`/${locale}`);
+                try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+                router.push(`/${locale}/not-authorized`);
+                router.refresh();
               }
             } else {
-              router.push(`/${locale}`);
+              try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+              router.push(`/${locale}/not-authorized`);
+              router.refresh();
             }
           } else {
-            router.push(`/${locale}`);
+            try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+            router.push(`/${locale}/not-authorized`);
+            router.refresh();
           }
         } catch {
-          router.push(`/${locale}`);
+          try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+          router.push(`/${locale}/not-authorized`);
+          router.refresh();
         }
-        router.refresh();
       } else {
         setError(result.error || t.unknownError);
       }

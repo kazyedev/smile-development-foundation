@@ -12,6 +12,9 @@ const PROTECTED_ROUTES = ['/cms'];
 // Auth routes that should redirect if already authenticated
 const AUTH_ROUTES = ['/login', '/signup', '/reset-password'];
 
+// Public routes that should be accessible without authentication
+const PUBLIC_ROUTES = ['/not-authorized'];
+
 // Create Supabase client for middleware
 function createSupabaseReqResClient(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: request.headers } });
@@ -91,42 +94,51 @@ export async function middleware(request: NextRequest) {
       pathWithoutLocale.startsWith(route)
     );
 
-    // Redirect authenticated users away from auth pages
-    if (isAuthenticated && isAuthRoute) {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = `/${locale}/cms`;
-      return NextResponse.redirect(redirectUrl);
-    }
+    // Check if current route is a public route
+    const isPublicRoute = PUBLIC_ROUTES.some(route => 
+      pathWithoutLocale.startsWith(route)
+    );
 
-    // Redirect unauthenticated users from protected routes
-    if (!isAuthenticated && isProtectedRoute) {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = `/${locale}/login`;
-      redirectUrl.searchParams.set('redirect', pathWithoutLocale);
-      return NextResponse.redirect(redirectUrl);
-    }
+    // Skip auth checks for public routes
+    if (isPublicRoute) {
+      // Allow access to public routes without authentication
+    } else {
+      // Redirect authenticated users away from auth pages
+      if (isAuthenticated && isAuthRoute) {
+        const redirectUrl = request.nextUrl.clone();
+        redirectUrl.pathname = `/${locale}/cms`;
+        return NextResponse.redirect(redirectUrl);
+      }
 
-    // If authenticated and accessing CMS, check user role
-    if (isAuthenticated && pathWithoutLocale.startsWith('/cms')) {
-      try {
-        const { data: user } = await supabase
-          .from('users')
-          .select('role, is_active')
-          .eq('id', session.user.id)
-          .single();
-
-        // If user doesn't have admin role or is inactive, redirect to home
-        if (!user?.role || user.role === 'default' || !user.is_active) {
-          const redirectUrl = request.nextUrl.clone();
-          redirectUrl.pathname = `/${locale}`;
-          redirectUrl.searchParams.set('error', 'unauthorized');
-          return NextResponse.redirect(redirectUrl);
-        }
-      } catch (error) {
-        // If there's an error checking the profile, redirect to login
+      // Redirect unauthenticated users from protected routes
+      if (!isAuthenticated && isProtectedRoute) {
         const redirectUrl = request.nextUrl.clone();
         redirectUrl.pathname = `/${locale}/login`;
+        redirectUrl.searchParams.set('redirect', pathWithoutLocale);
         return NextResponse.redirect(redirectUrl);
+      }
+
+      // If authenticated and accessing CMS, check user role
+      if (isAuthenticated && pathWithoutLocale.startsWith('/cms')) {
+        try {
+          const { data: user } = await supabase
+            .from('users')
+            .select('role, is_active')
+            .eq('id', session.user.id)
+            .single();
+
+          // If user doesn't have admin role or is inactive, logout and redirect to not-authorized
+          if (!user?.role || user.role === 'default' || !user.is_active) {
+            const redirectUrl = request.nextUrl.clone();
+            redirectUrl.pathname = `/${locale}/not-authorized`;
+            return NextResponse.redirect(redirectUrl);
+          }
+        } catch (error) {
+          // If there's an error checking the profile, redirect to login
+          const redirectUrl = request.nextUrl.clone();
+          redirectUrl.pathname = `/${locale}/login`;
+          return NextResponse.redirect(redirectUrl);
+        }
       }
     }
   } catch (error) {

@@ -118,10 +118,12 @@ export default function SignupPage() {
               // Redirect based on user role
               if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
                 router.push(`/${locale}/cms`);
+                router.refresh();
               } else {
-                router.push(`/${locale}`);
+                try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+                router.push(`/${locale}/not-authorized`);
+                router.refresh();
               }
-              router.refresh();
             }
           }
         }
@@ -424,7 +426,32 @@ export default function SignupPage() {
                         const data = await res.json();
                         if (!res.ok) throw new Error(data.error || "Failed to confirm OTP");
                         setPhase("done");
-                        router.push(`/${locale}`);
+                        
+                        // Check user role and redirect appropriately
+                        try {
+                          const profRes = await fetch("/api/auth/profile", { cache: "no-store" });
+                          if (profRes.ok) {
+                            const profileData = await profRes.json();
+                            if (profileData.profile && profileData.profile.is_active) {
+                              if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
+                                router.push(`/${locale}/cms`);
+                              } else {
+                                // User is not authorized, logout and redirect
+                                try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+                                router.push(`/${locale}/not-authorized`);
+                              }
+                            } else {
+                              try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+                              router.push(`/${locale}/not-authorized`);
+                            }
+                          } else {
+                            try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+                            router.push(`/${locale}/not-authorized`);
+                          }
+                        } catch {
+                          try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
+                          router.push(`/${locale}/not-authorized`);
+                        }
                         router.refresh();
                       } catch (err: unknown) {
                         setError(err instanceof Error ? err.message : 'Unknown error');

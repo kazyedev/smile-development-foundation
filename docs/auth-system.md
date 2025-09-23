@@ -78,6 +78,7 @@ The `user_role` enum includes:
 2. **Signup** (`/[locale]/signup`) - User registration with OTP verification
 3. **Reset Password** (`/[locale]/reset-password`) - Password reset request
 4. **Reset Password Complete** (`/[locale]/reset-password/complete`) - Set new password
+5. **Not Authorized** (`/[locale]/not-authorized`) - Message for users without admin access
 
 ### Protected Routes
 
@@ -116,14 +117,15 @@ The middleware (`src/middleware.ts`) provides:
 2. Supabase authenticates user
 3. System checks `users` table for role and status
 4. Redirects based on role:
-   - Admin roles → CMS dashboard
-   - Regular users → Home page
+   - Admin roles (admin, super_admin, content_manager) → CMS dashboard
+   - Regular users (default, viewer, author) → Automatic logout + Not Authorized page
 
 ### Access Control
 
-- **Public**: Home, about, contact pages
+- **Public**: Home, about, contact pages, not-authorized page
 - **Auth Required**: None currently (all handled by middleware)
 - **Admin Required**: CMS routes (`/cms/*`)
+- **Auto-Logout**: Users without admin roles are automatically logged out and redirected
 
 ## Environment Variables
 
@@ -193,6 +195,7 @@ WHERE email = 'user@example.com';
 2. **CMS access denied**: Verify user role is admin+
 3. **Redirect loops**: Check middleware configuration
 4. **Email not sending**: Verify Supabase email settings
+5. **User redirected to not-authorized**: User has `default` role, needs admin+ role assignment
 
 ### Debug Steps
 
