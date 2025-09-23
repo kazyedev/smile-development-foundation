@@ -102,6 +102,32 @@ export default function SignupPage() {
   const [otpError, setOtpError] = useState<string | null>(null);
   const [otpVerified, setOtpVerified] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [alreadyLogged, setAlreadyLogged] = useState(false);
+
+  // If already authenticated, redirect appropriately
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const profRes = await fetch("/api/auth/profile", { cache: "no-store" });
+        if (profRes.ok) {
+          const profileData = await profRes.json();
+          // Redirect if user is already confirmed and has an account
+          if (profileData.profile && profileData.profile.is_active) {
+            setAlreadyLogged(true);
+            if (locale && typeof locale === 'string') {
+              // Redirect based on user role
+              if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
+                router.push(`/${locale}/cms`);
+              } else {
+                router.push(`/${locale}`);
+              }
+              router.refresh();
+            }
+          }
+        }
+      } catch {}
+    })();
+  }, [locale, router]);
   
   // Utility functions
   const startCooldown = (seconds: number) => {
@@ -224,6 +250,21 @@ export default function SignupPage() {
       }
     }
   };
+
+  // If user is already logged in, show redirect message
+  if (alreadyLogged) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg animate-pulse"></div>
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Already signed in</h2>
+          <p className="text-muted-foreground">Redirecting to your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">

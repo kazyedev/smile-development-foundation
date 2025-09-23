@@ -15,15 +15,21 @@ export async function POST() {
   const { error } = await supabase.auth.updateUser({ data: { otp_verified: true } });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
-  // Create profile row (id/email) if it doesn't exist
+  // Create user row (id/email) in users table if it doesn't exist
   const { error: insertError } = await supabase
-    .from("profiles")
+    .from("users")
     .upsert(
       [
         {
           id: user.id,
           email: user.email ?? null,
+          role: 'default',
+          name_en: user.email?.split('@')[0] || 'User',
+          name_ar: user.email?.split('@')[0] || 'مستخدم',
           last_login: user.last_sign_in_at ?? null,
+          is_active: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         },
       ],
       { onConflict: "id", ignoreDuplicates: true }

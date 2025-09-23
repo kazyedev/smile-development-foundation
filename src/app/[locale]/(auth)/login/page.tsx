@@ -97,11 +97,16 @@ export default function LoginPage() {
         const profRes = await fetch("/api/auth/profile", { cache: "no-store" });
         if (profRes.ok) {
           const profileData = await profRes.json();
-          // Only redirect if user has admin role
-          if (profileData.profile && profileData.profile.role !== "default") {
+          // Redirect if user is already confirmed and has an account
+          if (profileData.profile && profileData.profile.is_active) {
             setAlreadyLogged(true);
             if (locale && typeof locale === 'string') {
-              router.push(`/${locale}/cms`);
+              // Redirect based on user role
+              if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
+                router.push(`/${locale}/cms`);
+              } else {
+                router.push(`/${locale}`);
+              }
               router.refresh();
             }
           }
@@ -167,8 +172,27 @@ export default function LoginPage() {
       const result = await login(email, password);
       
       if (result.success) {
-        // Login successful, redirect to CMS
-        router.push(`/${locale}/cms`);
+        // Login successful, get user profile to determine redirect
+        try {
+          const profRes = await fetch("/api/auth/profile", { cache: "no-store" });
+          if (profRes.ok) {
+            const profileData = await profRes.json();
+            if (profileData.profile) {
+              // Redirect based on user role
+              if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
+                router.push(`/${locale}/cms`);
+              } else {
+                router.push(`/${locale}`);
+              }
+            } else {
+              router.push(`/${locale}`);
+            }
+          } else {
+            router.push(`/${locale}`);
+          }
+        } catch {
+          router.push(`/${locale}`);
+        }
         router.refresh();
       } else {
         setError(result.error || t.unknownError);
