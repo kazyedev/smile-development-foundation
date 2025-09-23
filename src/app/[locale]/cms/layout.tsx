@@ -18,7 +18,19 @@ import {
   Settings,
   Image,
   BarChart3,
-  Globe
+  Globe,
+  ChevronDown,
+  ChevronRight,
+  Folder,
+  Video,
+  BookOpen,
+  Newspaper,
+  Mail,
+  Heart,
+  Briefcase,
+  UserPlus,
+  HelpCircle,
+  Home
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -46,11 +58,38 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
   const translations = {
     en: {
       dashboard: "Dashboard",
-      users: "Users",
-      content: "Content",
-      media: "Media",
-      analytics: "Analytics",
-      settings: "Settings",
+      programs: "Programs",
+      projects: "Projects",
+      projectCategories: "Project Categories",
+      donations: "Donations",
+
+      mediaGroup: "Media",
+      videos: "Videos",
+      images: "Images",
+      publications: "Publications",
+      reports: "Reports",
+      activities: "Activities",
+      successStories: "Success Stories",
+      mediaCategories: "Media Categories",
+
+      newsGroup: "News",
+      news: "News",
+      newsCategories: "News Categories",
+      newsletters: "Newsletters",
+      newsletterMembers: "Newsletter Members",
+
+      hrGroup: "HR",
+      jobs: "Jobs",
+      jobApplications: "Job Applications",
+      volunteerRequests: "Volunteer Requests",
+
+      websiteDataGroup: "Website Data",
+      homeSlides: "Home Page Slides",
+      faqs: "FAQs",
+
+      foundationInfoGroup: "Foundation Info",
+      team: "Team",
+
       logout: "Logout",
       toggleTheme: "Toggle theme",
       switchLanguage: "Switch language",
@@ -58,11 +97,38 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
     },
     ar: {
       dashboard: "لوحة التحكم",
-      users: "المستخدمين",
-      content: "المحتوى",
-      media: "الوسائط",
-      analytics: "التحليلات",
-      settings: "الإعدادات",
+      programs: "البرامج",
+      projects: "المشاريع",
+      projectCategories: "تصنيفات المشاريع",
+      donations: "التبرعات",
+
+      mediaGroup: "الوسائط",
+      videos: "الفيديوهات",
+      images: "الصور",
+      publications: "المنشورات",
+      reports: "التقارير",
+      activities: "الأنشطة",
+      successStories: "قصص النجاح",
+      mediaCategories: "تصنيفات الوسائط",
+
+      newsGroup: "الأخبار",
+      news: "الأخبار",
+      newsCategories: "تصنيفات الأخبار",
+      newsletters: "النشرات البريدية",
+      newsletterMembers: "مشتركو النشرة",
+
+      hrGroup: "الموارد البشرية",
+      jobs: "الوظائف",
+      jobApplications: "طلبات التوظيف",
+      volunteerRequests: "طلبات التطوع",
+
+      websiteDataGroup: "بيانات الموقع",
+      homeSlides: "شرائح الصفحة الرئيسية",
+      faqs: "الأسئلة الشائعة",
+
+      foundationInfoGroup: "معلومات المؤسسة",
+      team: "الفريق",
+
       logout: "تسجيل الخروج",
       toggleTheme: "تبديل المظهر",
       switchLanguage: "تبديل اللغة",
@@ -84,14 +150,70 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
     router.push(`/${locale}/login`);
   };
 
-  const sidebarItems = useMemo(() => ([
-    { icon: LayoutDashboard, label: t.dashboard, href: `/${locale}/cms/dashboard` },
-    { icon: Users,            label: t.users,     href: `/${locale}/cms/users`     },
-    { icon: FileText,         label: t.content,   href: `/${locale}/cms/content`   },
-    { icon: Image,            label: t.media,     href: `/${locale}/cms/media`     },
-    { icon: BarChart3,        label: t.analytics, href: `/${locale}/cms/analytics` },
-    { icon: Settings,         label: t.settings,  href: `/${locale}/cms/settings`  },
-  ]), [locale, t.dashboard, t.users, t.content, t.media, t.analytics, t.settings]);
+  type LinkItem = { type: 'link'; icon: any; label: string; href: string };
+  type GroupItem = { type: 'group'; key: string; icon: any; label: string; children: LinkItem[] };
+  type SidebarItem = LinkItem | GroupItem;
+
+  const sidebarItems: SidebarItem[] = useMemo(() => ([
+    { type: 'link', icon: LayoutDashboard, label: t.dashboard, href: `/${locale}/cms/dashboard` },
+    { type: 'link', icon: Folder,          label: t.programs,  href: `/${locale}/cms/programs`  },
+    { type: 'link', icon: FileText,        label: t.projects,  href: `/${locale}/cms/projects`  },
+    { type: 'link', icon: Folder,          label: t.projectCategories, href: `/${locale}/cms/project-categories` },
+
+    {
+      type: 'group', key: 'media', icon: Image, label: t.mediaGroup, children: [
+        { type: 'link', icon: Video,     label: t.videos,          href: `/${locale}/cms/media/videos` },
+        { type: 'link', icon: Image,     label: t.images,          href: `/${locale}/cms/media/images` },
+        { type: 'link', icon: BookOpen,  label: t.publications,    href: `/${locale}/cms/media/publications` },
+        { type: 'link', icon: FileText,  label: t.reports,         href: `/${locale}/cms/media/reports` },
+        { type: 'link', icon: HelpCircle,label: t.activities,      href: `/${locale}/cms/media/activities` },
+        { type: 'link', icon: BookOpen,  label: t.successStories,  href: `/${locale}/cms/media/success-stories` },
+        { type: 'link', icon: Folder,    label: t.mediaCategories, href: `/${locale}/cms/media/categories` },
+      ]
+    },
+
+    {
+      type: 'group', key: 'news', icon: Newspaper, label: t.newsGroup, children: [
+        { type: 'link', icon: Newspaper, label: t.news,              href: `/${locale}/cms/news/news` },
+        { type: 'link', icon: Folder,    label: t.newsCategories,    href: `/${locale}/cms/news/categories` },
+        { type: 'link', icon: Mail,      label: t.newsletters,       href: `/${locale}/cms/news/newsletters` },
+        { type: 'link', icon: Users,     label: t.newsletterMembers, href: `/${locale}/cms/news/newsletter-members` },
+      ]
+    },
+
+    { type: 'link', icon: Heart, label: t.donations, href: `/${locale}/cms/donations` },
+
+    {
+      type: 'group', key: 'hr', icon: Users, label: t.hrGroup, children: [
+        { type: 'link', icon: Briefcase, label: t.jobs,              href: `/${locale}/cms/hr/jobs` },
+        { type: 'link', icon: UserPlus,  label: t.jobApplications,   href: `/${locale}/cms/hr/job-applications` },
+        { type: 'link', icon: HelpCircle,label: t.volunteerRequests, href: `/${locale}/cms/hr/volunteer-requests` },
+      ]
+    },
+
+    {
+      type: 'group', key: 'website-data', icon: Home, label: t.websiteDataGroup, children: [
+        { type: 'link', icon: Home,       label: t.homeSlides, href: `/${locale}/cms/website-data/home-slides` },
+        { type: 'link', icon: HelpCircle, label: t.faqs,       href: `/${locale}/cms/website-data/faqs` },
+      ]
+    },
+
+    {
+      type: 'group', key: 'foundation-info', icon: Users, label: t.foundationInfoGroup, children: [
+        { type: 'link', icon: Users, label: t.team, href: `/${locale}/cms/foundation-info/team` },
+      ]
+    },
+  ]), [locale, t]);
+
+  // Track which groups are open
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    const initial: Record<string, boolean> = {};
+    ["media", "news", "hr", "website-data", "foundation-info"].forEach((key) => {
+      if (pathname?.startsWith(`/${locale}/cms/${key}`)) initial[key] = true;
+    });
+    setOpenGroups(initial);
+  }, [pathname, locale]);
 
   if (!mounted) {
     return null; // Avoid hydration issues with theme
@@ -104,7 +226,7 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
         className={`fixed inset-y-0 z-50 w-64 transform transition-transform duration-200 ease-in-out
           ${isArabic ? 'right-0' : 'left-0'}
           ${sidebarOpen ? 'translate-x-0' : isArabic ? 'translate-x-full' : '-translate-x-full'}
-          lg:translate-x-0 lg:static lg:inset-0
+          lg:translate-x-0
           bg-card border-border ${isArabic ? 'lg:border-l' : 'lg:border-r'}
           flex flex-col overflow-y-auto`}
       >
@@ -130,22 +252,70 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
         {/* Sidebar Navigation */}
         <nav className="flex-1 space-y-1 p-4">
           {sidebarItems.map((item) => {
-            const Icon = item.icon;
-            const active = pathname?.startsWith(item.href);
+            if (item.type === 'link') {
+              const active = pathname?.startsWith(item.href);
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`
+                    flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                    ${active
+                      ? 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'}
+                  `}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              );
+            }
+
+            // Group item
+            const groupOpen = !!openGroups[item.key];
+            const toggle = () => setOpenGroups((prev) => ({ ...prev, [item.key]: !prev[item.key] }));
+            const GroupIcon = item.icon;
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`
-                  flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors
-                  ${active
-                    ? 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'}
-                `}
-              >
-                <Icon className="w-4 h-4" />
-                <span className="truncate">{item.label}</span>
-              </Link>
+              <div key={item.key} className="space-y-1">
+                <button
+                  type="button"
+                  onClick={toggle}
+                  className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                    ${groupOpen ? 'bg-muted text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}
+                  aria-expanded={groupOpen}
+                >
+                  <span className="flex items-center gap-3">
+                    <GroupIcon className="w-4 h-4" />
+                    <span className="truncate">{item.label}</span>
+                  </span>
+                  {groupOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                </button>
+
+                {groupOpen && (
+                  <div className="ml-6 space-y-1">
+                    {item.children.map((child) => {
+                      const active = pathname?.startsWith(child.href);
+                      const ChildIcon = child.icon;
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className={`
+                            flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors
+                            ${active
+                              ? 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20'
+                              : 'text-muted-foreground hover:text-foreground hover:bg-muted'}
+                          `}
+                        >
+                          <ChildIcon className="w-4 h-4" />
+                          <span className="truncate">{child.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>
@@ -160,7 +330,7 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
       )}
 
       {/* Main Content (offset for desktop sidebar) */}
-      <div className={`${isArabic ? 'lg:pr-64' : 'lg:pl-64'} min-h-screen flex flex-col min-w-0`}>
+      <div className={`${isArabic ? 'lg:mr-64' : 'lg:ml-64'} min-h-screen flex flex-col min-w-0`}>
         {/* Top Bar */}
         <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex h-16 items-center justify-between px-4">
