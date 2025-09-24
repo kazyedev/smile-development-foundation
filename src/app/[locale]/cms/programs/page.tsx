@@ -27,15 +27,16 @@ import { Badge } from "@/components/ui/badge";
 import { 
   Plus, 
   RefreshCw, 
-  ArrowUpDown, 
   Edit2, 
   Trash2, 
   Search,
   Loader2 
 } from "lucide-react";
 import { toast } from "sonner";
+import { ProgramFormDialog } from "@/components/cms/programs/ProgramFormDialog";
+import type { Program } from "@/lib/db/schema/programs";
 
-interface Program {
+interface ProgramListItem {
   id: number;
   title_en: string;
   title_ar: string;
@@ -50,13 +51,18 @@ export default function ProgramsPage() {
   const { locale } = useParams<{ locale: string }>();
   const isArabic = locale === "ar";
   
-  const [programs, setPrograms] = useState<Program[]>([]);
+  const [programs, setPrograms] = useState<ProgramListItem[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("created_at");
+  const [sortBy, setSortBy] = useState<"title" | "page_views" | "created_at">("created_at");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [bulkDeleting, setBulkDeleting] = useState(false);
+
+  // Form dialog states
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingProgram, setEditingProgram] = useState<Program | null>(null);
 
   // Translations
   const t = {
@@ -87,8 +93,11 @@ export default function ProgramsPage() {
       deleteSuccess: "Program deleted successfully",
       deleteFailed: "Failed to delete program",
       fetchFailed: "Failed to fetch programs",
-      editComingSoon: "Edit functionality coming soon",
-      addComingSoon: "Add program functionality coming soon"
+      bulkDelete: "Delete Selected",
+      bulkDeleteConfirm: "Delete Selected Programs",
+      bulkDeleteDescription: "Are you sure you want to delete the selected programs? This action cannot be undone.",
+      bulkDeleteSuccess: "Selected programs deleted successfully",
+      bulkDeleteFailed: "Failed to delete selected programs"
     },
     ar: {
       title: "البرامج",
@@ -117,8 +126,11 @@ export default function ProgramsPage() {
       deleteSuccess: "تم حذف البرنامج بنجاح",
       deleteFailed: "فشل في حذف البرنامج",
       fetchFailed: "فشل في جلب البرامج",
-      editComingSoon: "وظيفة التعديل قادمة قريباً",
-      addComingSoon: "وظيفة إضافة البرنامج قادمة قريباً"
+      bulkDelete: "حذف المحدد",
+      bulkDeleteConfirm: "حذف البرامج المحددة",
+      bulkDeleteDescription: "هل أنت متأكد من أنك تريد حذف البرامج المحددة؟ لا يمكن التراجع عن هذا الإجراء.",
+      bulkDeleteSuccess: "تم حذف البرامج المحددة بنجاح",
+      bulkDeleteFailed: "فشل في حذف البرامج المحددة"
     }
   };
 
@@ -127,13 +139,8 @@ export default function ProgramsPage() {
   const fetchPrograms = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        ...(searchQuery && { search: searchQuery }),
-        sortBy,
-        sortOrder,
-      });
-      
-      const response = await fetch(`/api/cms/programs?${params}`);
+      const qs = searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : "";
+      const response = await fetch(`/api/cms/programs${qs}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -174,6 +181,63 @@ export default function ProgramsPage() {
     setDeleteId(null);
   };
 
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    
+    try {
+      setBulkDeleting(true);
+      const response = await fetch("/api/cms/programs/bulk-delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ids: Array.from(selectedIds),
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        toast.success(result.message || text.bulkDeleteSuccess);
+        setPrograms(prev => prev.filter(p => !selectedIds.has(p.id)));
+        setSelectedIds(new Set());
+      } else {
+        throw new Error(result.error || text.bulkDeleteFailed);
+      }
+    } catch (error: any) {
+      toast.error(error.message || text.bulkDeleteFailed);
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
+
+  const handleFormSuccess = () => {
+    fetchPrograms();
+    setSelectedIds(new Set());
+  };
+
+  const openAddDialog = () => {
+    setEditingProgram(null);
+    setIsFormOpen(true);
+  };
+
+  const openEditDialog = async (programId: number) => {
+    try {
+      const response = await fetch(`/api/cms/programs/${programId}`);
+      const result = await response.json();
+      
+      if (response.ok) {
+        setEditingProgram(result.data);
+        setIsFormOpen(true);
+      } else {
+        toast.error(result.error || "Failed to fetch program details");
+      }
+    } catch (error) {
+      toast.error("Failed to fetch program details");
+    }
+  };
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedIds(new Set(programs.map(p => p.id)));
@@ -203,7 +267,31 @@ export default function ProgramsPage() {
 
   useEffect(() => {
     fetchPrograms();
-  }, [searchQuery, sortBy, sortOrder]);
+  }, [searchQuery]);
+
+  // Client-side sorting
+  const sortedPrograms = [...programs].sort((a, b) => {
+    let aVal: any, bVal: any;
+    
+    if (sortBy === "title") {
+      aVal = isArabic ? a.title_ar : a.title_en;
+      bVal = isArabic ? b.title_ar : b.title_en;
+    } else if (sortBy === "page_views") {
+      aVal = a.page_views || 0;
+      bVal = b.page_views || 0;
+    } else if (sortBy === "created_at") {
+      aVal = new Date(a.created_at).getTime();
+      bVal = new Date(b.created_at).getTime();
+    } else {
+      return 0;
+    }
+    
+    if (sortOrder === "asc") {
+      return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+    } else {
+      return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+    }
+  });
 
   const allSelected = programs.length > 0 && selectedIds.size === programs.length;
   const someSelected = selectedIds.size > 0 && selectedIds.size < programs.length;
@@ -223,16 +311,6 @@ export default function ProgramsPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handleSort(sortBy)}
-            className="flex items-center gap-2"
-          >
-            <ArrowUpDown className="w-4 h-4" />
-            <span className="hidden sm:inline">{text.sort}</span>
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
             onClick={fetchPrograms}
             disabled={loading}
             className="flex items-center gap-2"
@@ -247,7 +325,7 @@ export default function ProgramsPage() {
           
           <Button
             size="sm"
-            onClick={() => toast.info(text.addComingSoon)}
+            onClick={openAddDialog}
             className="flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
@@ -268,8 +346,24 @@ export default function ProgramsPage() {
           />
         </div>
         {selectedIds.size > 0 && (
-          <div className="text-sm text-muted-foreground">
-            {selectedIds.size} {text.itemsSelected}
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-muted-foreground">
+              {selectedIds.size} {text.itemsSelected}
+            </div>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleBulkDelete}
+              disabled={bulkDeleting}
+              className="flex items-center gap-2"
+            >
+              {bulkDeleting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Trash2 className="w-4 h-4" />
+              )}
+              <span className="hidden sm:inline">{text.bulkDelete}</span>
+            </Button>
           </div>
         )}
       </div>
@@ -290,21 +384,9 @@ export default function ProgramsPage() {
               </TableHead>
               <TableHead 
                 className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("id")}
+                onClick={() => handleSort("title")}
               >
-                {text.id}
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("title_en")}
-              >
-                {text.titleEn}
-              </TableHead>
-              <TableHead 
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("title_ar")}
-              >
-                {text.titleAr}
+                {isArabic ? text.titleAr : text.titleEn}
               </TableHead>
               <TableHead>{text.status}</TableHead>
               <TableHead 
@@ -325,7 +407,7 @@ export default function ProgramsPage() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-8">
+                <TableCell colSpan={6} className="text-center py-8">
                   <div className="flex items-center justify-center gap-2">
                     <Loader2 className="w-5 h-5 animate-spin" />
                     <span>{text.loading}</span>
@@ -334,12 +416,12 @@ export default function ProgramsPage() {
               </TableRow>
             ) : programs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   {searchQuery ? text.noResults : text.noPrograms}
                 </TableCell>
               </TableRow>
             ) : (
-              programs.map((program) => (
+              sortedPrograms.map((program) => (
                 <TableRow key={program.id} className="hover:bg-muted/50">
                   <TableCell>
                     <Checkbox
@@ -349,12 +431,8 @@ export default function ProgramsPage() {
                       }
                     />
                   </TableCell>
-                  <TableCell className="font-medium">{program.id}</TableCell>
-                  <TableCell className="max-w-xs truncate">
-                    {program.title_en}
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate">
-                    {program.title_ar}
+                  <TableCell className="max-w-xs truncate font-medium">
+                    {isArabic ? program.title_ar : program.title_en}
                   </TableCell>
                   <TableCell>
                     <Badge variant={program.is_published ? "default" : "secondary"}>
@@ -370,7 +448,7 @@ export default function ProgramsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => toast.info(text.editComingSoon)}
+                        onClick={() => openEditDialog(program.id)}
                         className="h-8 w-8 p-0"
                       >
                         <Edit2 className="w-4 h-4" />
@@ -391,6 +469,15 @@ export default function ProgramsPage() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Program Form Dialog */}
+      <ProgramFormDialog
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        program={editingProgram}
+        onSuccess={handleFormSuccess}
+        isArabic={isArabic}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
