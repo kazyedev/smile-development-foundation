@@ -33,7 +33,7 @@ import {
   Loader2 
 } from "lucide-react";
 import { toast } from "sonner";
-import { ProgramFormDialog } from "@/components/cms/programs/ProgramFormDialog";
+import Link from "next/link";
 import type { Program } from "@/lib/db/schema/programs";
 
 interface ProgramListItem {
@@ -60,9 +60,6 @@ export default function ProgramsPage() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
-  // Form dialog states
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingProgram, setEditingProgram] = useState<Program | null>(null);
 
   // Translations
   const t = {
@@ -212,31 +209,6 @@ export default function ProgramsPage() {
     }
   };
 
-  const handleFormSuccess = () => {
-    fetchPrograms();
-    setSelectedIds(new Set());
-  };
-
-  const openAddDialog = () => {
-    setEditingProgram(null);
-    setIsFormOpen(true);
-  };
-
-  const openEditDialog = async (programId: number) => {
-    try {
-      const response = await fetch(`/api/cms/programs/${programId}`);
-      const result = await response.json();
-      
-      if (response.ok) {
-        setEditingProgram(result.data);
-        setIsFormOpen(true);
-      } else {
-        toast.error(result.error || "Failed to fetch program details");
-      }
-    } catch (error) {
-      toast.error("Failed to fetch program details");
-    }
-  };
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -323,14 +295,15 @@ export default function ProgramsPage() {
             <span className="hidden sm:inline">{text.refresh}</span>
           </Button>
           
-          <Button
-            size="sm"
-            onClick={openAddDialog}
-            className="flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">{text.addProgram}</span>
-          </Button>
+          <Link href={`/${locale}/cms/programs/new`}>
+            <Button
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">{text.addProgram}</span>
+            </Button>
+          </Link>
         </div>
       </div>
 
@@ -445,14 +418,15 @@ export default function ProgramsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEditDialog(program.id)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
+                      <Link href={`/${locale}/cms/programs/${program.id}/edit`}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                      </Link>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -470,14 +444,6 @@ export default function ProgramsPage() {
         </Table>
       </div>
 
-      {/* Program Form Dialog */}
-      <ProgramFormDialog
-        open={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        program={editingProgram}
-        onSuccess={handleFormSuccess}
-        isArabic={isArabic}
-      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>

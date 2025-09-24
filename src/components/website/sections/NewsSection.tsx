@@ -83,10 +83,7 @@ export default function NewsSection({ locale }: { locale: string }) {
 
   return (
     <>
-      {/* Temporary debug element */}
-      <div className="bg-red-500 text-white p-4 text-center font-bold">
-        NEWS SECTION DEBUG - Data loaded: {data?.news?.length || 0} items
-      </div>
+
     <section ref={sectionRef} className="relative py-20 bg-gradient-to-b from-background to-muted/20 dark:to-muted/10">
       {/* Newspaper Pattern Background */}
       <div className="absolute inset-0 opacity-5 dark:opacity-3">

@@ -18,8 +18,8 @@ export async function POST(req: Request) {
         mode: 'subscription',
         line_items: [{ price: price.id, quantity: 1 }],
         customer_email: email,
-        success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/en/donate/thank-you?method=stripe&amount=${amount}&currency=${currency}&frequency=${frequency}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/en/donate`,
+        success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/en/donate/thank-you?method=stripe&amount=${amount}&currency=${currency}&frequency=${frequency}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/en/donate`,
         metadata: { name, note },
       });
       return NextResponse.json({ url: session.url });
@@ -28,8 +28,8 @@ export async function POST(req: Request) {
         mode: 'payment',
         line_items: [{ price_data: { currency, product_data: { name: 'One-time Donation' }, unit_amount: unitAmount }, quantity: 1 }],
         customer_email: email,
-        success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/en/donate/thank-you?method=stripe&amount=${amount}&currency=${currency}&frequency=${frequency}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/en/donate`,
+        success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/en/donate/thank-you?method=stripe&amount=${amount}&currency=${currency}&frequency=${frequency}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/en/donate`,
         metadata: { name, note },
       });
       return NextResponse.json({ url: session.url });

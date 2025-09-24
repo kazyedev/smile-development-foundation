@@ -110,12 +110,12 @@ npm run db:summary
 Since there's no formal testing setup, test individual API endpoints and components manually:
 ```bash
 # Test API endpoints using curl or similar tools
-curl http://localhost:3000/api/programs
-curl http://localhost:3000/api/donations
+curl https://smile-development-foundation-xvjd.vercel.app/api/programs
+curl https://smile-development-foundation-xvjd.vercel.app/api/donations
 
 # Test specific pages
-# Navigate to http://localhost:3000/en/cms (requires admin login)
-# Navigate to http://localhost:3000/en/donate
+# Navigate to https://smile-development-foundation-xvjd.vercel.app/en/cms (requires admin login)
+# Navigate to https://smile-development-foundation-xvjd.vercel.app/en/donate
 ```
 
 ## Development Workflow
@@ -138,7 +138,7 @@ curl http://localhost:3000/api/donations
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 
    # Site Configuration
-   NEXT_PUBLIC_SITE_URL=http://localhost:3000
+   NEXT_PUBLIC_SITE_URL=https://smile-development-foundation-xvjd.vercel.app
    ```
 
 ### Adding New Database Tables

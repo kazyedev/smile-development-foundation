@@ -8,7 +8,7 @@ import { Project } from "@/types/project";
 // Helper functions to fetch data from APIs
 async function fetchProgram(slug: string): Promise<Program | null> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/programs/${encodeURIComponent(slug)}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/api/programs/${encodeURIComponent(slug)}`, {
       next: { revalidate: 3600 } // Revalidate every hour
     });
     
@@ -28,7 +28,7 @@ async function fetchProgram(slug: string): Promise<Program | null> {
 
 async function fetchProjectsByProgram(programSlug: string): Promise<Project[]> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/programs/${encodeURIComponent(programSlug)}/projects`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/api/programs/${encodeURIComponent(programSlug)}/projects`, {
       next: { revalidate: 3600 } // Revalidate every hour
     });
     
@@ -218,7 +218,7 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
 export async function generateStaticParams() {
   try {
     // Fetch all programs from API
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/programs`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/api/programs`);
     if (!response.ok) {
       console.error('Failed to fetch programs for static generation');
       return [];

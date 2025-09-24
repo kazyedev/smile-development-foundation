@@ -9,98 +9,7 @@ import Image from "next/image";
 import { useHomepageData, type HomepageSuccessStory } from "@/hooks/useHomepageData";
 import { SuccessStoriesSkeletonSection } from "../skeletons/HomepageSectionSkeleton";
 
-const mockSuccessStories: any[] = [
-  {
-    isEnglish: true,
-    isArabic: true,
-    titleEn: "From Struggle to Success: Ahmed's Journey",
-    titleAr: "من الكفاح إلى النجاح: رحلة أحمد",
-    featuredImageUrl: "/assets/hero-1.jpg",
-    video: "https://example.com/video1.mp4",
-    personNameEn: "Ahmed Hassan",
-    personNameAr: "أحمد حسن",
-    personAge: 28,
-    personLocationEn: "Al-Minya Governorate",
-    personLocationAr: "محافظة مأرب",
-    cityEn: "Mallawi",
-    cityAr: "ملوي",
-    otherImagesUrl: ["/assets/hero-2.jpg", "/assets/hero-3.jpg"],
-    contentEn: "Ahmed's transformation from a struggling farmer to a successful entrepreneur through our agricultural development program showcases the power of education and support. With access to modern farming techniques and microfinance, he now employs 15 people in his community.",
-    contentAr: "تحول أحمد من مزارع يكافح إلى رائد أعمال ناجح من خلال برنامج التنمية الزراعية يُظهر قوة التعليم والدعم. مع الوصول إلى تقنيات الزراعة الحديثة والتمويل الأصغر، يوظف الآن 15 شخصًا في مجتمعه.",
-    slugEn: "ahmed-hassan-farming-success",
-    slugAr: "أحمد-حسن-نجاح-زراعي",
-    keywordsEn: ["agriculture", "entrepreneurship", "microfinance", "rural development"],
-    keywordsAr: ["زراعة", "ريادة أعمال", "تمويل أصغر", "تنمية ريفية"],
-    tagsEn: ["Agriculture", "Success"],
-    tagsAr: ["زراعة", "نجاح"],
-    readTime: 5,
-    pageViews: 1250,
-    isPublished: true,
-    publishedAt: new Date("2024-03-15"),
-    createdAt: new Date("2024-02-01"),
-    updatedAt: new Date("2024-03-10"),
-  },
-  {
-    isEnglish: true,
-    isArabic: true,
-    titleEn: "Breaking Barriers: Fatima's Educational Victory",
-    titleAr: "كسر الحواجز: انتصار فاطمة التعليمي",
-    featuredImageUrl: "/assets/hero-2.jpg",
-    video: "",
-    personNameEn: "Fatima Al-Zahra",
-    personNameAr: "فاطمة الزهراء",
-    personAge: 22,
-    personLocationEn: "Upper Yemen",
-    personLocationAr: "مجمع اليمن",
-    cityEn: "Aswan",
-    cityAr: "أسوان",
-    otherImagesUrl: ["/assets/hero-1.jpg"],
-    contentEn: "Despite facing numerous obstacles as a young woman in rural Yemen, Fatima persevered through our educational scholarship program to become the first university graduate in her family. She now works as a teacher, inspiring other girls in her community.",
-    contentAr: "رغم مواجهة عقبات عديدة كامرأة شابة في ريف اليمن، ثابرت فاطمة من خلال برنامج المنح التعليمية لتصبح أول خريجة جامعية في عائلتها. تعمل الآن كمعلمة، تلهم الفتيات الأخريات في مجتمعها.",
-    slugEn: "fatima-educational-success",
-    slugAr: "فاطمة-نجاح-تعليمي",
-    keywordsEn: ["education", "women empowerment", "scholarship", "teaching"],
-    keywordsAr: ["تعليم", "تمكين المرأة", "منحة", "تدريس"],
-    tagsEn: ["Education", "Women"],
-    tagsAr: ["تعليم", "نساء"],
-    readTime: 4,
-    pageViews: 980,
-    isPublished: true,
-    publishedAt: new Date("2024-04-20"),
-    createdAt: new Date("2024-03-15"),
-    updatedAt: new Date("2024-04-18"),
-  },
-  {
-    isEnglish: true,
-    isArabic: true,
-    titleEn: "Healing Hearts: Dr. Omar's Medical Mission",
-    titleAr: "شفاء القلوب: مهمة الدكتور عمر الطبية",
-    featuredImageUrl: "/assets/hero-3.jpg",
-    video: "https://example.com/video3.mp4",
-    personNameEn: "Dr. Omar Mahmoud",
-    personNameAr: "الدكتور عمر محمود",
-    personAge: 35,
-    personLocationEn: "Sinai Peninsula",
-    personLocationAr: "شبوة",
-    cityEn: "Arish",
-    cityAr: "العريش",
-    otherImagesUrl: [],
-    contentEn: "Through our healthcare initiative, Dr. Omar established a mobile clinic that serves remote communities in Sinai. His dedication has provided medical care to over 5,000 people who previously had no access to healthcare services.",
-    contentAr: "من خلال مبادرة الرعاية الصحية، أسس الدكتور عمر عيادة متنقلة تخدم المجتمعات النائية في شبوة. إخلاصه وفر الرعاية الطبية لأكثر من 5000 شخص لم يكن لديهم سابقاً الوصول إلى الخدمات الصحية.",
-    slugEn: "dr-omar-mobile-clinic",
-    slugAr: "الدكتور-عمر-عيادة-متنقلة",
-    keywordsEn: ["healthcare", "mobile clinic", "rural health", "medical mission"],
-    keywordsAr: ["رعاية صحية", "عيادة متنقلة", "صحة ريفية", "مهمة طبية"],
-    tagsEn: ["Healthcare", "Community"],
-    tagsAr: ["رعاية صحية", "مجتمع"],
-    readTime: 6,
-    pageViews: 1850,
-    isPublished: true,
-    publishedAt: new Date("2024-05-10"),
-    createdAt: new Date("2024-04-25"),
-    updatedAt: new Date("2024-05-08"),
-  },
-];
+
 
 export default function SuccessStoriesSection({ locale }: { locale: string }) {
   const [activeStory, setActiveStory] = useState(0);
@@ -130,6 +39,7 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
   }
 
   return (
+      
     <section ref={sectionRef} className="relative py-20 bg-gradient-to-br from-amber-50/50 via-orange-50/30 to-red-50/20 dark:from-amber-950/20 dark:via-orange-950/10 dark:to-red-950/5 overflow-hidden">
       {/* Inspirational Background Elements */}
       <div className="absolute inset-0 opacity-30 dark:opacity-20">
@@ -147,13 +57,12 @@ export default function SuccessStoriesSection({ locale }: { locale: string }) {
           <Award className="w-full h-full animate-pulse" fill="currentColor" style={{ animationDelay: '3s' }} />
         </div>
       </div>
-      
       <div className="container mx-auto px-4 relative">
         {/* Header */}
         <motion.div 
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
-          animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          animate={hasAnimated ? { opacity: 1, y: 1 } : { opacity: 1, y: 30 }}
           transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 text-amber-700 dark:text-amber-300 rounded-full text-sm font-medium mb-6">

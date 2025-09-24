@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   const supabase = await supabaseServer();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/callback`,
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://smile-development-foundation-xvjd.vercel.app"}/auth/callback`,
   });
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
