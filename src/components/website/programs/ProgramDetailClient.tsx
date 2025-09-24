@@ -7,11 +7,11 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Calendar, 
-  Eye, 
-  Tag, 
-  FileText, 
+import {
+  Calendar,
+  Eye,
+  Tag,
+  FileText,
   Palette,
   Handshake,
   Gift
@@ -48,6 +48,14 @@ export default function ProgramDetailClient({ program, relatedProjects, relatedS
     }).format(date);
   };
 
+  const handleBecomePartner = () => {
+    window.location.href = '/contact-us';
+  };
+
+  const handleDonate = () => {
+    window.location.href = '/donate';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       {/* Hero Section */}
@@ -65,8 +73,6 @@ export default function ProgramDetailClient({ program, relatedProjects, relatedS
       {/* Statistics Section */}
       <ProgramStatistics program={program} locale={locale} />
 
-
-
       {/* Slides Section */}
       {/* <ProgramSlides program={program} locale={locale} /> */}
 
@@ -82,7 +88,7 @@ export default function ProgramDetailClient({ program, relatedProjects, relatedS
              {/* Program Details */}
        <section className="py-16">
          <div className="container mx-auto px-4">
-           <motion.div 
+           <motion.div
              className="max-w-4xl mx-auto"
              initial={{ opacity: 0, y: 20 }}
              whileInView={{ opacity: 1, y: 0 }}
@@ -144,23 +150,23 @@ export default function ProgramDetailClient({ program, relatedProjects, relatedS
                    {isEn ? "Support This Project" : "ادعم هذا المشروع"}
                  </h3>
                  <p className="text-muted-foreground mb-6 max-w-2xl mx-auto text-center">
-                   {isEn 
+                   {isEn
                      ? "Your support can make a real difference in our community. Whether through partnership opportunities or direct donations, every contribution helps us create lasting positive impact."
                      : "دعمك يمكن أن يحدث فرقاً حقيقياً في مجتمعنا. سواء من خلال فرص الشراكة أو التبرعات المباشرة، كل مساهمة تساعدنا في خلق تأثير إيجابي دائم."
                    }
                  </p>
                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                   <Button 
+                   <Button
                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-                     onClick={() => window.location.href = '/contact-us'}
+                     onClick={handleBecomePartner}
                    >
                      {isEn ? "Become a Partner" : "كن شريكاً"}
                      <Handshake className="w-4 h-4 ml-2" />
                    </Button>
-                   <Button 
-                     variant="outline" 
+                   <Button
+                     variant="outline"
                      className="border-blue-200 hover:bg-blue-50"
-                     onClick={() => window.location.href = '/donate'}
+                     onClick={handleDonate}
                    >
                      {isEn ? "Make a Donation" : "تبرع الآن"}
                      <Gift className="w-4 h-4 ml-2" />
@@ -170,9 +176,7 @@ export default function ProgramDetailClient({ program, relatedProjects, relatedS
              </motion.div>
            </motion.div>
          </div>
-       </section>      
+       </section>
     </div>
   );
 }
-
-

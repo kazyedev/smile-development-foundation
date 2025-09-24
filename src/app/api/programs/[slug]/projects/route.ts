@@ -3,11 +3,11 @@ import { supabaseServer } from "@/lib/supabase/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const supabase = await supabaseServer();
-    const { slug } = params;
+    const { slug } = await params;
 
     // First, get the program ID from the slug
     const { data: programData, error: programError } = await supabase

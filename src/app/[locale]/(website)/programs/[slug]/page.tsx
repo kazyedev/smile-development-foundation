@@ -1,4 +1,5 @@
 import ProgramDetailClient from "@/components/website/programs/ProgramDetailClient";
+import ProgramErrorFallback from "@/components/website/programs/ProgramErrorFallback";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,7 +9,10 @@ import { Project } from "@/types/project";
 // Helper functions to fetch data from APIs
 async function fetchProgram(slug: string): Promise<Program | null> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/api/programs/${encodeURIComponent(slug)}`, {
+    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
+    const url = `${baseUrl}/api/programs/${encodeURIComponent(slug)}`;
+    
+    const response = await fetch(url, {
       next: { revalidate: 3600 } // Revalidate every hour
     });
     
@@ -16,10 +20,11 @@ async function fetchProgram(slug: string): Promise<Program | null> {
       if (response.status === 404) {
         return null;
       }
-      throw new Error('Failed to fetch program');
+      throw new Error(`Failed to fetch program: ${response.status}`);
     }
     
-    return await response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching program:', error);
     return null;
@@ -28,7 +33,8 @@ async function fetchProgram(slug: string): Promise<Program | null> {
 
 async function fetchProjectsByProgram(programSlug: string): Promise<Project[]> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/api/programs/${encodeURIComponent(programSlug)}/projects`, {
+    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
+    const response = await fetch(`${baseUrl}/api/programs/${encodeURIComponent(programSlug)}/projects`, {
       next: { revalidate: 3600 } // Revalidate every hour
     });
     
@@ -144,25 +150,8 @@ export default async function ProgramDetailPage({ params }: ProgramDetailPagePro
   } catch (error) {
     console.error('Error in ProgramDetailPage:', error);
     
-    // Fallback error UI
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center">
-        <div className="text-center px-4">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
-            Something went wrong
-          </h1>
-          <p className="text-muted-foreground mb-6">
-            We encountered an error while loading this program. Please try again later.
-          </p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="inline-flex items-center px-6 py-3 bg-brand-primary text-white rounded-xl hover:bg-brand-primary/90 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
+    // Return client component for error handling with interactivity
+    return <ProgramErrorFallback locale="en" />;
   }
 }
 
@@ -218,7 +207,8 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
 export async function generateStaticParams() {
   try {
     // Fetch all programs from API
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://smile-development-foundation-xvjd.vercel.app'}/api/programs`);
+    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
+    const response = await fetch(`${baseUrl}/api/programs`);
     if (!response.ok) {
       console.error('Failed to fetch programs for static generation');
       return [];
