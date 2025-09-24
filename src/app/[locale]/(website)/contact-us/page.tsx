@@ -49,7 +49,7 @@ export default function ContactUsPage() {
       icon: Mail,
       title: isEn ? "Email Us" : "راسلنا",
       description: isEn ? "Get in touch via email" : "تواصل معنا عبر البريد الإلكتروني",
-      value: "info@ibtisama.org",
+      value: "info@Ebtsama.org",
       color: "text-blue-600 dark:text-blue-400"
     },
     {
@@ -302,8 +302,8 @@ export default function ContactUsPage() {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1">{isEn ? "Email" : "البريد الإلكتروني"}</h4>
-                      <p className="text-sm text-muted-foreground">info@ibtisama.org</p>
-                      <p className="text-sm text-muted-foreground">support@ibtisama.org</p>
+                      <p className="text-sm text-muted-foreground">info@Ebtsama.org</p>
+                      <p className="text-sm text-muted-foreground">support@Ebtsama.org</p>
                     </div>
                   </div>
 

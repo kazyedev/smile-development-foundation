@@ -266,7 +266,7 @@ export default function PrivacyPolicyPage({ params }: PrivacyPolicyPageProps) {
                       <span className="font-semibold text-foreground">
                         {isLocaleEnglish ? "Email:" : "البريد الإلكتروني:"}
                       </span>
-                      <span>privacy@Ibtisamadev.org</span>
+                      <span>privacy@Ebtsamadev.org</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="font-semibold text-foreground">

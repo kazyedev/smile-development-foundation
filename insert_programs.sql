@@ -1,4 +1,4 @@
--- Insert Programs Data for Smile Development Foundation
+-- Insert Programs Data for Ebtsama Development Foundation
 -- This file contains INSERT statements for all programs from the text file
 -- Note: Make sure the programs table exists before running these queries
 -- Run the create_programs_table.sql script first if needed
@@ -99,7 +99,7 @@ INSERT INTO programs (
     'تركز برامجنا الترفيهية للأيتام على خلق تجارب مفرحة تعزز الشفاء والتنمية الاجتماعية والرفاهية العاطفية. نحن نؤمن أن اللعب والترفيه ضروريان للتنمية الصحية للطفولة.',
     ARRAY['Organize monthly recreational activities and outings', 'Develop social and interpersonal skills through group activities', 'Provide emotional healing through play therapy', 'Create positive memories and experiences', 'Build confidence and self-esteem'],
     ARRAY['تنظيم أنشطة ترفيهية ونزهات شهرية', 'تطوير المهارات الاجتماعية والشخصية من خلال الأنشطة الجماعية', 'توفير الشفاء العاطفي من خلال العلاج باللعب', 'خلق ذكريات وتجارب إيجابية', 'بناء الثقة وتقدير الذات'],
-    'smile',
+    'Ebtsama',
     '#F39C12',
     'Yemen - Multiple Cities',
     'اليمن - مدن متعددة',

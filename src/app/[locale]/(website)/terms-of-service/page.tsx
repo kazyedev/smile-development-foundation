@@ -347,7 +347,7 @@ export default function TermsOfServicePage({ params }: TermsOfServicePageProps) 
                       <span className="font-semibold text-foreground">
                         {isLocaleEnglish ? "Email:" : "البريد الإلكتروني:"}
                       </span>
-                      <span>legal@Ibtisamadev.org</span>
+                      <span>legal@Ebtsamadev.org</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="font-semibold text-foreground">

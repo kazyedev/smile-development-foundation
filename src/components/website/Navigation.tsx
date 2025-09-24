@@ -100,7 +100,7 @@ export default function Navigation() {
           <Link href={`/${locale}`} className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-brand-primary to-brand-secondary rounded-lg"></div>
             <span className="font-bold text-xl bg-gradient-to-r from-brand-primary to-brand-secondary bg-clip-text text-transparent">
-              {isEnglish ? "Ibtisama" : "ابتسامة"}
+              {isEnglish ? "Ebtsama" : "ابتسامة"}
             </span>
           </Link>
 

@@ -2,7 +2,7 @@
 
 ## 🎉 Successfully Completed!
 
-I have successfully set up **Drizzle ORM** for your Smile Development Foundation project, replacing the direct Supabase client usage with a type-safe, modern ORM solution.
+I have successfully set up **Drizzle ORM** for your Ebtsama Development Foundation project, replacing the direct Supabase client usage with a type-safe, modern ORM solution.
 
 ## 📋 What Was Implemented
 

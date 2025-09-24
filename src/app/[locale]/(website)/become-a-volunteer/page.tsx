@@ -256,7 +256,7 @@ export default function BecomeAVolunteerPage() {
           </h1>
           <p className="text-muted-foreground text-lg mb-8">
             {isEn
-              ? "We've received your application and will contact you within 48 hours. Welcome to the Ibtisama family!"
+              ? "We've received your application and will contact you within 48 hours. Welcome to the Ebtsama family!"
               : "لقد تلقينا طلبك وسنتواصل معك خلال 48 ساعة. أهلاً بك في عائلة ابتسامة!"
             }
           </p>
@@ -347,7 +347,7 @@ export default function BecomeAVolunteerPage() {
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               {isEn
-                ? "Volunteering with Ibtisama offers you meaningful opportunities to grow personally and professionally."
+                ? "Volunteering with Ebtsama offers you meaningful opportunities to grow personally and professionally."
                 : "التطوع مع ابتسامة يوفر لك فرصاً مفيدة للنمو شخصياً ومهنياً."
               }
             </p>

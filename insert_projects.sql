@@ -1,4 +1,4 @@
--- Insert Projects Data for Smile Development Foundation
+-- Insert Projects Data for Ebtsama Development Foundation
 -- This file contains INSERT statements for all projects from the text file
 
 -- Note: Make sure the projects table exists before running these queries
@@ -376,7 +376,7 @@ INSERT INTO projects (
     NOW()
 );
 
--- Project 11: Restoring a Smile Project to support disabled children
+-- Project 11: Restoring a Ebtsama Project to support disabled children
 INSERT INTO projects (
     title_en,
     title_ar,
@@ -395,13 +395,13 @@ INSERT INTO projects (
     is_published,
     published_at
 ) VALUES (
-    'Restoring a Smile Project to support disabled children in Marib Governorate',
+    'Restoring a Ebtsama Project to support disabled children in Marib Governorate',
     'مشروع إعادة الابتسامة لدعم الأطفال المعاقين في محافظة مأرب',
     'The project aims to improve the lives of 312 children with disabilities in Marib Governorate, where disability cases have increased due to the conflict and poor health care during pregnancy and childbirth, causing many children to suffer from cerebral palsy. The project provides customized splints that meet each child needs to support their movement, in addition to two months of motor training to improve their motor and social skills. It also includes providing health kits containing hygiene items and clothes, which enhances children independence and reduces the burden on their families.',
     'يهدف المشروع إلى تحسين حياة 312 طفلًا من ذوي الإعاقة في محافظة مأرب، حيث تزايدت حالات الإعاقة نتيجة النزاع وسوء الرعاية الصحية أثناء الحمل والولادة، مما تسبب في إصابة العديد من الأطفال بالشلل الدماغي. يقدم المشروع جبائر مخصصة تلبي احتياجات كل طفل لدعم حركته، إلى جانب تدريبات حركية لمدة شهرين لتحسين مهاراتهم الحركية والاجتماعية. كما يشمل توفير حقائب صحية تحتوي على أدوات نظافة وملابس.',
     '/assets/mockimage.jpg',
     '#F59E0B',
-    'restoring-smile-project-disabled-children',
+    'restoring-Ebtsama-project-disabled-children',
     'مشروع-إعادة-الابتسامة-لدعم-الأطفال-المعاقين',
     '[{"costTitleEn": "Average per person", "costTitleAr": "القيمة المتوسطة للفرد", "costAmount": 800, "costCurrencyEn": "USD", "costCurrencyAr": "دولار أمريكي", "costPeriodEn": "one-time", "costPeriodAr": "مرة واحدة"}, {"costTitleEn": "Total Cost", "costTitleAr": "القيمة الإجمالية", "costAmount": 124800, "costCurrencyEn": "USD", "costCurrencyAr": "دولار أمريكي", "costPeriodEn": "one-time", "costPeriodAr": "مرة واحدة"}]',
     '[{"beneficiaryAmount": 312, "beneficiaryTargetEn": "children (boys and girls)", "beneficiaryTargetAr": "طفلًا"}]',
@@ -598,7 +598,7 @@ INSERT INTO projects (
     NOW()
 );
 
--- Project 17: Family Counseling Diploma Project (Family Smile)
+-- Project 17: Family Counseling Diploma Project (Family Ebtsama)
 INSERT INTO projects (
     title_en,
     title_ar,
@@ -617,7 +617,7 @@ INSERT INTO projects (
     is_published,
     published_at
 ) VALUES (
-    'Family Counseling Diploma Project (Family Smile)',
+    'Family Counseling Diploma Project (Family Ebtsama)',
     'مشروع دبلوم الإرشاد الأسري (ابتسامة الأسرة)',
     'The Family Guidance Diploma (Smiling Family) Project aims to enhance family relationships and provide psychological support in Marib Governorate, which is experiencing congestion due to an influx of displaced populations. The program consists of two phases: In the first phase, we will train 20 individuals to become proficient in the psychological support program. In the second phase, family guidance will be extended to 400 individuals from families experiencing psychological and social challenges.',
     'يهدف المشروع إلى تحسين العلاقات الأسرية وتعزيز الدعم النفسي في محافظة مأرب، التي تعاني من ازدحام النازحين الذي أدى بدوره الى خلق تحديات اقتصادية واجتماعية توثر سلبًا على الوضع النفسي والاجتماعي للنازحين. يتكون البرنامج من مرحلتين: المرحلة الأولى: سيتم تدريب 20 مدربًا لتمكينهم من برنامج الدعم النفسي. المرحلة الثانية: سيتم تقديم الإرشاد الأسري لعدد 400 من أفراد الأسر المتضررة نفسيًا واجتماعيًا.',

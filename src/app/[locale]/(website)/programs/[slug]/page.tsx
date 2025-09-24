@@ -188,10 +188,10 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
       : program.descriptionAr.substring(0, 160);
 
     return {
-      title: `${title} - Smile Development Foundation`,
+      title: `${title} - Ebtsama Development Foundation`,
       description,
       openGraph: {
-        title: `${title} - Smile Development Foundation`,
+        title: `${title} - Ebtsama Development Foundation`,
         description,
         type: 'website',
         locale: locale,
@@ -199,7 +199,7 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${title} - Smile Development Foundation`,
+        title: `${title} - Ebtsama Development Foundation`,
         description,
         images: program.featuredImageUrl ? [program.featuredImageUrl] : [],
       },
@@ -208,7 +208,7 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {
-      title: 'Program - Smile Development Foundation',
+      title: 'Program - Ebtsama Development Foundation',
       description: 'Learn more about our programs and initiatives.',
     };
   }

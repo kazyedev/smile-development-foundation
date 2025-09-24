@@ -3,7 +3,7 @@ import { FAQ } from "@/types/faq";
 export const mockFAQs: FAQ[] = [
   {
     id: 1,
-    questionEn: "What is the mission of Ibtisama Foundation?",
+    questionEn: "What is the mission of Ebtsama Foundation?",
     questionAr: "ما هي رسالة مؤسسة ابتسامة التنموية؟",
     answerEn: "Our mission is to create sustainable positive change in communities through education, healthcare, environmental protection, and social empowerment programs. We believe every individual deserves access to opportunities that enable them to thrive and contribute to society.",
     answerAr: "مهمتنا هي إحداث تغيير إيجابي مستدام في المجتمعات من خلال برامج التعليم والرعاية الصحية وحماية البيئة والتمكين الاجتماعي. نحن نؤمن أن كل فرد يستحق الوصول إلى الفرص التي تمكنه من الازدهار والمساهمة في المجتمع.",

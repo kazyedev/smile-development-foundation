@@ -4,7 +4,7 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 ## Project Overview
 
-The Smile Development Foundation website is a bilingual (English/Arabic) Next.js application that serves as a comprehensive content management and donation platform for a non-profit organization. The project features a public website, admin CMS, and integrated donation system with file upload capabilities.
+The Ebtsama Development Foundation website is a bilingual (English/Arabic) Next.js application that serves as a comprehensive content management and donation platform for a non-profit organization. The project features a public website, admin CMS, and integrated donation system with file upload capabilities.
 
 ## Core Architecture
 

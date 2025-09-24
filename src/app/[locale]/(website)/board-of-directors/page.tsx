@@ -262,12 +262,12 @@ export default function BoardOfDirectorsPage({ params }: BoardOfDirectorsPagePro
         en: "For board-related inquiries, governance matters, or partnership opportunities, please contact our board secretariat.",
         ar: "للاستفسارات المتعلقة بالمجلس أو مسائل الحوكمة أو فرص الشراكة، يرجى الاتصال بأمانة مجلس الإدارة."
       },
-      email: "board@Ibtisamadev.org",
+      email: "board@Ebtsamadev.org",
       secretary: {
         name: { en: "Ms. Layla Ahmad", ar: "الآنسة ليلى أحمد" },
         title: { en: "Board Secretary", ar: "أمين سر المجلس" },
         phone: "+967 1 234 5690",
-        email: "secretary@Ibtisamadev.org"
+        email: "secretary@Ebtsamadev.org"
       }
     }
   };

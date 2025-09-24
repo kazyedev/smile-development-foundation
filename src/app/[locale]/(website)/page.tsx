@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
 
   if (isEnglish) {
     return {
-      title: 'Ibtisama Development Foundation - Creating Positive Change in Communities',
+      title: 'Ebtsama Development Foundation - Creating Positive Change in Communities',
       description: 'Join our mission to create sustainable positive change in communities through education, healthcare, and social development programs. Discover our projects, activities, and success stories.',
       keywords: [
-        'Ibtisama Development Foundation',
+        'Ebtsama Development Foundation',
         'community development',
         'sustainable change',
         'education programs',
@@ -38,15 +38,15 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
         'donation platform',
         'social impact'
       ],
-      authors: [{ name: 'Ibtisama Development Foundation' }],
-      creator: 'Ibtisama Development Foundation',
-      publisher: 'Ibtisama Development Foundation',
+      authors: [{ name: 'Ebtsama Development Foundation' }],
+      creator: 'Ebtsama Development Foundation',
+      publisher: 'Ebtsama Development Foundation',
       formatDetection: {
         email: false,
         address: false,
         telephone: false,
       },
-      metadataBase: new URL('https://ibtisama.org'),
+      metadataBase: new URL('https://Ebtsama.org'),
       alternates: {
         canonical: '/en',
         languages: {
@@ -55,10 +55,10 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
         },
       },
       openGraph: {
-        title: 'Ibtisama Development Foundation - Creating Positive Change in Communities',
+        title: 'Ebtsama Development Foundation - Creating Positive Change in Communities',
         description: 'Join our mission to create sustainable positive change in communities through education, healthcare, and social development programs.',
-        url: 'https://ibtisama.org/en',
-        siteName: 'Ibtisama Development Foundation',
+        url: 'https://Ebtsama.org/en',
+        siteName: 'Ebtsama Development Foundation',
         locale: 'en_US',
         type: 'website',
         images: [
@@ -66,17 +66,17 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
             url: '/og-image-en.jpg',
             width: 1200,
             height: 630,
-            alt: 'Ibtisama Development Foundation - Community Development Programs',
+            alt: 'Ebtsama Development Foundation - Community Development Programs',
           },
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: 'Ibtisama Development Foundation - Creating Positive Change',
+        title: 'Ebtsama Development Foundation - Creating Positive Change',
         description: 'Join our mission to create sustainable positive change in communities through education, healthcare, and social development programs.',
         images: ['/og-image-en.jpg'],
-        creator: '@ibtisama_dev',
-        site: '@ibtisama_dev',
+        creator: '@Ebtsama_dev',
+        site: '@Ebtsama_dev',
       },
       robots: {
         index: true,
@@ -122,7 +122,7 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
         address: false,
         telephone: false,
       },
-      metadataBase: new URL('https://ibtisama.org'),
+      metadataBase: new URL('https://Ebtsama.org'),
       alternates: {
         canonical: '/ar',
         languages: {
@@ -133,7 +133,7 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
       openGraph: {
         title: 'مؤسسة ابتسامة للتنمية - إحداث تغيير إيجابي في المجتمعات',
         description: 'انضم إلى مهمتنا لإحداث تغيير إيجابي مستدام في المجتمعات من خلال برامج التعليم والرعاية الصحية والتنمية الاجتماعية.',
-        url: 'https://ibtisama.org/ar',
+        url: 'https://Ebtsama.org/ar',
         siteName: 'مؤسسة ابتسامة للتنمية',
         locale: 'ar_SA',
         type: 'website',
@@ -151,8 +151,8 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
         title: 'مؤسسة ابتسامة للتنمية - إحداث تغيير إيجابي',
         description: 'انضم إلى مهمتنا لإحداث تغيير إيجابي مستدام في المجتمعات من خلال برامج التعليم والرعاية الصحية والتنمية الاجتماعية.',
         images: ['/og-image-ar.jpg'],
-        creator: '@ibtisama_dev',
-        site: '@ibtisama_dev',
+        creator: '@Ebtsama_dev',
+        site: '@Ebtsama_dev',
       },
       robots: {
         index: true,

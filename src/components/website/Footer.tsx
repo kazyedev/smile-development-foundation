@@ -229,7 +229,7 @@ export default function Footer({ locale }: { locale: string }) {
               className="lg:col-span-2"
             >
               <h3 className="text-2xl font-bold text-foreground mb-6">
-                {isEnglish ? "Ibtisama Development Foundation" : "مؤسسة ابتسامة للتنمية"}
+                {isEnglish ? "Ebtsama Development Foundation" : "مؤسسة ابتسامة للتنمية"}
               </h3>
               <p className="text-muted-foreground text-lg leading-relaxed mb-8">
                 {isEnglish 
@@ -250,11 +250,11 @@ export default function Footer({ locale }: { locale: string }) {
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Mail className="w-5 h-5 text-brand-primary flex-shrink-0" />
-                  <span>info@ibtisama.org</span>
+                  <span>info@Ebtsama.org</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Globe className="w-5 h-5 text-brand-primary flex-shrink-0" />
-                  <span>www.ibtisama.org</span>
+                  <span>www.Ebtsama.org</span>
                 </div>
               </div>
             </motion.div>
@@ -388,7 +388,7 @@ export default function Footer({ locale }: { locale: string }) {
             >
               <div className="flex items-center gap-2">
                 <Heart className="w-4 h-4 text-brand-primary" fill="currentColor" />
-                <span>© 2025 Ibtisama Development Foundation.</span>
+                <span>© 2025 Ebtsama Development Foundation.</span>
               </div>
               <div className="flex items-center gap-6">
                 <a href={`/${locale}/privacy-policy`} className="hover:text-brand-primary transition-colors duration-300 flex items-center gap-1">

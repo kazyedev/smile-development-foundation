@@ -1,4 +1,4 @@
--- Create Programs Table for Smile Development Foundation
+-- Create Programs Table for Ebtsama Development Foundation
 -- Based on the Program interface in src/types/program.ts
 
 -- Drop table if exists (for development only - remove in production)

@@ -119,7 +119,7 @@ export interface AboutUsContent {
 export const aboutUsContent: AboutUsContent = {
   hero: {
     title: {
-      en: "About Ibtisama Development Foundation",
+      en: "About Ebtsama Development Foundation",
       ar: "عن مؤسسة الابتسامة للتنمية"
     },
     subtitle: {
@@ -137,14 +137,14 @@ export const aboutUsContent: AboutUsContent = {
       ar: "قصتنا"
     },
     content: {
-      en: "The Ibtisama Development Foundation was born from a vision to address the growing challenges facing Yemen's most vulnerable communities. Founded by a group of dedicated professionals and volunteers, we recognized the urgent need for sustainable solutions to health and education crises affecting thousands of families. Our journey began with a simple belief: every person deserves access to basic healthcare and quality education, regardless of their circumstances.",
+      en: "The Ebtsama Development Foundation was born from a vision to address the growing challenges facing Yemen's most vulnerable communities. Founded by a group of dedicated professionals and volunteers, we recognized the urgent need for sustainable solutions to health and education crises affecting thousands of families. Our journey began with a simple belief: every person deserves access to basic healthcare and quality education, regardless of their circumstances.",
       ar: "وُلدت مؤسسة الابتسامة للتنمية من رؤية لمعالجة التحديات المتزايدة التي تواجه أكثر المجتمعات اليمنية ضعفاً. تأسست من قبل مجموعة من المتخصصين والمتطوعين المتفانين، أدركنا الحاجة الملحة لحلول مستدامة لأزمات الصحة والتعليم التي تؤثر على آلاف العائلات. بدأت رحلتنا بإيمان بسيط: كل شخص يستحق الوصول إلى الرعاية الصحية الأساسية والتعليم الجيد، بغض النظر عن ظروفه."
     }
   },
   overview: {
     title: { en: "About the Organization", ar: "عن المؤسسة" },
     content: {
-      en: "Ibtisama Development Foundation is a Yemeni non-profit charitable organization dedicated to creating sustainable positive change in communities across Yemen. We focus on delivering comprehensive health and education programs that address the most pressing needs of vulnerable populations.",
+      en: "Ebtsama Development Foundation is a Yemeni non-profit charitable organization dedicated to creating sustainable positive change in communities across Yemen. We focus on delivering comprehensive health and education programs that address the most pressing needs of vulnerable populations.",
       ar: "مؤسسة ابتسامة التنموية هي منظمة إنسانية تعمل في اليمن لتقديم الدعم والمساعدة للفئات المحتاجة والهشة في المجتمع، بما في ذلك الأطفال، والأفراد ذوي الاحتياجات الخاصة. وتركز على تلبية الاحتياجات الأساسية : «الغذاء والصحة والتعليم » بهدف تحقيق حياة آمنة ومستقرة للفئات المستهدفة"
     }
   },
@@ -412,19 +412,19 @@ export const aboutUsContent: AboutUsContent = {
       email: {
         title: { en: "Email Addresses", ar: "عناوين البريد الإلكتروني" },
         items: [
-          { label: { en: "General Inquiries", ar: "الاستفسارات العامة" }, value: "info@Ibtisamadev.org" },
-          { label: { en: "Partnerships", ar: "الشراكات" }, value: "partnerships@Ibtisamadev.org" },
-          { label: { en: "Volunteers", ar: "المتطوعون" }, value: "volunteers@Ibtisamadev.org" },
-          { label: { en: "Press & Media", ar: "الصحافة والإعلام" }, value: "media@Ibtisamadev.org" }
+          { label: { en: "General Inquiries", ar: "الاستفسارات العامة" }, value: "info@Ebtsamadev.org" },
+          { label: { en: "Partnerships", ar: "الشراكات" }, value: "partnerships@Ebtsamadev.org" },
+          { label: { en: "Volunteers", ar: "المتطوعون" }, value: "volunteers@Ebtsamadev.org" },
+          { label: { en: "Press & Media", ar: "الصحافة والإعلام" }, value: "media@Ebtsamadev.org" }
         ]
       },
       social: {
         title: { en: "Social Media", ar: "وسائل التواصل الاجتماعي" },
         items: [
-          { platform: "Facebook", icon: "Facebook", url: "https://facebook.com/Ibtisamadevfoundation", handle: "@IbtisamaDevFoundation" },
-          { platform: "Twitter", icon: "Twitter", url: "https://twitter.com/Ibtisamadevfdn", handle: "@IbtisamaDevFdn" },
-          { platform: "Instagram", icon: "Instagram", url: "https://instagram.com/Ibtisamadevfoundation", handle: "@IbtisamaDevFoundation" },
-          { platform: "YouTube", icon: "Youtube", url: "https://youtube.com/@Ibtisamadevfoundation", handle: "@IbtisamaDevFoundation" }
+          { platform: "Facebook", icon: "Facebook", url: "https://facebook.com/Ebtsamadevfoundation", handle: "@EbtsamaDevFoundation" },
+          { platform: "Twitter", icon: "Twitter", url: "https://twitter.com/Ebtsamadevfdn", handle: "@EbtsamaDevFdn" },
+          { platform: "Instagram", icon: "Instagram", url: "https://instagram.com/Ebtsamadevfoundation", handle: "@EbtsamaDevFoundation" },
+          { platform: "YouTube", icon: "Youtube", url: "https://youtube.com/@Ebtsamadevfoundation", handle: "@EbtsamaDevFoundation" }
         ]
       },
       address: {
@@ -469,7 +469,7 @@ export const aboutUsContent: AboutUsContent = {
       year: 2020,
       title: { en: "Foundation Established", ar: "تأسيس المؤسسة" },
       description: { 
-        en: "Ibtisama Development Foundation officially launched with initial focus on emergency medical aid.",
+        en: "Ebtsama Development Foundation officially launched with initial focus on emergency medical aid.",
         ar: "انطلقت مؤسسة الابتسامة للتنمية رسمياً مع التركيز الأولي على المساعدات الطبية الطارئة."
       }
     },

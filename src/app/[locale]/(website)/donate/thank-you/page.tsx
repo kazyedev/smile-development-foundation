@@ -41,12 +41,12 @@ export default function ThankYouPage() {
   };
 
   const shareMessage = isEn 
-    ? `I just donated ${getCurrencySymbol(donationDetails.currency)}${donationDetails.amount} to Ibtisama Development Foundation to help provide food for families in need. Join me in making a difference! 🍽️❤️`
+    ? `I just donated ${getCurrencySymbol(donationDetails.currency)}${donationDetails.amount} to Ebtsama Development Foundation to help provide food for families in need. Join me in making a difference! 🍽️❤️`
     : `لقد تبرعت بمبلغ ${donationDetails.amount} ${getCurrencySymbol(donationDetails.currency)} لمؤسسة ابتسامة للتنمية لمساعدة توفير الطعام للعائلات المحتاجة. انضم إلي في إحداث الفرق! 🍽️❤️`;
 
   const shareOnSocial = (platform: string) => {
     const encodedMessage = encodeURIComponent(shareMessage);
-    const url = encodeURIComponent('https://ibtisama.org');
+    const url = encodeURIComponent('https://Ebtsama.org');
     
     const urls = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${encodedMessage}`,

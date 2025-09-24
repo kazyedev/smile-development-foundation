@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { AuthProvider } from '@/providers/auth-provider';
 
 export const metadata: Metadata = {
-  title: 'Ibtisama Foundation',
+  title: 'Ebtsama Foundation',
   description: 'Official website',
 };
 
