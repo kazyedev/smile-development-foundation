@@ -488,8 +488,8 @@ export default function Footer({ locale }: { locale: string }) {
                             <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-background"></div>
                           </div>
                           <div>
-                            <h4 className="font-bold text-lg text-foreground">Khattab</h4>
-                            <p className="text-sm text-muted-foreground">{isEnglish ? "Full Stack Developer" : "مطور ويب متكامل"}</p>
+                            <h4 className="font-bold text-lg text-foreground">Khattab Ahmed</h4>
+                            <p className="text-sm text-muted-foreground">{isEnglish ? "Software Engineer & Developer" : "مهندس ومطور برمجيات"}</p>
                           </div>
                         </div>
 
