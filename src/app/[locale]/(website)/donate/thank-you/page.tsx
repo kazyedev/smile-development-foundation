@@ -1,9 +1,6 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-
-// This page uses useSearchParams which requires dynamic rendering
-export const dynamic = 'force-dynamic';
 import { motion } from "framer-motion";
 import { CheckCircle, Heart, ArrowRight, Share2, Download, Calendar, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";

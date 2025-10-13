@@ -1,97 +1,12 @@
+"use client";
+
 import ProgramDetailClient from "@/components/website/programs/ProgramDetailClient";
-import ProgramErrorFallback from "@/components/website/programs/ProgramErrorFallback";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useEffect, use } from "react";
 import { Program } from "@/types/program";
 import { Project } from "@/types/project";
-
-// Helper functions to fetch data from APIs
-async function fetchProgram(slug: string): Promise<Program | null> {
-  try {
-    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
-    const url = `${baseUrl}/api/programs/${encodeURIComponent(slug)}`;
-    
-    const response = await fetch(url, {
-      next: { revalidate: 3600 } // Revalidate every hour
-    });
-    
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
-      throw new Error(`Failed to fetch program: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching program:', error);
-    return null;
-  }
-}
-
-async function fetchProjectsByProgram(programSlug: string): Promise<Project[]> {
-  try {
-    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
-    const response = await fetch(`${baseUrl}/api/programs/${encodeURIComponent(programSlug)}/projects`, {
-      next: { revalidate: 3600 } // Revalidate every hour
-    });
-    
-    if (!response.ok) {
-      // If the specific endpoint fails, return empty array (program might not have projects)
-      return [];
-    }
-    
-    const data = await response.json();
-    return data.items || [];
-  } catch (error) {
-    console.error('Error fetching program projects:', error);
-    return [];
-  }
-}
-
-// Loading skeleton component for better UX
-function ProgramDetailSkeleton() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Hero Section Skeleton */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            <Skeleton className="w-20 h-20 rounded-full mx-auto" />
-            <Skeleton className="h-16 w-3/4 mx-auto" />
-            <Skeleton className="h-8 w-1/2 mx-auto" />
-            <Skeleton className="h-6 w-1/3 mx-auto" />
-          </div>
-        </div>
-      </section>
-
-      {/* Content Skeleton */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto space-y-8">
-            <Skeleton className="h-8 w-1/3" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-4 w-4/6" />
-            
-            <Skeleton className="h-8 w-1/4" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-            
-            <Skeleton className="h-8 w-1/3" />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-64 w-full rounded-xl" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
+import { Loader2, Target } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ProgramDetailPageProps {
   params: Promise<{ 
@@ -100,108 +15,116 @@ interface ProgramDetailPageProps {
   }>;
 }
 
-export default async function ProgramDetailPage({ params }: ProgramDetailPageProps) {
-  try {
-    const { slug, locale } = await params;
+export default function ProgramDetailPage({ params }: ProgramDetailPageProps) {
+  const { slug, locale } = use(params);
+  const decodedSlug = decodeURIComponent(slug);
+  const isEn = locale === 'en';
+  
+  const [program, setProgram] = useState<Program | null>(null);
+  const [linkedProjects, setLinkedProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch program
+        const programResponse = await fetch(`/api/programs/${encodeURIComponent(decodedSlug)}`);
+        
+        if (programResponse.status === 404) {
+          notFound();
+          return;
+        }
+        
+        if (!programResponse.ok) {
+          throw new Error('Failed to fetch program');
+        }
+        
+        const programData = await programResponse.json();
+        
+        if (!programData || !programData.titleEn || !programData.titleAr) {
+          throw new Error('Program data is incomplete');
+        }
+        
+        setProgram(programData);
+        
+        // Fetch linked projects
+        try {
+          const projectsResponse = await fetch(`/api/programs/${encodeURIComponent(decodedSlug)}/projects`);
+          if (projectsResponse.ok) {
+            const projectsData = await projectsResponse.json();
+            setLinkedProjects(projectsData.items || []);
+          }
+        } catch (projectError) {
+          console.error('Error fetching projects:', projectError);
+          // Continue without projects
+        }
+        
+      } catch (err) {
+        console.error('Error fetching program:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    // Validate locale
-    if (!['en', 'ar'].includes(locale)) {
-      notFound();
+    if (decodedSlug) {
+      fetchData();
     }
-
-    // Decode the slug and fetch the program
-    const decodedSlug = decodeURIComponent(slug);
-    const isEn = locale === "en";
-    
-    // Fetch program and its linked projects in parallel
-    const [program, linkedProjects] = await Promise.all([
-      fetchProgram(decodedSlug),
-      fetchProjectsByProgram(decodedSlug)
-    ]);
-
-    // If program not found, show 404
-    if (!program) {
-      notFound();
-    }
-
-    // Validate that we have the required data
-    if (!program.titleEn || !program.titleAr || !program.descriptionEn || !program.descriptionAr) {
-      console.error('Program data is incomplete:', program);
-      notFound();
-    }
-
-    // Use the directly linked projects (already filtered by program_id in the API)
-    const relatedProjects = linkedProjects.slice(0, 6); // Limit to 6 related projects
-
-    // For now, we'll use empty stories array since we don't have stories in the database yet
-    const relatedStories: any[] = [];
-
+  }, [decodedSlug]);
+  
+  if (loading) {
     return (
-      <Suspense fallback={<ProgramDetailSkeleton />}>
-        <ProgramDetailClient 
-          program={program} 
-          relatedProjects={relatedProjects} 
-          relatedStories={relatedStories} 
-          locale={locale} 
-        />
-      </Suspense>
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 text-brand-primary mx-auto mb-4 animate-spin" />
+          <h3 className="text-2xl font-bold mb-2">
+            {isEn ? 'Loading program...' : 'جاري تحميل البرنامج...'}
+          </h3>
+        </div>
+      </div>
     );
-
-  } catch (error) {
-    console.error('Error in ProgramDetailPage:', error);
-    
-    // Return client component for error handling with interactivity
-    return <ProgramErrorFallback locale="en" />;
   }
-}
-
-// Generate metadata for SEO
-export async function generateMetadata({ params }: ProgramDetailPageProps) {
-  try {
-    const { slug, locale } = await params;
-    const decodedSlug = decodeURIComponent(slug);
-    const program = await fetchProgram(decodedSlug);
-
-    if (!program) {
-      return {
-        title: locale === 'en' ? 'Program Not Found' : 'البرنامج غير موجود',
-        description: locale === 'en' 
-          ? 'The requested program could not be found.' 
-          : 'لم يتم العثور على البرنامج المطلوب.'
-      };
-    }
-
-    const title = locale === 'en' ? program.titleEn : program.titleAr;
-    const description = locale === 'en' 
-      ? program.descriptionEn.substring(0, 160) 
-      : program.descriptionAr.substring(0, 160);
-
-    return {
-      title: `${title} - Ebtsama Development Foundation`,
-      description,
-      openGraph: {
-        title: `${title} - Ebtsama Development Foundation`,
-        description,
-        type: 'website',
-        locale: locale,
-        images: program.featuredImageUrl ? [program.featuredImageUrl] : [],
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: `${title} - Ebtsama Development Foundation`,
-        description,
-        images: program.featuredImageUrl ? [program.featuredImageUrl] : [],
-      },
-      keywords: locale === 'en' ? program.keywordsEn?.join(', ') : program.keywordsAr?.join(', '),
-    };
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-    return {
-      title: 'Program - Ebtsama Development Foundation',
-      description: 'Learn more about our programs and initiatives.',
-    };
+  
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center">
+        <div className="text-center">
+          <Target className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-red-600 mb-2">
+            {isEn ? 'Error loading program' : 'خطأ في تحميل البرنامج'}
+          </h3>
+          <p className="text-muted-foreground mb-4">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-brand-primary hover:bg-brand-primary/90"
+          >
+            {isEn ? 'Try Again' : 'حاول مرة أخرى'}
+          </Button>
+        </div>
+      </div>
+    );
   }
-}
+  
+  if (!program) {
+    notFound();
+  }
 
-// Use dynamic rendering for this page since we need data from Supabase
-export const dynamic = 'force-dynamic';
+  // Use the directly linked projects (already filtered by program_id in the API)
+  const relatedProjects = linkedProjects.slice(0, 6); // Limit to 6 related projects
+
+  // For now, we'll use empty stories array since we don't have stories in the database yet
+  const relatedStories: any[] = [];
+
+  return (
+    <ProgramDetailClient 
+      program={program} 
+      relatedProjects={relatedProjects} 
+      relatedStories={relatedStories} 
+      locale={locale} 
+    />
+  );
+}

@@ -3,7 +3,7 @@
 import { Target, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { Project } from "@/types/project";
 import {
   ProjectHeroSection,
@@ -16,7 +16,15 @@ import {
   ProjectRelatedSection
 } from "@/components/website/projects";
 
-export default function ProjectDetailPage({ params: { slug, locale } }: { params: { slug: string; locale: string } }) {
+interface ProjectDetailPageProps {
+  params: Promise<{ 
+    slug: string; 
+    locale: string 
+  }>;
+}
+
+export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
+  const { slug, locale } = use(params);
   const decoded = decodeURIComponent(slug);
   const isEn = locale === 'en';
   const [project, setProject] = useState<Project | null>(null);
