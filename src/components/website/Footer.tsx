@@ -2,9 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Heart, Mail, MapPin, Phone, Globe, ArrowRight, Send, Shield, Users } from "lucide-react";
-import { motion, useInView } from "framer-motion";
+import { Heart, Mail, MapPin, Phone, Globe, ArrowRight, Send, Shield, Users, Code2, PhoneCall, MessageCircle, Copy, Check } from "lucide-react";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useState, useRef } from "react";
+import Image from "next/image";
 
 export default function Footer({ locale }: { locale: string }) {
   const [email, setEmail] = useState("");
@@ -12,6 +13,8 @@ export default function Footer({ locale }: { locale: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [showDevCard, setShowDevCard] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
   const footerRef = useRef(null);
   const isInView = useInView(footerRef, { once: true, amount: 0.1 });
   const isEnglish = locale === "en";
@@ -65,6 +68,12 @@ export default function Footer({ locale }: { locale: string }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText("Khattabz2050@gmail.com");
+    setEmailCopied(true);
+    setTimeout(() => setEmailCopied(false), 2000);
   };
 
   return (
@@ -425,6 +434,130 @@ export default function Footer({ locale }: { locale: string }) {
                   </svg>
                 </a>
               ))}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Developer Credit Section */}
+      <section className="relative border-t border-border/50 py-6 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={hasAnimated ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 1.1 }}
+              className="relative"
+              onMouseEnter={() => setShowDevCard(true)}
+              onMouseLeave={() => setShowDevCard(false)}
+            >
+              <div className="flex items-center gap-2 text-muted-foreground text-sm cursor-pointer group">
+                <span>{isEnglish ? "Built with" : "صنع بـ"}</span>
+                <Heart className="w-4 h-4 text-red-500 fill-red-500 group-hover:scale-110 transition-transform" />
+                <span>{isEnglish ? "by" : "بواسطة"}</span>
+                <div className="flex items-center gap-1 text-brand-primary group-hover:text-brand-secondary transition-colors">
+                  <Code2 className="w-4 h-4" />
+                  <span className="font-semibold">Khattab</span>
+                </div>
+              </div>
+
+              {/* Developer Card */}
+              <AnimatePresence>
+                {showDevCard && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 z-50"
+                  >
+                    <div className="relative bg-gradient-to-br from-red-50/50 via-pink-50/30 to-purple-50/20 dark:from-red-950/20 dark:via-pink-950/10 dark:to-purple-950/5 backdrop-blur-xl border border-border/50 rounded-2xl shadow-2xl shadow-brand-primary/10 p-6 w-80">
+                      {/* Decorative Elements - Similar to videos page */}
+                      <div className="absolute top-2 left-2 w-8 h-6 border border-red-400/30 rounded-md"></div>
+                      <div className="absolute top-4 right-4 w-6 h-6 bg-pink-400/20 rounded-full"></div>
+                      <div className="absolute bottom-4 left-6 w-8 h-5 border border-purple-400/30 rounded-md rotate-12"></div>
+                      
+                      {/* Content */}
+                      <div className="relative space-y-4">
+                        {/* Logo & Name */}
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            <div className="w-16 h-16 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 rounded-full flex items-center justify-center">
+                              <Code2 className="w-8 h-8 text-brand-primary" />
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-background"></div>
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-lg text-foreground">Khattab</h4>
+                            <p className="text-sm text-muted-foreground">{isEnglish ? "Full Stack Developer" : "مطور ويب متكامل"}</p>
+                          </div>
+                        </div>
+
+                        {/* Contact Buttons */}
+                        <div className="space-y-2">
+                          {/* Call Button */}
+                          <a
+                            href="tel:+967777841140"
+                            className="flex items-center gap-3 p-3 bg-background/50 hover:bg-green-500/10 border border-border/30 hover:border-green-500/30 rounded-xl transition-all duration-200 group"
+                          >
+                            <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                              <PhoneCall className="w-5 h-5 text-green-500" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-foreground">{isEnglish ? "Call Now" : "اتصل الآن"}</div>
+                              <div className="text-xs text-muted-foreground">+967 777 841 140</div>
+                            </div>
+                          </a>
+
+                          {/* WhatsApp Button */}
+                          <a
+                            href={`https://wa.me/967777841140?text=${encodeURIComponent(isEnglish ? "Hi Khattab, I'm interested in your web development services!" : "مرحبا خطاب، أنا مهتم بخدمات تطوير الويب الخاصة بك!")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-3 p-3 bg-background/50 hover:bg-green-500/10 border border-border/30 hover:border-green-500/30 rounded-xl transition-all duration-200 group"
+                          >
+                            <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                              <MessageCircle className="w-5 h-5 text-green-500" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-foreground">WhatsApp</div>
+                              <div className="text-xs text-muted-foreground">{isEnglish ? "Send a message" : "أرسل رسالة"}</div>
+                            </div>
+                          </a>
+
+                          {/* Email Button with Copy */}
+                          <div className="flex gap-2">
+                            <a
+                              href="mailto:Khattabz2050@gmail.com"
+                              className="flex-1 flex items-center gap-3 p-3 bg-background/50 hover:bg-blue-500/10 border border-border/30 hover:border-blue-500/30 rounded-xl transition-all duration-200 group"
+                            >
+                              <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
+                                <Mail className="w-5 h-5 text-blue-500" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium text-foreground">{isEnglish ? "Email" : "البريد الإلكتروني"}</div>
+                                <div className="text-xs text-muted-foreground truncate">Khattabz2050@gmail.com</div>
+                              </div>
+                            </a>
+                            
+                            <button
+                              onClick={copyEmail}
+                              className="w-12 h-12 bg-background/50 hover:bg-brand-primary/10 border border-border/30 hover:border-brand-primary/30 rounded-xl transition-all duration-200 flex items-center justify-center group"
+                              title={isEnglish ? "Copy email" : "نسخ البريد"}
+                            >
+                              {emailCopied ? (
+                                <Check className="w-5 h-5 text-green-500" />
+                              ) : (
+                                <Copy className="w-5 h-5 text-muted-foreground group-hover:text-brand-primary transition-colors" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           </div>
         </div>
