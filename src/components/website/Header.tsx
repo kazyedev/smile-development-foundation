@@ -498,14 +498,31 @@ export default function Header() {
                   </button>
                 </div>
 
-                {/* Mobile Menu Toggle */}
-                <button 
-                  className="md:hidden relative p-2.5 rounded-full bg-[var(--card)]/50 backdrop-blur-sm border border-[var(--border)]/30 shadow-md" 
-                  onClick={() => setMobileOpen(!mobileOpen)}
-                  aria-label="Toggle mobile menu"
-                >
-                  <Menu className="w-6 h-6" />
-                </button>
+                {/* Mobile Controls */}
+                <div className="md:hidden flex items-center gap-2">
+                  {/* Mobile Language Toggle */}
+                  <button 
+                    onClick={toggleLocale} 
+                    className="p-2.5 rounded-full bg-[var(--card)]/50 backdrop-blur-sm border border-[var(--border)]/30 shadow-md hover:bg-[var(--accent)] transition-all duration-200 group" 
+                    aria-label="Toggle language"
+                  >
+                    <div className="flex items-center gap-1">
+                      <Globe className="w-5 h-5 group-hover:text-[var(--brand-primary)] transition-colors" />
+                      <span className="text-xs font-medium group-hover:text-[var(--brand-primary)] transition-colors">
+                        {currentLocale.toUpperCase()}
+                      </span>
+                    </div>
+                  </button>
+
+                  {/* Mobile Menu Toggle */}
+                  <button 
+                    className="p-2.5 rounded-full bg-[var(--card)]/50 backdrop-blur-sm border border-[var(--border)]/30 shadow-md" 
+                    onClick={() => setMobileOpen(!mobileOpen)}
+                    aria-label="Toggle mobile menu"
+                  >
+                    <Menu className="w-6 h-6" />
+                  </button>
+                </div>
               </motion.div>
             </div>
           </div>
@@ -651,14 +668,6 @@ export default function Header() {
                     ) : (
                       <Moon className="w-4 h-4" />
                     )}
-                  </button>
-                  
-                  <button 
-                    onClick={toggleLocale} 
-                    className="p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]/30 hover:bg-[var(--accent)] transition-all"
-                    aria-label="Toggle language"
-                  >
-                    <Globe className="w-4 h-4" />
                   </button>
                 </div>
               </div>
