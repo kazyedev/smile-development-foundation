@@ -1,111 +1,85 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase/server";
+import { ProgramsRepository } from "@/lib/db/repositories/programs";
+import { ProjectsRepository } from "@/lib/db/repositories/projects";
+import { db } from "@/lib/db";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const supabase = await supabaseServer();
+    // Get database instance
+    const database = db();
+    if (!database) {
+      return NextResponse.json(
+        { error: "Database not configured" },
+        { status: 503 }
+      );
+    }
+
     const { slug } = await params;
+    const decodedSlug = decodeURIComponent(slug);
 
-    // First, get the program ID from the slug
-    const { data: programData, error: programError } = await supabase
-      .from("programs")
-      .select("id")
-      .or(`slug_en.eq.${slug},slug_ar.eq.${slug}`)
-      .eq("is_published", true)
-      .single();
+    // First, get the program from the slug
+    const program = await ProgramsRepository.findBySlug(decodedSlug);
 
-    if (programError || !programData) {
+    if (!program) {
       return NextResponse.json({ error: "Program not found" }, { status: 404 });
     }
 
     // Then fetch projects linked to this program
-    const { data: projectsData, error: projectsError } = await supabase
-      .from("projects")
-      .select(`
-        id,
-        title_en,
-        title_ar,
-        description_en,
-        description_ar,
-        featured_image_url,
-        color,
-        slug_en,
-        slug_ar,
-        keywords_en,
-        keywords_ar,
-        tags_en,
-        tags_ar,
-        page_views,
-        cost,
-        beneficiaries,
-        program_id,
-        is_published,
-        published_at,
-        created_at,
-        updated_at
-      `)
-      .eq("program_id", programData.id)
-      .eq("is_published", true)
-      .order("created_at", { ascending: false });
-
-    if (projectsError) {
-      console.error("Database error:", projectsError);
-      return NextResponse.json({ error: projectsError.message }, { status: 400 });
-    }
+    const projectsData = await ProjectsRepository.findByProgramId(program.id, true);
 
     // Transform the data to match the frontend interface
     const transformedData = projectsData?.map(project => ({
       id: project.id,
-      titleEn: project.title_en,
-      titleAr: project.title_ar,
-      descriptionEn: project.description_en,
-      descriptionAr: project.description_ar,
-      featuredImageUrl: project.featured_image_url,
-      color: project.color,
-      slugEn: project.slug_en,
-      slugAr: project.slug_ar,
-      keywordsEn: project.keywords_en || [],
-      keywordsAr: project.keywords_ar || [],
-      tagsEn: project.tags_en || [],
-      tagsAr: project.tags_ar || [],
-      pageViews: project.page_views || 0,
+      titleEn: project.titleEn,
+      titleAr: project.titleAr,
+      descriptionEn: project.descriptionEn,
+      descriptionAr: project.descriptionAr,
+      featuredImageUrl: project.featuredImageUrl || "/assets/mockimage.jpg",
+      color: project.color || "#3498DB",
+      slugEn: project.slugEn,
+      slugAr: project.slugAr,
+      keywordsEn: project.keywordsEn || [],
+      keywordsAr: project.keywordsAr || [],
+      tagsEn: project.tagsEn || [],
+      tagsAr: project.tagsAr || [],
+      pageViews: project.pageViews || 0,
       cost: project.cost || [],
       beneficiaries: project.beneficiaries || [],
-      programId: project.program_id || 0,
-      isPublished: project.is_published,
-      publishedAt: new Date(project.published_at),
-      createdAt: new Date(project.created_at),
-      updatedAt: new Date(project.updated_at),
-      // Default values for fields not in database yet
-      isEnglish: true,
-      isArabic: true,
-      banners: [],
-      goalsEn: [],
-      goalsAr: [],
-      videoUrl: "",
-      statics: [],
-      fundingProviders: [],
-      donors: [],
-      partners: [],
-      deliverables: [],
-      resources: [],
-      categoryId: 0,
-      activityIds: []
+      programId: project.programId || 0,
+      isPublished: project.isPublished,
+      publishedAt: project.publishedAt ? new Date(project.publishedAt) : null,
+      createdAt: project.createdAt ? new Date(project.createdAt) : null,
+      updatedAt: project.updatedAt ? new Date(project.updatedAt) : null,
+      // Optional fields with defaults
+      isEnglish: project.isEnglish ?? true,
+      isArabic: project.isArabic ?? true,
+      banners: project.banners || [],
+      goalsEn: project.goalsEn || [],
+      goalsAr: project.goalsAr || [],
+      videoUrl: project.videoUrl || "",
+      statics: project.statics || [],
+      fundingProviders: project.fundingProviders || [],
+      donors: project.donors || [],
+      partners: project.partners || [],
+      deliverables: project.deliverables || [],
+      resources: project.resources || [],
+      categoryId: project.categoryId || 0,
+      activityIds: project.activityIds || []
     })) || [];
 
     return NextResponse.json({ 
       items: transformedData,
       total: transformedData.length,
-      programId: programData.id
+      programId: program.id
     });
 
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(
-      { error: "Internal server error" }, 
+      { error: "Internal server error", details: error instanceof Error ? error.message : "Unknown error" }, 
       { status: 500 }
     );
   }

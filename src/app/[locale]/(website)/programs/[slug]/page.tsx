@@ -40,12 +40,20 @@ export default function ProgramDetailPage({ params }: ProgramDetailPageProps) {
         }
         
         if (!programResponse.ok) {
-          throw new Error('Failed to fetch program');
+          const errorData = await programResponse.json().catch(() => ({}));
+          const errorMessage = errorData.error || `Failed to fetch program (${programResponse.status})`;
+          console.error('Program fetch failed:', {
+            status: programResponse.status,
+            statusText: programResponse.statusText,
+            error: errorData
+          });
+          throw new Error(errorMessage);
         }
         
         const programData = await programResponse.json();
         
         if (!programData || !programData.titleEn || !programData.titleAr) {
+          console.error('Incomplete program data received:', programData);
           throw new Error('Program data is incomplete');
         }
         

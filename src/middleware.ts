@@ -4,7 +4,7 @@ import { locales } from './lib/i18n';
 
 const PUBLIC_FILE = /\.(.*)$/;
 const LOCALES = ['en', 'ar'];
-const DEFAULT_LOCALE = 'en';
+const DEFAULT_LOCALE = 'ar';
 
 // Protected routes that require authentication
 const PROTECTED_ROUTES = ['/cms'];
