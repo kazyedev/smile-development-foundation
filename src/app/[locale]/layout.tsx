@@ -1,4 +1,5 @@
 import { ProgressBar } from "@/app/ProgressBar";
+import { Suspense } from "react";
 
 export default async function LocaleLayout({
   children,
@@ -10,7 +11,9 @@ export default async function LocaleLayout({
   const { locale } = await params;
   return (
     <div dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-      <ProgressBar />
+      <Suspense fallback={null}>
+        <ProgressBar />
+      </Suspense>
       {children}
     </div>
   );

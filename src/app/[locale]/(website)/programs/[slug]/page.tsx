@@ -203,44 +203,5 @@ export async function generateMetadata({ params }: ProgramDetailPageProps) {
   }
 }
 
-// Generate static params for better performance
-export async function generateStaticParams() {
-  try {
-    // Fetch all programs from API
-    const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
-    const response = await fetch(`${baseUrl}/api/programs`);
-    if (!response.ok) {
-      console.error('Failed to fetch programs for static generation');
-      return [];
-    }
-    
-    const data = await response.json();
-    const programs = data.items || [];
-    
-    const params: Array<{ slug: string; locale: string }> = [];
-    
-    // Generate params for all programs in both languages
-    programs.forEach((program: Program) => {
-      // English version
-      if (program.slugEn) {
-        params.push({
-          slug: program.slugEn,
-          locale: 'en'
-        });
-      }
-      
-      // Arabic version
-      if (program.slugAr) {
-        params.push({
-          slug: program.slugAr,
-          locale: 'ar'
-        });
-      }
-    });
-
-    return params;
-  } catch (error) {
-    console.error('Error generating static params:', error);
-    return [];
-  }
-}
+// Use dynamic rendering for this page since we need data from Supabase
+export const dynamic = 'force-dynamic';

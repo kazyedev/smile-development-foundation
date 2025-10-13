@@ -1,5 +1,5 @@
 // Internationalization configuration
-export const defaultLocale = 'en';
+export const defaultLocale = 'ar';
 export const locales = ['en', 'ar'];
 
 export function getMessages(locale: string) {
