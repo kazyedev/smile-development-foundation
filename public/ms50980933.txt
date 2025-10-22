@@ -1,0 +1,5 @@
+﻿{
+  "Description": "ملف التحقق من ملكيه المجال لـ Microsoft 365 - الموقع في جذر موقع الويب",
+  "Domain": "ebtsama.org",
+  "Id": "7abc6c0d-e8bf-469a-b9f0-76008ad816fc"
+}
