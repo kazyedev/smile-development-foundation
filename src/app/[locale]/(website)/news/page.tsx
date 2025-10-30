@@ -15,7 +15,7 @@ export default function NewsPage() {
   const params = useParams<{ locale: string }>();
   const locale = params?.locale || 'en';
   const isEn = locale === 'en';
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -29,7 +29,7 @@ export default function NewsPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch news
         const newsParams = new URLSearchParams({
           published: 'true',
@@ -37,39 +37,39 @@ export default function NewsPage() {
           orderBy: 'publishedAt',
           order: 'desc'
         });
-        
+
         if (searchTerm.trim()) {
           newsParams.append('search', searchTerm.trim());
         }
-        
+
         if (selectedCategory !== "all") {
           newsParams.append('categoryId', selectedCategory);
         }
-        
+
         const [newsResponse, categoriesResponse] = await Promise.all([
           fetch(`/api/news?${newsParams.toString()}`),
           fetch('/api/news-categories?published=true')
         ]);
-        
+
         if (!newsResponse.ok || !categoriesResponse.ok) {
           throw new Error('Failed to fetch data');
         }
-        
+
         const newsData = await newsResponse.json();
         const categoriesData = await categoriesResponse.json();
-        
+
         if (newsData.success) {
           setNews(newsData.items || []);
         } else {
           throw new Error(newsData.error || 'Failed to fetch news');
         }
-        
+
         if (categoriesData.success) {
           setNewsCategories(categoriesData.items || []);
         } else {
           throw new Error(categoriesData.error || 'Failed to fetch categories');
         }
-        
+
         setError(null);
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -78,10 +78,10 @@ export default function NewsPage() {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, [searchTerm, selectedCategory]);
-  
+
   // Get featured news (first 3)
   const featuredNews = news.slice(0, 3);
   const regularNews = news.slice(3);
@@ -97,7 +97,7 @@ export default function NewsPage() {
           <div className="absolute bottom-20 left-1/3 w-12 h-16 border-2 border-red-400 rounded-lg rotate-45"></div>
           <div className="absolute top-1/4 left-1/2 w-8 h-10 bg-orange-300/40 rounded-lg -rotate-12"></div>
         </div>
-        
+
         <div className="max-w-6xl mx-auto relative">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -109,15 +109,15 @@ export default function NewsPage() {
               <Newspaper className="w-4 h-4" />
               {isEn ? "Breaking News" : "أخبار عاجلة"}
             </div>
-            
+
             <h1 className="text-4xl lg:text-6xl font-bold mb-6">
               <span className="bg-gradient-to-r from-orange-600 via-yellow-500 to-red-500 bg-clip-text text-transparent">
                 {isEn ? "Latest News" : "آخر الأخبار"}
               </span>
             </h1>
-            
+
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8">
-              {isEn 
+              {isEn
                 ? "Stay informed with the latest updates, developments, and stories from our organization and the communities we serve. Real-time coverage of our impact and initiatives."
                 : "ابق على اطلاع بآخر التحديثات والتطورات والقصص من منظمتنا والمجتمعات التي نخدمها. تغطية فورية لتأثيرنا ومبادراتنا."
               }
@@ -156,7 +156,7 @@ export default function NewsPage() {
                 <Zap className="w-6 h-6 text-orange-600" />
                 <h2 className="text-2xl font-bold">{isEn ? "Featured Stories" : "القصص المميزة"}</h2>
               </div>
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Featured Article */}
                 <div className="lg:col-span-2">
@@ -178,7 +178,12 @@ export default function NewsPage() {
                             {isEn ? featuredNews[0].titleEn : featuredNews[0].titleAr}
                           </h3>
                           <p className="text-white/90 line-clamp-2 mb-3">
-                            {(isEn ? featuredNews[0].contentEn : featuredNews[0].contentAr).substring(0, 150)}...
+                            {(() => {
+                              const parser = new DOMParser();
+                              const doc = parser.parseFromString(isEn ? featuredNews[0].contentEn : featuredNews[0].contentAr, "text/html");
+                              const text = doc.body.textContent || "";
+                              return text.substring(0, 150) + "...";
+                            })()}
                           </p>
                           <div className="flex items-center gap-4 text-sm text-white/80">
                             <div className="flex items-center gap-1">
@@ -195,7 +200,7 @@ export default function NewsPage() {
                     </div>
                   </Link>
                 </div>
-                
+
                 {/* Secondary Featured Articles */}
                 <div className="space-y-6">
                   {featuredNews.slice(1, 3).map((news, idx) => (
@@ -305,7 +310,7 @@ export default function NewsPage() {
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4" />
               <span>
-                {isEn 
+                {isEn
                   ? `Showing ${news.length} articles`
                   : `عرض ${news.length} مقال`
                 }
@@ -316,7 +321,7 @@ export default function NewsPage() {
                 <span>{isEn ? "Category:" : "الفئة:"}</span>
                 <span className="px-2 py-1 bg-orange-600/10 text-orange-600 rounded-full text-xs">
                   {newsCategories.find(c => c.id === parseInt(selectedCategory))
-                    ? isEn 
+                    ? isEn
                       ? newsCategories.find(c => c.id === parseInt(selectedCategory))!.nameEn
                       : newsCategories.find(c => c.id === parseInt(selectedCategory))!.nameAr
                     : selectedCategory
@@ -364,7 +369,7 @@ export default function NewsPage() {
                 {isEn ? "No articles found" : "لم يتم العثور على مقالات"}
               </h3>
               <p className="text-muted-foreground">
-                {isEn 
+                {isEn
                   ? "Try adjusting your search terms or filters"
                   : "جرب تعديل مصطلحات البحث أو المرشحات"
                 }
@@ -372,7 +377,7 @@ export default function NewsPage() {
             </motion.div>
           ) : (
             <div className={
-              viewMode === "grid" 
+              viewMode === "grid"
                 ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 : "space-y-8"
             }>
@@ -383,30 +388,30 @@ export default function NewsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1, duration: 0.5 }}
                   className={viewMode === "list" ? "w-full" : ""}
-                  viewport={{once:true}}
+                  viewport={{ once: true }}
                 >
                   {viewMode === "grid" ? (
                     <Link href={`/${locale}/news/${isEn ? news.slugEn : news.slugAr}`}>
                       <article className="group bg-gradient-to-br from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 border border-border rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-500">
                         <div className="relative aspect-[4/3] overflow-hidden">
-                          <Image 
-                            src={news.featuredImageUrl} 
-                            alt={isEn ? news.titleEn : news.titleAr} 
-                            fill 
-                            className="object-cover group-hover:scale-105 transition-transform duration-500" 
+                          <Image
+                            src={news.featuredImageUrl}
+                            alt={isEn ? news.titleEn : news.titleAr}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          
+
                           {/* Read Time Badge */}
                           <div className="absolute top-4 right-4 bg-orange-600/90 text-white px-3 py-1 rounded-full text-xs font-medium">
                             {news.readTime} {isEn ? 'min' : 'د'}
                           </div>
-                          
+
                           {/* Category Badge */}
                           <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <span className="bg-white/90 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
                               {newsCategories.find(c => c.id === news.categoryId)
-                                ? isEn 
+                                ? isEn
                                   ? newsCategories.find(c => c.id === news.categoryId)!.nameEn
                                   : newsCategories.find(c => c.id === news.categoryId)!.nameAr
                                 : isEn ? 'News' : 'أخبار'
@@ -414,14 +419,20 @@ export default function NewsPage() {
                             </span>
                           </div>
                         </div>
-                        
+
                         <div className="p-6">
                           <h3 className="font-bold text-lg mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors">
                             {isEn ? news.titleEn : news.titleAr}
                           </h3>
                           <p className="text-muted-foreground text-sm line-clamp-3 mb-4 leading-relaxed">
-                            {(isEn ? news.contentEn : news.contentAr).substring(0, 120)}...
+                            {(() => {
+                              const parser = new DOMParser();
+                              const doc = parser.parseFromString(isEn ? news.contentEn : news.contentAr, "text/html");
+                              const text = doc.body.textContent || "";
+                              return text.substring(0, 120) + "...";
+                            })()}
                           </p>
+
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
@@ -458,7 +469,12 @@ export default function NewsPage() {
                                 {isEn ? news.titleEn : news.titleAr}
                               </h3>
                               <p className="text-muted-foreground line-clamp-3 leading-relaxed">
-                                {(isEn ? news.contentEn : news.contentAr).substring(0, 200)}...
+                                {(() => {
+                                  const parser = new DOMParser();
+                                  const doc = parser.parseFromString(isEn ? news.contentEn : news.contentAr, "text/html");
+                                  const text = doc.body.textContent || "";
+                                  return text.substring(0, 120) + "...";
+                                })()}
                               </p>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -474,10 +490,10 @@ export default function NewsPage() {
                                   <Calendar className="w-4 h-4" />
                                   <span>{new Date(news.publishedAt).toLocaleDateString(isEn ? 'en-US' : 'ar-EG')}</span>
                                 </div>
-                              <div className="flex items-center gap-1">
-                                <Eye className="w-4 h-4" />
-                                <span>{news.pageViews || 0} {isEn ? 'views' : 'مشاهدة'}</span>
-                              </div>
+                                <div className="flex items-center gap-1">
+                                  <Eye className="w-4 h-4" />
+                                  <span>{news.pageViews || 0} {isEn ? 'views' : 'مشاهدة'}</span>
+                                </div>
                               </div>
                               <Button variant="outline" size="sm" className="bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-950/30 dark:to-yellow-950/30 border-orange-200 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900/50">
                                 {isEn ? "Read Article" : "قراءة المقال"}
@@ -502,7 +518,7 @@ export default function NewsPage() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center"
-          viewport={{once:true}}
+          viewport={{ once: true }}
         >
           <div className="bg-gradient-to-r from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 rounded-3xl p-8 lg:p-12 border border-orange-200/50 dark:border-orange-800/30">
             <div className="flex items-center justify-center gap-2 mb-6">
@@ -514,7 +530,7 @@ export default function NewsPage() {
               {isEn ? "Stay Informed, Stay Connected" : "ابق على اطلاع، ابق متصلاً"}
             </h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-              {isEn 
+              {isEn
                 ? "Never miss an update from our community. Subscribe to our newsletter for the latest news, insights, and stories delivered directly to your inbox."
                 : "لا تفوت أي تحديث من مجتمعنا. اشترك في نشرتنا الإخبارية للحصول على آخر الأخبار والرؤى والقصص مباشرة في صندوق الوارد الخاص بك."
               }

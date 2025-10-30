@@ -209,7 +209,12 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
             {/* Article Body */}
             <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
               <p className="text-xl leading-relaxed text-muted-foreground font-medium mb-8">
-                {(isEn ? news.contentEn : news.contentAr).substring(0, 200)}...
+              {(() => {
+                              const parser = new DOMParser();
+                              const doc = parser.parseFromString(isEn ? news.contentEn : news.contentAr, "text/html");
+                              const text = doc.body.textContent || "";
+                              return text.substring(0, 200) + "...";
+                            })()}
               </p>
 
               {/* Render HTML as real DOM */}
@@ -334,7 +339,12 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                             {isEn ? relatedItem.titleEn : relatedItem.titleAr}
                           </h3>
                           <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
-                            {(isEn ? relatedItem.contentEn : relatedItem.contentAr).substring(0, 100)}...
+                          {(() => {
+                              const parser = new DOMParser();
+                              const doc = parser.parseFromString(isEn ? relatedItem.contentEn : relatedItem.contentAr, "text/html");
+                              const text = doc.body.textContent || "";
+                              return text.substring(0, 120) + "...";
+                            })()}
                           </p>
                           <div className="flex items-center gap-3 text-xs text-muted-foreground">
                             <div className="flex items-center gap-1">
