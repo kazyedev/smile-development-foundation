@@ -255,7 +255,7 @@ export default function Footer({ locale }: { locale: string }) {
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Phone className="w-5 h-5 text-brand-primary flex-shrink-0" />
-                  <span>+967 123 456 7890</span>
+                  <span>+967782108884</span>
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Mail className="w-5 h-5 text-brand-primary flex-shrink-0" />

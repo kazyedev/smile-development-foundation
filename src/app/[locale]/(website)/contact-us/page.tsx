@@ -56,7 +56,7 @@ export default function ContactUsPage() {
       icon: Phone,
       title: isEn ? "Call Us" : "اتصل بنا",
       description: isEn ? "Speak directly with our team" : "تحدث مباشرة مع فريقنا",
-      value: "+967 123 456 7890",
+      value: "+967782108884",
       color: "text-green-600 dark:text-green-400"
     },
     {
@@ -313,8 +313,8 @@ export default function ContactUsPage() {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1">{isEn ? "Phone" : "الهاتف"}</h4>
-                      <p className="text-sm text-muted-foreground">+967 123 456 7890</p>
-                      <p className="text-sm text-muted-foreground">+967 123 456 7891 (Fax)</p>
+                      <p className="text-sm text-muted-foreground">+967782108884</p>
+                      <p className="text-sm text-muted-foreground">+967782108884 (Fax)</p>
                     </div>
                   </div>
 
