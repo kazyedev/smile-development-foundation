@@ -421,10 +421,10 @@ export const aboutUsContent: AboutUsContent = {
       social: {
         title: { en: "Social Media", ar: "وسائل التواصل الاجتماعي" },
         items: [
-          { platform: "Facebook", icon: "Facebook", url: "https://facebook.com/Ebtsamadevfoundation", handle: "@EbtsamaDevFoundation" },
-          { platform: "Twitter", icon: "Twitter", url: "https://twitter.com/Ebtsamadevfdn", handle: "@EbtsamaDevFdn" },
-          { platform: "Instagram", icon: "Instagram", url: "https://instagram.com/Ebtsamadevfoundation", handle: "@EbtsamaDevFoundation" },
-          { platform: "YouTube", icon: "Youtube", url: "https://youtube.com/@Ebtsamadevfoundation", handle: "@EbtsamaDevFoundation" }
+          { platform: "Facebook", icon: "Facebook", url: "https://www.facebook.com/smilefoundation2/", handle: "@smilefoundation2" },
+          { platform: "Twitter", icon: "Twitter", url: "https://twitter.com/smilefoundation2", handle: "@smilefoundation2" },
+          { platform: "Instagram", icon: "Instagram", url: "https://instagram.com/smilefoundation2", handle: "@smilefoundation2" },
+          { platform: "YouTube", icon: "Youtube", url: "https://www.youtube.com/@smilefoun", handle: "@smilefoun" }
         ]
       },
       address: {

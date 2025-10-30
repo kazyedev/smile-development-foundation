@@ -183,11 +183,11 @@ export default async function HomePage({ params }: HomePageProps) {
       {/* <AboutSection locale={locale} /> */}
       <WhoWeAreSection {...mockWhoWeAreSection} locale={locale} />
       <ProjectsSection locale={locale} />
+      <NewsSection locale={locale} />
       <ActivitiesSection locale={locale} />
       <SuccessStoriesSection locale={locale} />
       <VideosSection locale={locale} />
       <StaticSection locale={locale} />
-      <NewsSection locale={locale} />
     </main>
   );
 }
