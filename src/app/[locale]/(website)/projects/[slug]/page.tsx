@@ -48,25 +48,11 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
           if (projectResponse.status === 404) {
             throw new Error('Project not found');
           }
-          const errorData = await projectResponse.json().catch(() => ({}));
-          const errorMessage = errorData.error || `Failed to fetch project (${projectResponse.status})`;
-          console.error('Project fetch failed:', {
-            status: projectResponse.status,
-            statusText: projectResponse.statusText,
-            error: errorData
-          });
-          throw new Error(errorMessage);
+          throw new Error('Failed to fetch project');
         }
         
         if (!allProjectsResponse.ok) {
-          const errorData = await allProjectsResponse.json().catch(() => ({}));
-          const errorMessage = errorData.error || `Failed to fetch projects list (${allProjectsResponse.status})`;
-          console.error('Projects list fetch failed:', {
-            status: allProjectsResponse.status,
-            statusText: allProjectsResponse.statusText,
-            error: errorData
-          });
-          throw new Error(errorMessage);
+          throw new Error('Failed to fetch all projects');
         }
         
         const [projectData, allProjectsData] = await Promise.all([
