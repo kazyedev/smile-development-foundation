@@ -14,62 +14,62 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
   const { slug, locale } = use(params);
   const decoded = decodeURIComponent(slug || '');
   const isEn = (locale || 'en') === 'en';
-  
+
   const [news, setNews] = useState<News | null>(null);
   const [relatedNews, setRelatedNews] = useState<News[]>([]);
   const [newsCategories, setNewsCategories] = useState<NewsCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch the news article by slug
         const newsResponse = await fetch(`/api/news/${decoded}`);
-        
+
         if (newsResponse.status === 404) {
           notFound();
           return;
         }
-        
+
         if (!newsResponse.ok) {
           throw new Error('Failed to fetch news article');
         }
-        
+
         const newsData = await newsResponse.json();
-        
+
         if (!newsData.success || !newsData.item) {
           throw new Error(newsData.error || 'News article not found');
         }
-        
+
         setNews(newsData.item);
-        
+
         // Fetch related news and categories
         const [relatedResponse, categoriesResponse] = await Promise.all([
           fetch(`/api/news?published=true&categoryId=${newsData.item.categoryId}&limit=4`),
           fetch('/api/news-categories?published=true')
         ]);
-        
+
         if (relatedResponse.ok) {
           const relatedData = await relatedResponse.json();
           if (relatedData.success && relatedData.items) {
             // Filter out the current article and limit to 3
-            const filtered = relatedData.items.filter((n: News) => 
+            const filtered = relatedData.items.filter((n: News) =>
               n.id !== newsData.item.id
             ).slice(0, 3);
             setRelatedNews(filtered);
           }
         }
-        
+
         if (categoriesResponse.ok) {
           const categoriesData = await categoriesResponse.json();
           if (categoriesData.success) {
             setNewsCategories(categoriesData.items || []);
           }
         }
-        
+
       } catch (err) {
         console.error('Error fetching news:', err);
         setError(err instanceof Error ? err.message : 'An error occurred');
@@ -77,14 +77,14 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
         setLoading(false);
       }
     };
-    
+
     if (decoded) {
       fetchNews();
     }
   }, [decoded]);
-  
+
   const category = news && newsCategories.find(c => c.id === news.categoryId);
-  
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10 flex items-center justify-center">
@@ -97,7 +97,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-orange-50/20 dark:to-orange-950/10 flex items-center justify-center">
@@ -116,7 +116,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
       </div>
     );
   }
-  
+
   if (!news) {
     notFound();
   }
@@ -126,15 +126,15 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
       {/* Hero Section */}
       <section className="relative">
         <div className="relative w-full h-[60vh] lg:h-[70vh]">
-          <Image 
-            src={news.featuredImageUrl} 
-            alt={isEn ? news.titleEn : news.titleAr} 
-            fill 
-            className="object-cover" 
+          <Image
+            src={news.featuredImageUrl}
+            alt={isEn ? news.titleEn : news.titleAr}
+            fill
+            className="object-cover"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-          
+
           {/* Navigation */}
           <div className="absolute top-6 left-6 z-10">
             <Button asChild variant="secondary" size="sm" className="bg-black/20 backdrop-blur-sm border-white/20 text-white hover:bg-black/30">
@@ -154,7 +154,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
               <Bookmark className="w-4 h-4" />
             </Button>
           </div>
-          
+
           {/* Hero Content */}
           <div className="absolute inset-0 flex items-end">
             <div className="container mx-auto px-6 py-12">
@@ -163,18 +163,18 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 className="max-w-4xl"
-                viewport={{once:true}}
+                viewport={{ once: true }}
               >
                 {/* Category Badge */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600/90 backdrop-blur-sm text-white rounded-full text-sm border border-white/30 mb-6">
                   <Globe className="w-4 h-4" />
                   {category ? (isEn ? category.nameEn : category.nameAr) : (isEn ? "News" : "أخبار")}
                 </div>
-                
+
                 <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                   {isEn ? news.titleEn : news.titleAr}
                 </h1>
-                
+
                 {/* Article Meta */}
                 <div className="flex flex-wrap items-center gap-6 text-white/90 text-lg mb-6">
                   <div className="flex items-center gap-2">
@@ -204,16 +204,21 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="mb-12"
-            viewport={{once:true}}
+            viewport={{ once: true }}
           >
             {/* Article Body */}
             <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
               <p className="text-xl leading-relaxed text-muted-foreground font-medium mb-8">
                 {(isEn ? news.contentEn : news.contentAr).substring(0, 200)}...
               </p>
-              <p className="leading-relaxed">
-                {isEn ? news.contentEn : news.contentAr}
-              </p>
+
+              {/* Render HTML as real DOM */}
+              <div
+                className="leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: isEn ? news.contentEn : news.contentAr,
+                }}
+              />
             </div>
 
             {/* Keywords and Tags */}
@@ -231,7 +236,7 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
                   ))}
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-orange-600" />
@@ -297,12 +302,12 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              viewport={{once:true}}
+              viewport={{ once: true }}
             >
               <h2 className="text-3xl font-bold mb-8 text-center">
                 {isEn ? "Related News" : "أخبار ذات صلة"}
               </h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {relatedNews.map((relatedItem, idx) => (
                   <motion.div
@@ -359,14 +364,14 @@ export default function NewsDetailPage({ params }: { params: Promise<{ slug: str
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto text-center"
-          viewport={{once:true}}
+          viewport={{ once: true }}
         >
           <div className="bg-gradient-to-r from-orange-50/50 to-yellow-50/30 dark:from-orange-950/20 dark:to-yellow-950/10 rounded-3xl p-8 lg:p-12 border border-orange-200/50 dark:border-orange-800/30">
             <h2 className="text-3xl lg:text-4xl font-bold mb-6 bg-gradient-to-r from-orange-600 to-red-500 bg-clip-text text-transparent">
               {isEn ? "Stay Updated" : "ابق على اطلاع"}
             </h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-              {isEn 
+              {isEn
                 ? "Don't miss our latest news and updates. Subscribe to our newsletter for regular insights and stories from our community."
                 : "لا تفوت آخر أخبارنا وتحديثاتنا. اشترك في نشرتنا الإخبارية للحصول على رؤى وقصص منتظمة من مجتمعنا."
               }
