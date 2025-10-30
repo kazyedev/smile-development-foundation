@@ -133,7 +133,7 @@ export default function ProgramStakeholders({ program, locale }: ProgramStakehol
             <p className="text-muted-foreground max-w-3xl mx-auto text-lg leading-relaxed">
               {isEn 
                 ? "This program is made possible through the collaboration of funding providers, generous donors, and strategic partners who share our vision for sustainable community development."
-                : "هذا البرنامج ممكن من خلال التعاون مع مزودي التمويل، والمانحين الكرماء، والشركاء الاستراتيجيين الذين يشاركوننا رؤيتنا للتنمية المجتمعية المستدامة."
+                : "هذا البرنامج ممكن من خلال التعاون مع مزودي التمويل، والمانحين الكرماء، والشركاء الاستراتيجيين الذين يشاركوننا رؤيتنا التنموية المجتمعية المستدامة."
               }
             </p>
           </div>

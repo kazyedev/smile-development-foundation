@@ -98,10 +98,10 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
   } else {
     // Arabic locale
     return {
-      title: 'مؤسسة ابتسامة للتنمية - إحداث تغيير إيجابي في المجتمعات',
+      title: 'مؤسسة ابتسامة التنموية - إحداث تغيير إيجابي في المجتمعات',
       description: 'انضم إلى مهمتنا لإحداث تغيير إيجابي مستدام في المجتمعات من خلال برامج التعليم والرعاية الصحية والتنمية الاجتماعية. اكتشف مشاريعنا وأنشطتنا وقصص النجاح.',
       keywords: [
-        'مؤسسة ابتسامة للتنمية',
+        'مؤسسة ابتسامة التنموية',
         'تنمية المجتمع',
         'تغيير مستدام',
         'برامج التعليم',
@@ -114,9 +114,9 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
         'منصة التبرع',
         'التأثير الاجتماعي'
       ],
-      authors: [{ name: 'مؤسسة ابتسامة للتنمية' }],
-      creator: 'مؤسسة ابتسامة للتنمية',
-      publisher: 'مؤسسة ابتسامة للتنمية',
+      authors: [{ name: 'مؤسسة ابتسامة التنموية' }],
+      creator: 'مؤسسة ابتسامة التنموية',
+      publisher: 'مؤسسة ابتسامة التنموية',
       formatDetection: {
         email: false,
         address: false,
@@ -131,10 +131,10 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
         },
       },
       openGraph: {
-        title: 'مؤسسة ابتسامة للتنمية - إحداث تغيير إيجابي في المجتمعات',
+        title: 'مؤسسة ابتسامة التنموية - إحداث تغيير إيجابي في المجتمعات',
         description: 'انضم إلى مهمتنا لإحداث تغيير إيجابي مستدام في المجتمعات من خلال برامج التعليم والرعاية الصحية والتنمية الاجتماعية.',
         url: 'https://Ebtsama.org/ar',
-        siteName: 'مؤسسة ابتسامة للتنمية',
+        siteName: 'مؤسسة ابتسامة التنموية',
         locale: 'ar_SA',
         type: 'website',
         images: [
@@ -142,13 +142,13 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
             url: '/og-image-ar.jpg',
             width: 1200,
             height: 630,
-            alt: 'مؤسسة ابتسامة للتنمية - برامج تنمية المجتمع',
+            alt: 'مؤسسة ابتسامة التنموية - برامج تنمية المجتمع',
           },
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: 'مؤسسة ابتسامة للتنمية - إحداث تغيير إيجابي',
+        title: 'مؤسسة ابتسامة التنموية - إحداث تغيير إيجابي',
         description: 'انضم إلى مهمتنا لإحداث تغيير إيجابي مستدام في المجتمعات من خلال برامج التعليم والرعاية الصحية والتنمية الاجتماعية.',
         images: ['/og-image-ar.jpg'],
         creator: '@Ebtsama_dev',

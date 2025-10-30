@@ -42,7 +42,7 @@ export default function ThankYouPage() {
 
   const shareMessage = isEn 
     ? `I just donated ${getCurrencySymbol(donationDetails.currency)}${donationDetails.amount} to Ebtsama Development Foundation to help provide food for families in need. Join me in making a difference! 🍽️❤️`
-    : `لقد تبرعت بمبلغ ${donationDetails.amount} ${getCurrencySymbol(donationDetails.currency)} لمؤسسة ابتسامة للتنمية لمساعدة توفير الطعام للعائلات المحتاجة. انضم إلي في إحداث الفرق! 🍽️❤️`;
+    : `لقد تبرعت بمبلغ ${donationDetails.amount} ${getCurrencySymbol(donationDetails.currency)} لمؤسسة ابتسامة التنموية لمساعدة توفير الطعام للعائلات المحتاجة. انضم إلي في إحداث الفرق! 🍽️❤️`;
 
   const shareOnSocial = (platform: string) => {
     const encodedMessage = encodeURIComponent(shareMessage);

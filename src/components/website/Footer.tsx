@@ -238,7 +238,7 @@ export default function Footer({ locale }: { locale: string }) {
               className="lg:col-span-2"
             >
               <h3 className="text-2xl font-bold text-foreground mb-6">
-                {isEnglish ? "Ebtsama Development Foundation" : "مؤسسة ابتسامة للتنمية"}
+                {isEnglish ? "Ebtsama Development Foundation" : "مؤسسة ابتسامة التنموية"}
               </h3>
               <p className="text-muted-foreground text-lg leading-relaxed mb-8">
                 {isEnglish 

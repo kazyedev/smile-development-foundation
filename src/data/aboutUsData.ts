@@ -120,7 +120,7 @@ export const aboutUsContent: AboutUsContent = {
   hero: {
     title: {
       en: "About Ebtsama Development Foundation",
-      ar: "عن مؤسسة الابتسامة للتنمية"
+      ar: "عن مؤسسة الابتسامة التنموية"
     },
     subtitle: {
       en: "Building Hope, Transforming Lives, Creating Sustainable Change",
@@ -138,7 +138,7 @@ export const aboutUsContent: AboutUsContent = {
     },
     content: {
       en: "The Ebtsama Development Foundation was born from a vision to address the growing challenges facing Yemen's most vulnerable communities. Founded by a group of dedicated professionals and volunteers, we recognized the urgent need for sustainable solutions to health and education crises affecting thousands of families. Our journey began with a simple belief: every person deserves access to basic healthcare and quality education, regardless of their circumstances.",
-      ar: "وُلدت مؤسسة الابتسامة للتنمية من رؤية لمعالجة التحديات المتزايدة التي تواجه أكثر المجتمعات اليمنية ضعفاً. تأسست من قبل مجموعة من المتخصصين والمتطوعين المتفانين، أدركنا الحاجة الملحة لحلول مستدامة لأزمات الصحة والتعليم التي تؤثر على آلاف العائلات. بدأت رحلتنا بإيمان بسيط: كل شخص يستحق الوصول إلى الرعاية الصحية الأساسية والتعليم الجيد، بغض النظر عن ظروفه."
+      ar: "وُلدت مؤسسة الابتسامة التنموية من رؤية لمعالجة التحديات المتزايدة التي تواجه أكثر المجتمعات اليمنية ضعفاً. تأسست من قبل مجموعة من المتخصصين والمتطوعين المتفانين، أدركنا الحاجة الملحة لحلول مستدامة لأزمات الصحة والتعليم التي تؤثر على آلاف العائلات. بدأت رحلتنا بإيمان بسيط: كل شخص يستحق الوصول إلى الرعاية الصحية الأساسية والتعليم الجيد، بغض النظر عن ظروفه."
     }
   },
   overview: {
@@ -470,7 +470,7 @@ export const aboutUsContent: AboutUsContent = {
       title: { en: "Foundation Established", ar: "تأسيس المؤسسة" },
       description: { 
         en: "Ebtsama Development Foundation officially launched with initial focus on emergency medical aid.",
-        ar: "انطلقت مؤسسة الابتسامة للتنمية رسمياً مع التركيز الأولي على المساعدات الطبية الطارئة."
+        ar: "انطلقت مؤسسة الابتسامة التنموية رسمياً مع التركيز الأولي على المساعدات الطبية الطارئة."
       }
     },
     {

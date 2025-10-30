@@ -89,7 +89,7 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
                 icon: LucideUsers,
                 title: {
                     en: "Al-Rashid Development Center",
-                    ar: "مركز الراشد للتنمية"
+                    ar: "مركز الراشد التنموية"
                 },
                 bgColor: "bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)]"
             }

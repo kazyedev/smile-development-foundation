@@ -46,7 +46,7 @@ export default function AboutSection({ locale = 'en' }: AboutSectionProps) {
         {
             href: `/${locale}/programs/development-center`,
             icon: LucideUsers,
-            title: "مركز الراشد للتنمية",
+            title: "مركز الراشد التنموية",
             bgColor: "bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)]"
         }
     ];
