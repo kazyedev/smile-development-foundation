@@ -279,12 +279,12 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
 
                             {/* Accordion - 1/3 width on desktop */}
                             <div className="space-y-4">
-                                <CollapsibleSection
+                                {/* <CollapsibleSection
                                     id="ceo-message"
                                     title={isLocaleEn ? "CEO's Message" : "رسالة الرئيس التنفيذي"}
                                     content={isLocaleEn ? messageEn : messageAr}
                                     icon={<UserStar className="w-5 h-5" />}
-                                />
+                                /> */}
 
                                 <CollapsibleSection
                                     id="goals"
