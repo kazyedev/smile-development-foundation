@@ -396,13 +396,13 @@ INSERT INTO projects (
     published_at
 ) VALUES (
     'Restoring a Ebtsama Project to support disabled children in Marib Governorate',
-    'مشروع إعادة الابتسامة لدعم الأطفال المعاقين في محافظة مأرب',
+    'مشروع إعادة ابتسامة لدعم الأطفال المعاقين في محافظة مأرب',
     'The project aims to improve the lives of 312 children with disabilities in Marib Governorate, where disability cases have increased due to the conflict and poor health care during pregnancy and childbirth, causing many children to suffer from cerebral palsy. The project provides customized splints that meet each child needs to support their movement, in addition to two months of motor training to improve their motor and social skills. It also includes providing health kits containing hygiene items and clothes, which enhances children independence and reduces the burden on their families.',
     'يهدف المشروع إلى تحسين حياة 312 طفلًا من ذوي الإعاقة في محافظة مأرب، حيث تزايدت حالات الإعاقة نتيجة النزاع وسوء الرعاية الصحية أثناء الحمل والولادة، مما تسبب في إصابة العديد من الأطفال بالشلل الدماغي. يقدم المشروع جبائر مخصصة تلبي احتياجات كل طفل لدعم حركته، إلى جانب تدريبات حركية لمدة شهرين لتحسين مهاراتهم الحركية والاجتماعية. كما يشمل توفير حقائب صحية تحتوي على أدوات نظافة وملابس.',
     '/assets/mockimage.jpg',
     '#F59E0B',
     'restoring-Ebtsama-project-disabled-children',
-    'مشروع-إعادة-الابتسامة-لدعم-الأطفال-المعاقين',
+    'مشروع-إعادة-ابتسامة-لدعم-الأطفال-المعاقين',
     '[{"costTitleEn": "Average per person", "costTitleAr": "القيمة المتوسطة للفرد", "costAmount": 800, "costCurrencyEn": "USD", "costCurrencyAr": "دولار أمريكي", "costPeriodEn": "one-time", "costPeriodAr": "مرة واحدة"}, {"costTitleEn": "Total Cost", "costTitleAr": "القيمة الإجمالية", "costAmount": 124800, "costCurrencyEn": "USD", "costCurrencyAr": "دولار أمريكي", "costPeriodEn": "one-time", "costPeriodAr": "مرة واحدة"}]',
     '[{"beneficiaryAmount": 312, "beneficiaryTargetEn": "children (boys and girls)", "beneficiaryTargetAr": "طفلًا"}]',
     ARRAY['disability', 'children', 'rehabilitation', 'mobility', 'healthcare', 'support', 'cerebral palsy'],
