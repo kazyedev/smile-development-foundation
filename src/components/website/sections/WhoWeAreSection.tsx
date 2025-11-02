@@ -41,6 +41,9 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
     // Single state to manage which accordion is open (only one at a time)
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
     
+    // State to control video overlay visibility
+    const [showVideoOverlay, setShowVideoOverlay] = useState(true);
+    
     // Toggle function that ensures only one accordion is open
     const toggleAccordion = (accordionId: string) => {
         setOpenAccordion(prev => prev === accordionId ? null : accordionId);
@@ -273,7 +276,13 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                                         src={isLocaleEn ? videoUrlEn : videoUrlAr}
                                         title="YouTube video player"
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                    {showVideoOverlay && (
+                                        <div 
+                                            className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer z-10"
+                                            onClick={() => setShowVideoOverlay(false)}
+                                            title={isLocaleEn ? "Click to watch video" : "انقر لمشاهدة الفيديو"}
+                                        ></div>
+                                    )}
                                 </div>
                             </div>
 
