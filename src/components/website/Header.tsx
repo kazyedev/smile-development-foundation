@@ -71,7 +71,7 @@ export default function Header() {
       { label: 'Images', labelAr: 'الصور', href: `/${currentLocale}/media/images` },
       { label: 'Videos', labelAr: 'الفيديوهات', href: `/${currentLocale}/media/videos` },
       { label: 'Activities', labelAr: 'الأنشطة', href: `/${currentLocale}/activities` },
-      { label: 'Publications', labelAr: 'النشرات', href: `/${currentLocale}/media/publications` },
+      // { label: 'Publications', labelAr: 'النشرات', href: `/${currentLocale}/media/publications` },
       { label: 'Reports', labelAr: 'التقارير', href: `/${currentLocale}/media/reports` },
       { label: 'Success Stories', labelAr: 'قصص النجاح', href: `/${currentLocale}/media/success-stories` },
     ],

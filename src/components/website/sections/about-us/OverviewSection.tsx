@@ -112,7 +112,7 @@ export default function OverviewSection({
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/assets/hero-1.jpg"
+                src="https://drive.google.com/thumbnail?id=1QIZMDrbY_05TYfTsyovLjEM8yFGAGL5-&sz=w1000"
                 alt="Foundation overview"
                 width={600}
                 height={400}
