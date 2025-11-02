@@ -59,8 +59,8 @@ export default function Header() {
 
     about: [
       { label: 'About Us', labelAr: 'عن المؤسسة', href: `/${currentLocale}/about-us` },
-      { label: 'Board of Directors', labelAr: 'مجلس الإدارة', href: `/${currentLocale}/board-of-directors` },
-      { label: 'Team Members', labelAr: 'فريق العمل', href: `/${currentLocale}/team-members` },
+      // { label: 'Board of Directors', labelAr: 'مجلس الإدارة', href: `/${currentLocale}/board-of-directors` },
+      // { label: 'Team Members', labelAr: 'فريق العمل', href: `/${currentLocale}/team-members` },
     ],
     projects: [
       { label: 'Programs', labelAr: 'البرامج', href: `/${currentLocale}/programs` },

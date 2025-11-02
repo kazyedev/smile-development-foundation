@@ -173,9 +173,9 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                             {isLocaleEn ? bioEn : bioAr}
                         </p>
                         
-                        <div className="inline-block px-6 py-3 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 dark:from-brand-primary/20 dark:to-brand-secondary/20 text-brand-primary rounded-xl text-base font-medium transition-colors duration-300 border border-brand-primary/20">
+                        {/* <div className="inline-block px-6 py-3 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 dark:from-brand-primary/20 dark:to-brand-secondary/20 text-brand-primary rounded-xl text-base font-medium transition-colors duration-300 border border-brand-primary/20">
                             {isLocaleEn ? seoAnnouncementEn : seoAnnouncementAr}
-                        </div>
+                        </div> */}
                     </div>
                     
                     <motion.div 
