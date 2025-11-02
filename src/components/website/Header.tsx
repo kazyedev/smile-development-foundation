@@ -65,7 +65,7 @@ export default function Header() {
     projects: [
       { label: 'Programs', labelAr: 'البرامج', href: `/${currentLocale}/programs` },
       { label: 'All Projects', labelAr: 'جميع المشاريع', href: `/${currentLocale}/projects` },
-      { label: 'Categories', labelAr: 'فئات المشاريع', href: `/${currentLocale}/projects/categories` },
+      // { label: 'Categories', labelAr: 'فئات المشاريع', href: `/${currentLocale}/projects/categories` },
     ],
     media: [
       { label: 'Images', labelAr: 'الصور', href: `/${currentLocale}/media/images` },
