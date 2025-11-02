@@ -34,8 +34,8 @@ export const mockWhoWeAreSection: WhoWeAreSectionProps = {
     bioAr:
       "نحن منظمة غير ربحية مكرسة لإنشاء حلول مستدامة للمجتمعات المحتاجة. يمتد عملنا ليشمل التعليم والرعاية الصحية والبيئة والتمكين الاقتصادي.",
     image: "/assets/mockimage.jpg",
-    videoUrlEn: "https://www.youtube.com/watch?v=g7hncMpviRY",
-    videoUrlAr: "https://www.youtube.com/watch?v=g7hncMpviRY",
+    videoUrlEn: "https://www.youtube.com/embed/g7hncMpviRY?si=o8DvaHRp3lhIxsVf",
+    videoUrlAr: "https://www.youtube.com/embed/g7hncMpviRY?si=o8DvaHRp3lhIxsVf",
     visionEn:
       "A world where every individual has access to basic needs, equal opportunities, and the ability to shape their future.",
     visionAr:
