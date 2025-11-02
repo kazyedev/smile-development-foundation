@@ -111,8 +111,8 @@ export const mockWhoWeAreSection: WhoWeAreSectionProps = {
         titleEn: "Contact Us",
         titleAr: "اتصل بنا",
         lucideIconName: "Mail",
-        linkEn: "/en/contact",
-        linkAr: "/ar/contact",
+        linkEn: "/en/contact-us",
+        linkAr: "/ar/contact-us",
       },
     ],
   };
