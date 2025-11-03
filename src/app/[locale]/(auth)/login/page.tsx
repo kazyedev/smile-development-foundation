@@ -102,7 +102,7 @@ export default function LoginPage() {
             setAlreadyLogged(true);
             if (locale && typeof locale === 'string') {
               // Redirect based on user role
-              if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
+              if (['admin', 'super_admin', 'content_manager', 'viewer', 'author'].includes(profileData.profile.role)) {
                 router.push(`/${locale}/cms`);
                 router.refresh();
               } else {
@@ -181,7 +181,7 @@ export default function LoginPage() {
             const profileData = await profRes.json();
             if (profileData.profile) {
               // Redirect based on user role
-              if (profileData.profile.role === 'admin' || profileData.profile.role === 'super_admin' || profileData.profile.role === 'content_manager') {
+              if (['admin', 'super_admin', 'content_manager', 'viewer', 'author'].includes(profileData.profile.role)) {
                 router.push(`/${locale}/cms`);
                 router.refresh();
               } else {

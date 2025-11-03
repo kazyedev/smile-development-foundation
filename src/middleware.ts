@@ -127,7 +127,9 @@ export async function middleware(request: NextRequest) {
             .eq('id', session.user.id)
             .single();
 
-          // If user doesn't have admin role or is inactive, logout and redirect to not-authorized
+          // If user doesn't have valid role or is inactive, redirect to not-authorized
+          // Allow: super_admin, admin, content_manager, viewer, author
+          // Block: default or any other role
           if (!user?.role || user.role === 'default' || !user.is_active) {
             const redirectUrl = request.nextUrl.clone();
             redirectUrl.pathname = `/${locale}/not-authorized`;

@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { routeToSection, hasSectionAccess, extractSectionNames } from "@/lib/utils/section-mapping";
 
 interface CMSLayoutProps {
   children: ReactNode;
@@ -47,10 +48,37 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
   const { logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [allowedSections, setAllowedSections] = useState<string[]>([]);
+  const [userRole, setUserRole] = useState<string>('');
 
   // Ensure component is mounted before accessing theme
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  // Fetch user profile and extract allowed sections
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const profRes = await fetch("/api/auth/profile", { cache: "no-store" });
+        if (profRes.ok) {
+          const profileData = await profRes.json();
+          if (profileData.profile) {
+            setUserProfile(profileData.profile);
+            setUserRole(profileData.profile.role || '');
+            
+            // Extract section names from allowedSections array
+            const sections = extractSectionNames(profileData.profile.allowed_sections || []);
+            setAllowedSections(sections);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
   }, []);
 
   const isArabic = locale === "ar";
@@ -154,7 +182,7 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
   type GroupItem = { type: 'group'; key: string; icon: any; label: string; children: LinkItem[] };
   type SidebarItem = LinkItem | GroupItem;
 
-  const sidebarItems: SidebarItem[] = useMemo(() => ([
+  const allSidebarItems: SidebarItem[] = useMemo(() => ([
     { type: 'link', icon: LayoutDashboard, label: t.dashboard, href: `/${locale}/cms/dashboard` },
     { type: 'link', icon: Folder,          label: t.programs,  href: `/${locale}/cms/programs`  },
     { type: 'link', icon: FileText,        label: t.projects,  href: `/${locale}/cms/projects`  },
@@ -204,6 +232,44 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
       ]
     },
   ]), [locale, t]);
+
+  // Filter sidebar items based on user permissions
+  const sidebarItems: SidebarItem[] = useMemo(() => {
+    // Filter sidebar items based on user permissions
+    const filterItems = (items: SidebarItem[]): SidebarItem[] => {
+      return items
+        .map(item => {
+          if (item.type === 'link') {
+            const section = routeToSection(item.href);
+            if (hasSectionAccess(section, userRole, allowedSections)) {
+              return item;
+            }
+            return null;
+          }
+          
+          if (item.type === 'group') {
+            const filteredChildren = item.children.filter(child => {
+              const section = routeToSection(child.href);
+              return hasSectionAccess(section, userRole, allowedSections);
+            });
+            
+            // Only include group if it has visible children
+            if (filteredChildren.length > 0) {
+              return {
+                ...item,
+                children: filteredChildren
+              };
+            }
+            return null;
+          }
+          
+          return null;
+        })
+        .filter((item): item is SidebarItem => item !== null);
+    };
+
+    return filterItems(allSidebarItems);
+  }, [allSidebarItems, userRole, allowedSections]);
 
   // Track which groups are open
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
