@@ -30,7 +30,8 @@ import {
   Briefcase,
   UserPlus,
   HelpCircle,
-  Home
+  Home,
+  User
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -118,6 +119,8 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
       foundationInfoGroup: "Foundation Info",
       team: "Team",
 
+      myProfile: "My Profile",
+
       logout: "Logout",
       toggleTheme: "Toggle theme",
       switchLanguage: "Switch language",
@@ -156,6 +159,8 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
 
       foundationInfoGroup: "معلومات المؤسسة",
       team: "الفريق",
+
+      myProfile: "حسابي",
 
       logout: "تسجيل الخروج",
       toggleTheme: "تبديل المظهر",
@@ -384,6 +389,22 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
               </div>
             );
           })}
+
+          {/* My Profile Link */}
+          <div className="mt-4 pt-4 border-t border-border">
+            <Link
+              href={`/${locale}/cms/my-profile`}
+              className={`
+                flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors
+                ${pathname?.startsWith(`/${locale}/cms/my-profile`)
+                  ? 'bg-brand-primary/10 text-brand-primary border border-brand-primary/20'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'}
+              `}
+            >
+              <User className="w-4 h-4" />
+              <span className="truncate">{t.myProfile}</span>
+            </Link>
+          </div>
         </nav>
       </aside>
 
