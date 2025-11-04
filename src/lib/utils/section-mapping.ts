@@ -95,6 +95,12 @@ export function hasSectionAccess(
     return true;
   }
 
+  // Super admins and admins have unrestricted access to ALL sections
+  // This check must come first to ensure admin bypasses all other restrictions
+  if (['super_admin', 'admin'].includes(userRole)) {
+    return true;
+  }
+
   // Content Manager role has specific access rules
   if (userRole === 'content_manager') {
     const contentManagerGuaranteedSections = [
@@ -152,11 +158,6 @@ export function hasSectionAccess(
 
     // 4. Otherwise → DENY
     return false;
-  }
-
-  // Super admins and admins see everything
-  if (['super_admin', 'admin'].includes(userRole)) {
-    return true;
   }
 
   // Author role always has access to news-related sections
