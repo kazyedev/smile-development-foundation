@@ -219,6 +219,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
+      // Call API endpoint to clear server-side session first
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch (apiError) {
+        // Continue with logout even if API call fails
+        console.error('Logout API error:', apiError);
+      }
+      
       // Clear stored data
       localStorage.removeItem('auth_user');
       
@@ -232,6 +240,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       router.push('/en');
     } catch (error) {
       console.error('Logout error:', error);
+      // Even if there's an error, clear local state and redirect
+      localStorage.removeItem('auth_user');
+      setState({
+        user: null,
+        isLoading: false,
+        isAuthenticated: false,
+      });
+      router.push('/en');
     }
   };
 

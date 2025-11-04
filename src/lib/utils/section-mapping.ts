@@ -95,8 +95,67 @@ export function hasSectionAccess(
     return true;
   }
 
-  // Super admins, admins, and content managers see everything
-  if (['super_admin', 'admin', 'content_manager'].includes(userRole)) {
+  // Content Manager role has specific access rules
+  if (userRole === 'content_manager') {
+    const contentManagerGuaranteedSections = [
+      // Library sections
+      'publications',
+      'reports',
+      'videos',
+      'images',
+      'photos',
+      'success_stories',
+      // News sections
+      'news',
+      'news_categories',
+      'email_newsletters',
+      'newsletter_members',
+      // Projects & Programs
+      'projects',
+      'programs',
+      'project_categories',
+    ];
+    
+    // Restricted sections for content_manager
+    const contentManagerRestrictedSections = [
+      // Foundation Info
+      'foundation_profile',
+      'admin_accounts',
+      'board_of_directors',
+      'team_members',
+      'partners',
+      // Website Data
+      'home_slides',
+      'faqs',
+      // HR
+      'jobs',
+      'job_applications',
+      'volunteer_requests',
+      // Donations
+      'donations',
+    ];
+
+    // 1. Check if section is in guaranteed list → ALLOW
+    if (contentManagerGuaranteedSections.includes(section)) {
+      return true;
+    }
+
+    // 2. Check if section is in restricted list → DENY
+    if (contentManagerRestrictedSections.includes(section)) {
+      return false;
+    }
+
+    // 3. Check if section is in allowedSections array → ALLOW (for other sections like activities, etc.)
+    if (allowedSections.includes(section)) {
+      return true;
+    }
+
+    // 4. Otherwise → DENY
+    return false;
+  }
+
+  // Super admins and admins see everything
+  if (['super_admin', 'admin'].includes(userRole)) {
     return true;
   }
 
