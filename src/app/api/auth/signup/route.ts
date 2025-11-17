@@ -14,7 +14,10 @@ export async function POST(request: Request) {
     }
   });
   
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) {
+    console.error("Supabase signup error:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 400 });
+  }
   
   // If user was created successfully, add them to the users table
   if (data.user) {
