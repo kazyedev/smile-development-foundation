@@ -53,6 +53,7 @@ function createSupabaseReqResClient(request: NextRequest) {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  console.log(`Middleware running for path: ${pathname}`);
   const pathnameSegments = pathname.split('/').filter(Boolean);
 
   // Ignore static files and system routes
