@@ -63,7 +63,6 @@ export async function middleware(request: NextRequest) {
   ) {
     return NextResponse.next();
   }
-
   // Check if there is any supported locale in the pathname
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`

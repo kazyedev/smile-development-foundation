@@ -2,7 +2,18 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const { email, password, role } = await request.json();
+  console.log("Signup API route started.");
+  let email, password, role;
+  try {
+    const body = await request.json();
+    email = body.email;
+    password = body.password;
+    role = body.role;
+  } catch (e: any) {
+    console.error("Failed to parse request body in signup:", e.message);
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
   const supabase = await supabaseServer();
 
   // Sign up the user with Supabase Auth
