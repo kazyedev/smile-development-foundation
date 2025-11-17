@@ -58,7 +58,6 @@ export async function middleware(request: NextRequest) {
   // Ignore static files and system routes
   if (
     PUBLIC_FILE.test(pathname) ||
-    pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/auth/callback')
   ) {
