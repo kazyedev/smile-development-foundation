@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Users, 
-  FileText, 
-  Image, 
-  BarChart3, 
-  TrendingUp, 
+import {
+  Users,
+  FileText,
+  Image,
+  BarChart3,
+  TrendingUp,
   Eye,
   Calendar,
   Globe,
@@ -99,35 +99,35 @@ export default function DashboardPage() {
   };
 
   // Fetch dashboard statistics
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await fetch("/api/cms/dashboard/stats", { cache: "no-store" });
-        
-        if (!response.ok) {
-          throw new Error("Failed to fetch statistics");
-        }
-        
-        const data = await response.json();
-        
-        if (data.success && data.stats) {
-          setStats(data.stats);
-        } else {
-          throw new Error(data.error || "Invalid response format");
-        }
-      } catch (err) {
-        console.error("Error fetching dashboard stats:", err);
-        setError(err instanceof Error ? err.message : t.error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchStats = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
 
-    fetchStats();
-  }, [t.error]);
+  //       const response = await fetch("/api/cms/dashboard/stats", { cache: "no-store" });
+
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch statistics");
+  //       }
+
+  //       const data = await response.json();
+
+  //       if (data.success && data.stats) {
+  //         setStats(data.stats);
+  //       } else {
+  //         throw new Error(data.error || "Invalid response format");
+  //       }
+  //     } catch (err) {
+  //       console.error("Error fetching dashboard stats:", err);
+  //       setError(err instanceof Error ? err.message : t.error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchStats();
+  // }, [t.error]);
 
   // Build stats array with real data or defaults
   const statsArray = stats ? [
@@ -205,7 +205,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div>
+      {/* <div>
         <h2 className="text-xl font-semibold mb-4">{t.quickStats}</h2>
         {loading ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -258,11 +258,11 @@ export default function DashboardPage() {
             })}
           </div>
         ) : null}
-      </div>
+      </div> */}
 
       <div className="grid gap-8 md:grid-cols-2">
         {/* Quick Actions */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="w-5 h-5" />
@@ -294,10 +294,10 @@ export default function DashboardPage() {
               );
             })}
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Recent Activity */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
@@ -341,7 +341,7 @@ export default function DashboardPage() {
               {t.viewAll}
             </Button>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Welcome Message */}
@@ -354,7 +354,7 @@ export default function DashboardPage() {
             <div className="flex-1">
               <h3 className="text-lg font-semibold mb-1">{t.getStarted}</h3>
               <p className="text-muted-foreground">
-                {isArabic 
+                {isArabic
                   ? "مرحباً بك في نظام إدارة المحتوى. يمكنك البدء بإدارة المستخدمين أو إنشاء محتوى جديد."
                   : "Welcome to your content management system. You can start by managing users or creating new content."
                 }
