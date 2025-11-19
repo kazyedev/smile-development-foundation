@@ -2,22 +2,12 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  console.log("Login API route started.");
-  let email, password;
-  try {
-    const body = await request.json();
-    email = body.email;
-    password = body.password;
-  } catch (e: any) {
-    console.error("Failed to parse request body:", e.message);
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
-
+  const { email, password } = await request.json();
   const supabase = await supabaseServer();
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    console.error("Supabase login error:", error.message);
+    console.error("Supabase Login Error:", error);
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 

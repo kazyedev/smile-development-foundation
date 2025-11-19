@@ -19,9 +19,17 @@ const PUBLIC_ROUTES = ['/not-authorized'];
 function createSupabaseReqResClient(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: request.headers } });
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // This will cause the middleware to fail loudly if vars are missing
+    throw new Error("Supabase URL or anonymous key is not defined in middleware. Please check your environment variables.");
+  }
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         get(name: string) {
@@ -53,7 +61,6 @@ function createSupabaseReqResClient(request: NextRequest) {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  console.log(`Middleware running for path: ${pathname}`);
   const pathnameSegments = pathname.split('/').filter(Boolean);
 
   // Ignore static files and system routes
