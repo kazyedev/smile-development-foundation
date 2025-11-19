@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Shield, 
-  Calendar, 
-  Edit, 
-  Save, 
+import {
+  User,
+  Mail,
+  Phone,
+  Shield,
+  Calendar,
+  Edit,
+  Save,
   X,
   Image as ImageIcon,
   CheckCircle2,
@@ -38,6 +38,16 @@ interface UserProfile {
   allowed_sections: any[];
 }
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 export default function MyProfilePage() {
   const { locale } = useParams<{ locale: string }>();
   const isArabic = locale === "ar";
@@ -45,7 +55,13 @@ export default function MyProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
+
+  // Password change state
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
   // Form state
   const [formData, setFormData] = useState({
     name_en: "",
@@ -83,6 +99,13 @@ export default function MyProfilePage() {
       updateError: "Failed to update profile",
       loading: "Loading profile...",
       changePassword: "Change Password",
+      newPassword: "New Password",
+      confirmPassword: "Confirm Password",
+      passwordMismatch: "Passwords do not match",
+      passwordMinLength: "Password must be at least 6 characters",
+      passwordChanged: "Password changed successfully",
+      passwordChangeError: "Failed to change password",
+      changingPassword: "Changing password...",
       uploadImage: "Upload Image",
       removeImage: "Remove Image",
       roleLabels: {
@@ -121,6 +144,13 @@ export default function MyProfilePage() {
       updateError: "فشل تحديث الملف الشخصي",
       loading: "جاري تحميل الملف الشخصي...",
       changePassword: "تغيير كلمة المرور",
+      newPassword: "كلمة المرور الجديدة",
+      confirmPassword: "تأكيد كلمة المرور",
+      passwordMismatch: "كلمات المرور غير متطابقة",
+      passwordMinLength: "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+      passwordChanged: "تم تغيير كلمة المرور بنجاح",
+      passwordChangeError: "فشل تغيير كلمة المرور",
+      changingPassword: "جاري تغيير كلمة المرور...",
       uploadImage: "رفع صورة",
       removeImage: "إزالة الصورة",
       roleLabels: {
@@ -168,22 +198,63 @@ export default function MyProfilePage() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // TODO: Implement update API endpoint
-      // const response = await fetch("/api/auth/profile", {
-      //   method: "PUT",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(formData),
-      // });
-      
-      // For now, just show success message
-      toast.success(t.profileUpdated);
-      setIsEditing(false);
-      // Optionally refresh profile data
+      const response = await fetch("/api/auth/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update profile");
+      }
+
+      const data = await response.json();
+      if (data.profile) {
+        setProfile(data.profile);
+        toast.success(t.profileUpdated);
+        setIsEditing(false);
+      }
     } catch (error) {
       console.error("Failed to update profile:", error);
       toast.error(t.updateError);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (password !== confirmPassword) {
+      toast.error(t.passwordMismatch);
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error(t.passwordMinLength);
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      const response = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to change password");
+      }
+
+      toast.success(t.passwordChanged);
+      setIsPasswordDialogOpen(false);
+      setPassword("");
+      setConfirmPassword("");
+    } catch (error: any) {
+      console.error("Failed to change password:", error);
+      toast.error(error.message || t.passwordChangeError);
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -483,12 +554,60 @@ export default function MyProfilePage() {
 
             {/* Change Password Button */}
             <div className="pt-4 border-t">
-              <Button variant="outline" className="w-full" onClick={() => {
-                // TODO: Implement password change
-                toast.info(t.changePassword);
-              }}>
-                {t.changePassword}
-              </Button>
+              <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="w-full">
+                    {t.changePassword}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{t.changePassword}</DialogTitle>
+                    <DialogDescription>
+                      {isArabic ? "أدخل كلمة المرور الجديدة أدناه." : "Enter your new password below."}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="new-password">{t.newPassword}</Label>
+                      <Input
+                        id="new-password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirm-password">{t.confirmPassword}</Label>
+                      <Input
+                        id="confirm-password"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsPasswordDialogOpen(false)}
+                      disabled={isChangingPassword}
+                    >
+                      {t.cancel}
+                    </Button>
+                    <Button onClick={handleChangePassword} disabled={isChangingPassword}>
+                      {isChangingPassword ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          {t.saving}
+                        </>
+                      ) : (
+                        t.save
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>

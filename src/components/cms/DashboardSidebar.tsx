@@ -15,26 +15,26 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { 
-  LayoutDashboard, 
-  Building2, 
-  Lightbulb, 
-  FolderOpen, 
-  Calendar, 
-  Handshake, 
-  Phone, 
-  Heart, 
-  HelpCircle, 
-  Image, 
-  Video, 
-  FileText, 
-  Trophy, 
-  Newspaper, 
-  Tags, 
-  Mail, 
-  BarChart3, 
-  Users, 
-  User, 
+import {
+  LayoutDashboard,
+  Building2,
+  Lightbulb,
+  FolderOpen,
+  Calendar,
+  Handshake,
+  Phone,
+  Heart,
+  HelpCircle,
+  Image,
+  Video,
+  FileText,
+  Trophy,
+  Newspaper,
+  Tags,
+  Mail,
+  BarChart3,
+  Users,
+  User,
   LogOut,
   ChevronRight,
   Settings,
@@ -51,7 +51,7 @@ interface DashboardSidebarProps {
 export default function DashboardSidebar({ userProfile, locale }: DashboardSidebarProps) {
   const pathname = usePathname()
   const urlParams = useParams()
-  
+
   // Get locale from props or fallback to URL params
   const currentLocale = locale || urlParams.locale || 'en'
   const isAr = currentLocale === "ar"
@@ -100,8 +100,8 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
     {
       label: t.quickActions,
       items: [
-        { 
-          label: t.dashboard, 
+        {
+          label: t.dashboard,
           href: `${base}/dashboard`,
           icon: LayoutDashboard,
           badge: null
@@ -117,50 +117,50 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
     {
       label: t.foundation,
       items: [
-        { 
-          label: t.foundation, 
+        {
+          label: t.foundation,
           href: `${base}/identity/foundation-profile`,
           icon: Building2,
           badge: null
         },
-        { 
-          label: t.programs, 
+        {
+          label: t.programs,
           href: `${base}/Initiatives/programs`,
           icon: Lightbulb,
           badge: null
         },
-        { 
-          label: t.projects, 
+        {
+          label: t.projects,
           href: `${base}/Initiatives/projects`,
           icon: FolderOpen,
           badge: null
         },
-        { 
-          label: t.activities, 
+        {
+          label: t.activities,
           href: `${base}/Initiatives/activities`,
           icon: Calendar,
           badge: null
         },
-        { 
-          label: t.partners, 
+        {
+          label: t.partners,
           href: `${base}/identity/partners`,
           icon: Handshake,
           badge: null
         },
-        { 
-          label: t.contact, 
+        {
+          label: t.contact,
           href: `${base}/identity/contact-info`,
           icon: Phone,
           badge: null
         },
-        { 
-          label: t.donations, 
+        {
+          label: t.donations,
           href: `${base}/identity/donations-info`,
           icon: Heart,
           badge: null
         },
-        { 
-          label: t.faqs, 
+        {
+          label: t.faqs,
           href: `${base}/identity/faqs`,
           icon: HelpCircle,
           badge: null
@@ -170,44 +170,44 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
     {
       label: t.media,
       items: [
-        { 
-          label: t.photos, 
+        {
+          label: t.photos,
           href: `${base}/media/photo`,
           icon: Image,
           badge: null
         },
-        { 
-          label: t.videos, 
+        {
+          label: t.videos,
           href: `${base}/media/videos`,
           icon: Video,
           badge: null
         },
-        { 
-          label: t.reports, 
+        {
+          label: t.reports,
           href: `${base}/media/reports`,
           icon: FileText,
           badge: null
         },
-        { 
-          label: t.stories, 
+        {
+          label: t.stories,
           href: `${base}/media/success-stories`,
           icon: Trophy,
           badge: null
         },
-        { 
-          label: t.news, 
+        {
+          label: t.news,
           href: `${base}/content/news`,
           icon: Newspaper,
           badge: null
         },
-        { 
-          label: t.newsCategories, 
+        {
+          label: t.newsCategories,
           href: `${base}/content/news-categories`,
           icon: Tags,
           badge: null
         },
-        { 
-          label: t.emailNewsletters, 
+        {
+          label: t.emailNewsletters,
           href: `${base}/content/email-newsletters`,
           icon: Mail,
           badge: null
@@ -217,14 +217,14 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
     {
       label: t.statistics,
       items: [
-        { 
-          label: t.statistics, 
+        {
+          label: t.statistics,
           href: `${base}/statistics`,
           icon: BarChart3,
           badge: null
         },
-        { 
-          label: t.admins, 
+        {
+          label: t.admins,
           href: `${base}/identity/admin-accounts`,
           icon: Users,
           badge: null
@@ -242,7 +242,7 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
     try {
       await fetch("/api/auth/logout", { method: "POST" })
       window.location.href = `/${currentLocale}`
-    } catch {}
+    } catch { }
   }
 
   function getInitials(name: string) {
@@ -261,15 +261,15 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
   }
 
   // Sidebar positioning based on locale
-  const sidebarClasses = isAr 
-    ? "border-l border-border/40 bg-gradient-to-l from-background via-muted/5 to-background" 
+  const sidebarClasses = isAr
+    ? "border-l border-border/40 bg-gradient-to-l from-background via-muted/5 to-background"
     : "border-r border-border/40 bg-gradient-to-r from-background via-muted/5 to-background"
 
   return (
-    <Sidebar className={`${sidebarClasses} ${isAr ? 'right-0 left-auto' : 'left-0 right-auto'} `} dir={`${locale=="en"? "ltr" : "rtl"}`}>
+    <Sidebar className={`${sidebarClasses} ${isAr ? 'right-0 left-auto' : 'left-0 right-auto'} `} dir={`${locale == "en" ? "ltr" : "rtl"}`}>
       {/* User Profile Header */}
       <SidebarHeader className="p-4 border-b border-border/40">
-        <motion.div 
+        <motion.div
           className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 border border-brand-primary/20"
           initial="initial"
           animate="animate"
@@ -334,8 +334,8 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
                     const Icon = item.icon
                     return (
                       <SidebarMenuItem key={item.href}>
-                        <SidebarMenuButton 
-                          asChild 
+                        <SidebarMenuButton
+                          asChild
                           isActive={isActive(item.href)}
                           className="group relative"
                         >
@@ -361,7 +361,7 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
         ))}
 
         {/* Bottom Actions */}
-        <motion.div 
+        <motion.div
           className="mt-6 space-y-2"
           initial="initial"
           animate="animate"
@@ -377,7 +377,7 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            
+
             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={false}>
                 <Link href={`${base}/settings`} className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-muted/80">
@@ -388,9 +388,9 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <SidebarMenuButton 
-                isActive={false} 
-                asChild={false} 
+              <SidebarMenuButton
+                isActive={false}
+                asChild={false}
                 onClick={onLogout}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 hover:bg-red-500/10 hover:text-red-600 text-red-500"
               >
@@ -403,7 +403,7 @@ export default function DashboardSidebar({ userProfile, locale }: DashboardSideb
           </SidebarMenu>
         </motion.div>
       </SidebarContent>
-      
+
       <SidebarRail />
     </Sidebar>
   )

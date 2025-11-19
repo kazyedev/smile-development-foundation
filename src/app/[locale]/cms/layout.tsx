@@ -68,7 +68,7 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
           if (profileData.profile) {
             setUserProfile(profileData.profile);
             setUserRole(profileData.profile.role || '');
-            
+
             // Extract section names from allowedSections array
             const sections = extractSectionNames(profileData.profile.allowed_sections || []);
             setAllowedSections(sections);
@@ -189,28 +189,28 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
 
   const allSidebarItems: SidebarItem[] = useMemo(() => ([
     { type: 'link', icon: LayoutDashboard, label: t.dashboard, href: `/${locale}/cms/dashboard` },
-    { type: 'link', icon: Folder,          label: t.programs,  href: `/${locale}/cms/programs`  },
-    { type: 'link', icon: FileText,        label: t.projects,  href: `/${locale}/cms/projects`  },
-    { type: 'link', icon: Folder,          label: t.projectCategories, href: `/${locale}/cms/project-categories` },
+    { type: 'link', icon: Folder, label: t.programs, href: `/${locale}/cms/programs` },
+    { type: 'link', icon: FileText, label: t.projects, href: `/${locale}/cms/projects` },
+    { type: 'link', icon: Folder, label: t.projectCategories, href: `/${locale}/cms/project-categories` },
 
     {
       type: 'group', key: 'media', icon: Image, label: t.mediaGroup, children: [
-        { type: 'link', icon: Video,     label: t.videos,          href: `/${locale}/cms/media/videos` },
-        { type: 'link', icon: Image,     label: t.images,          href: `/${locale}/cms/media/images` },
-        { type: 'link', icon: BookOpen,  label: t.publications,    href: `/${locale}/cms/media/publications` },
-        { type: 'link', icon: FileText,  label: t.reports,         href: `/${locale}/cms/media/reports` },
-        { type: 'link', icon: HelpCircle,label: t.activities,      href: `/${locale}/cms/media/activities` },
-        { type: 'link', icon: BookOpen,  label: t.successStories,  href: `/${locale}/cms/media/success-stories` },
-        { type: 'link', icon: Folder,    label: t.mediaCategories, href: `/${locale}/cms/media/categories` },
+        { type: 'link', icon: Video, label: t.videos, href: `/${locale}/cms/media/videos` },
+        { type: 'link', icon: Image, label: t.images, href: `/${locale}/cms/media/images` },
+        { type: 'link', icon: BookOpen, label: t.publications, href: `/${locale}/cms/media/publications` },
+        { type: 'link', icon: FileText, label: t.reports, href: `/${locale}/cms/media/reports` },
+        { type: 'link', icon: HelpCircle, label: t.activities, href: `/${locale}/cms/media/activities` },
+        { type: 'link', icon: BookOpen, label: t.successStories, href: `/${locale}/cms/media/success-stories` },
+        { type: 'link', icon: Folder, label: t.mediaCategories, href: `/${locale}/cms/media/categories` },
       ]
     },
 
     {
       type: 'group', key: 'news', icon: Newspaper, label: t.newsGroup, children: [
-        { type: 'link', icon: Newspaper, label: t.news,              href: `/${locale}/cms/news/news` },
-        { type: 'link', icon: Folder,    label: t.newsCategories,    href: `/${locale}/cms/news/categories` },
-        { type: 'link', icon: Mail,      label: t.newsletters,       href: `/${locale}/cms/news/newsletters` },
-        { type: 'link', icon: Users,     label: t.newsletterMembers, href: `/${locale}/cms/news/newsletter-members` },
+        { type: 'link', icon: Newspaper, label: t.news, href: `/${locale}/cms/news/news` },
+        { type: 'link', icon: Folder, label: t.newsCategories, href: `/${locale}/cms/news/categories` },
+        { type: 'link', icon: Mail, label: t.newsletters, href: `/${locale}/cms/news/newsletters` },
+        { type: 'link', icon: Users, label: t.newsletterMembers, href: `/${locale}/cms/news/newsletter-members` },
       ]
     },
 
@@ -218,24 +218,24 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
 
     {
       type: 'group', key: 'hr', icon: Users, label: t.hrGroup, children: [
-        { type: 'link', icon: Briefcase, label: t.jobs,              href: `/${locale}/cms/hr/jobs` },
-        { type: 'link', icon: UserPlus,  label: t.jobApplications,   href: `/${locale}/cms/hr/job-applications` },
-        { type: 'link', icon: HelpCircle,label: t.volunteerRequests, href: `/${locale}/cms/hr/volunteer-requests` },
+        { type: 'link', icon: Briefcase, label: t.jobs, href: `/${locale}/cms/hr/jobs` },
+        { type: 'link', icon: UserPlus, label: t.jobApplications, href: `/${locale}/cms/hr/job-applications` },
+        { type: 'link', icon: HelpCircle, label: t.volunteerRequests, href: `/${locale}/cms/hr/volunteer-requests` },
       ]
     },
 
     {
       type: 'group', key: 'website-data', icon: Home, label: t.websiteDataGroup, children: [
-        { type: 'link', icon: Home,       label: t.homeSlides, href: `/${locale}/cms/website-data/home-slides` },
-        { type: 'link', icon: HelpCircle, label: t.faqs,       href: `/${locale}/cms/website-data/faqs` },
+        { type: 'link', icon: Home, label: t.homeSlides, href: `/${locale}/cms/website-data/home-slides` },
+        { type: 'link', icon: HelpCircle, label: t.faqs, href: `/${locale}/cms/website-data/faqs` },
       ]
     },
 
-    {
-      type: 'group', key: 'foundation-info', icon: Users, label: t.foundationInfoGroup, children: [
-        { type: 'link', icon: Users, label: t.team, href: `/${locale}/cms/foundation-info/team` },
-      ]
-    },
+    // {
+    //   type: 'group', key: 'foundation-info', icon: Users, label: t.foundationInfoGroup, children: [
+    //     { type: 'link', icon: Users, label: t.team, href: `/${locale}/cms/foundation-info/team` },
+    //   ]
+    // },
   ]), [locale, t]);
 
   // Filter sidebar items based on user permissions
@@ -251,13 +251,13 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
             }
             return null;
           }
-          
+
           if (item.type === 'group') {
             const filteredChildren = item.children.filter(child => {
               const section = routeToSection(child.href);
               return hasSectionAccess(section, userRole, allowedSections);
             });
-            
+
             // Only include group if it has visible children
             if (filteredChildren.length > 0) {
               return {
@@ -267,7 +267,7 @@ export default function CMSLayout({ children }: CMSLayoutProps) {
             }
             return null;
           }
-          
+
           return null;
         })
         .filter((item): item is SidebarItem => item !== null);
