@@ -21,10 +21,10 @@ const publicationSchema = z.object({
   descriptionEn: z.string().optional(),
   descriptionAr: z.string().optional(),
   url: z.string().url("Must be a valid URL"),
-  programId: z.number().int().positive().optional().nullable(),
-  projectId: z.number().int().positive().optional().nullable(),
-  activityId: z.number().int().positive().optional().nullable(),
-  categoryId: z.number().int().positive().optional().nullable(),
+  programId: z.number().int().positive().optional().nullable().optional,
+  projectId: z.number().int().positive().optional().nullable().optional,
+  activityId: z.number().int().positive().optional().nullable().optional,
+  categoryId: z.number().int().positive().optional().nullable().optional,
   featuredImageUrl: z.string().url("Must be a valid URL").optional(),
   coverImageUrl: z.string().url("Must be a valid URL").optional(),
   attachmentUrl: z.string().url("Must be a valid URL").optional(),
@@ -114,7 +114,7 @@ export default function NewPublicationPage() {
 
   const onSubmit = async (data: PublicationFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch("/api/cms/publications", {
         method: "POST",
@@ -157,7 +157,7 @@ export default function NewPublicationPage() {
               {text.back}
             </Button>
           </div>
-          
+
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">{text.title}</CardTitle>
