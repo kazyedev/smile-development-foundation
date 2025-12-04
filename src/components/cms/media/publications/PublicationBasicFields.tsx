@@ -278,7 +278,7 @@ export function PublicationBasicFields({ form }: PublicationBasicFieldsProps) {
             <Label htmlFor="url">{text.fields.url}</Label>
             <Input
               id="url"
-              {...register("url", { 
+              {...register("url", {
                 required: "Publication URL is required",
                 pattern: {
                   value: /^https?:\/\/.+/,
@@ -328,7 +328,7 @@ export function PublicationBasicFields({ form }: PublicationBasicFieldsProps) {
               <Label htmlFor="programId">{text.fields.programId}</Label>
               <Select
                 value={watch("programId") ? String(watch("programId")) : "null"}
-                onValueChange={(value) => setValue("programId", value === "null" ? null : Number(value))}
+                onValueChange={(value) => setValue("programId", value === "null" ? undefined : Number(value))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select program" />
@@ -348,7 +348,7 @@ export function PublicationBasicFields({ form }: PublicationBasicFieldsProps) {
               <Label htmlFor="projectId">{text.fields.projectId}</Label>
               <Select
                 value={watch("projectId") ? String(watch("projectId")) : "null"}
-                onValueChange={(value) => setValue("projectId", value === "null" ? null : Number(value))}
+                onValueChange={(value) => setValue("projectId", value === "null" ? undefined : Number(value))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select project" />
@@ -370,7 +370,7 @@ export function PublicationBasicFields({ form }: PublicationBasicFieldsProps) {
               <Label htmlFor="activityId">{text.fields.activityId}</Label>
               <Select
                 value={watch("activityId") ? String(watch("activityId")) : "null"}
-                onValueChange={(value) => setValue("activityId", value === "null" ? null : Number(value))}
+                onValueChange={(value) => setValue("activityId", value === "null" ? undefined : Number(value))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select activity" />
@@ -390,7 +390,7 @@ export function PublicationBasicFields({ form }: PublicationBasicFieldsProps) {
               <Label htmlFor="categoryId">{text.fields.categoryId}</Label>
               <Select
                 value={watch("categoryId") ? String(watch("categoryId")) : "null"}
-                onValueChange={(value) => setValue("categoryId", value === "null" ? null : Number(value))}
+                onValueChange={(value) => setValue("categoryId", value === "null" ? undefined : Number(value))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
@@ -459,26 +459,7 @@ export function PublicationBasicFields({ form }: PublicationBasicFieldsProps) {
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="pageViews">{text.fields.pageViews}</Label>
-              <Input
-                id="pageViews"
-                type="number"
-                {...register("pageViews")}
-              />
-            </div>
 
-            <div>
-              <Label htmlFor="downloads">{text.fields.downloads}</Label>
-              <Input
-                id="downloads"
-                type="number"
-                {...register("downloads")}
-              />
-            </div>
-          </div>
 
           {/* Status */}
           <div className="flex flex-col space-y-4">

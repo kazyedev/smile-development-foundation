@@ -79,6 +79,7 @@ export const insertPublicationSchema = createInsertSchema(publications, {
   slugAr: z.string().min(1).max(200),
   pageViews: z.number().int().min(0).optional(),
   downloads: z.number().int().min(0).optional(),
+  publishedAt: z.union([z.string(), z.date()]).nullable().optional(),
 });
 
 export const selectPublicationSchema = createSelectSchema(publications);

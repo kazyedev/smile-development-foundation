@@ -38,8 +38,6 @@ const publicationSchema = z.object({
   keywordsAr: z.array(z.string()).default([]),
   tagsEn: z.array(z.string()).default([]),
   tagsAr: z.array(z.string()).default([]),
-  pageViews: z.number().default(0).optional(),
-  downloads: z.number().default(0).optional(),
   isPublished: z.boolean().default(false),
   publishedAt: z.string().nullable().optional(),
 });
@@ -105,8 +103,6 @@ export default function NewPublicationPage() {
       keywordsAr: [],
       tagsEn: [],
       tagsAr: [],
-      pageViews: 0,
-      downloads: 0,
       isPublished: false,
       publishedAt: null,
     },
