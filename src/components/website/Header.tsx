@@ -71,7 +71,7 @@ export default function Header() {
       { label: 'Images', labelAr: 'الصور', href: `/${currentLocale}/media/images` },
       { label: 'Videos', labelAr: 'الفيديوهات', href: `/${currentLocale}/media/videos` },
       { label: 'Activities', labelAr: 'الأنشطة', href: `/${currentLocale}/activities` },
-      // { label: 'Publications', labelAr: 'النشرات', href: `/${currentLocale}/media/publications` },
+      { label: 'Publications', labelAr: 'النشرات', href: `/${currentLocale}/media/publications` },
       { label: 'Reports', labelAr: 'التقارير', href: `/${currentLocale}/media/reports` },
       { label: 'Success Stories', labelAr: 'قصص النجاح', href: `/${currentLocale}/media/success-stories` },
     ],
@@ -179,7 +179,7 @@ export default function Header() {
           if (found) {
             // availability check
             const available = to === 'en' ? (typeof (found as any).isEnglish === 'boolean' ? (found as any).isEnglish : true)
-                                         : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
+              : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
             if (!available) {
               parts[1] = to;
               parts.splice(3); // go to /:locale/projects
@@ -250,7 +250,7 @@ export default function Header() {
           const found = mockStories.find(s => s.slugEn === slug || s.slugAr === slug);
           if (found) {
             const available = to === 'en' ? (typeof (found as any).isEnglish === 'boolean' ? (found as any).isEnglish : true)
-                                         : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
+              : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
             if (!available) {
               parts[1] = to;
               parts.splice(4); // /:locale/media/success-stories
@@ -264,7 +264,7 @@ export default function Header() {
           const found = mockPublications.find(p => p.slugEn === slug || p.slugAr === slug);
           if (found) {
             const available = to === 'en' ? (typeof (found as any).isEnglish === 'boolean' ? (found as any).isEnglish : true)
-                                         : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
+              : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
             if (!available) {
               parts[1] = to;
               parts.splice(4); // /:locale/media/publications
@@ -278,7 +278,7 @@ export default function Header() {
           const found = mockReports.find(p => p.slugEn === slug || p.slugAr === slug);
           if (found) {
             const available = to === 'en' ? (typeof (found as any).isEnglish === 'boolean' ? (found as any).isEnglish : true)
-                                         : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
+              : (typeof (found as any).isArabic === 'boolean' ? (found as any).isArabic : true);
             if (!available) {
               parts[1] = to;
               parts.splice(4); // /:locale/media/reports
@@ -313,11 +313,11 @@ export default function Header() {
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)]/5 via-transparent to-[var(--brand-secondary)]/5"></div>
         <div className="absolute inset-0 bg-[var(--background)]/95 backdrop-blur-xl"></div>
-        
+
         {/* Decorative Elements */}
         <div className="absolute top-0 left-0 w-32 h-1 bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)]"></div>
         <div className="absolute top-0 right-0 w-32 h-1 bg-gradient-to-l from-[var(--brand-primary)] to-[var(--brand-secondary)]"></div>
-        
+
         <div className="relative border-b border-[var(--border)]/50 shadow-lg shadow-[var(--brand-primary)]/5">
           <div className="container mx-auto px-8 py-4">
             {/* Main Navigation Row */}
@@ -347,7 +347,7 @@ export default function Header() {
               </motion.div>
 
               {/* Enhanced Desktop Navigation */}
-              <motion.nav 
+              <motion.nav
                 className="hidden lg:flex items-center"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -357,11 +357,10 @@ export default function Header() {
                   {/* Home Link */}
                   <Link
                     href={`/${currentLocale}`}
-                    className={`px-4 py-2 rounded-full transition-all duration-300 font-medium ${
-                      pathname === `/${currentLocale}` 
-                        ? 'bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white shadow-lg' 
+                    className={`px-4 py-2 rounded-full transition-all duration-300 font-medium ${pathname === `/${currentLocale}`
+                        ? 'bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white shadow-lg'
                         : 'hover:bg-[var(--accent)] text-[var(--foreground)] hover:text-[var(--brand-primary)]'
-                    }`}
+                      }`}
                   >
                     {currentLocale === 'en' ? 'Home' : 'الرئيسية'}
                   </Link>
@@ -380,17 +379,15 @@ export default function Header() {
                         onMouseLeave={handleMouseLeave}
                       >
                         <button
-                          className={`px-4 py-2 rounded-full flex items-center gap-2 cursor-pointer transition-all duration-300 font-medium ${
-                            isActive 
-                              ? 'bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white shadow-lg' 
+                          className={`px-4 py-2 rounded-full flex items-center gap-2 cursor-pointer transition-all duration-300 font-medium ${isActive
+                              ? 'bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white shadow-lg'
                               : 'hover:bg-[var(--accent)] text-[var(--foreground)] hover:text-[var(--brand-primary)]'
-                          }`}
+                            }`}
                         >
                           {menuLabels[currentLocale][key as MenuKey]}
-                          <ChevronDown 
-                            className={`w-4 h-4 transition-transform duration-300 ${
-                              delayedHoveredMenu === key ? 'rotate-180' : ''
-                            }`}
+                          <ChevronDown
+                            className={`w-4 h-4 transition-transform duration-300 ${delayedHoveredMenu === key ? 'rotate-180' : ''
+                              }`}
                           />
                         </button>
 
@@ -416,16 +413,14 @@ export default function Header() {
                                       initial={{ opacity: 0, x: -10 }}
                                       animate={{ opacity: 1, x: 0 }}
                                       transition={{ delay: index * 0.05 }}
-                                      className={`rounded-xl transition-all duration-200 ${
-                                        isItemActive
+                                      className={`rounded-xl transition-all duration-200 ${isItemActive
                                           ? 'bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white shadow-md'
                                           : 'hover:bg-[var(--accent)] hover:shadow-sm'
-                                      }`}
+                                        }`}
                                     >
                                       <Link href={href} className="flex items-center px-4 py-3 text-sm font-medium">
-                                        <div className={`w-2 h-2 rounded-full mr-3 ${
-                                          isItemActive ? 'bg-white' : 'bg-[var(--brand-secondary)]'
-                                        }`}></div>
+                                        <div className={`w-2 h-2 rounded-full mr-3 ${isItemActive ? 'bg-white' : 'bg-[var(--brand-secondary)]'
+                                          }`}></div>
                                         {currentLocale === 'en' ? label : labelAr}
                                       </Link>
                                     </motion.li>
@@ -442,14 +437,14 @@ export default function Header() {
               </motion.nav>
 
               {/* Enhanced Action Controls */}
-              <motion.div 
+              <motion.div
                 className="flex items-center gap-3"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
                 {/* Donate Button */}
-                <Link 
+                <Link
                   href={`/${currentLocale}/donate`}
                   className="hidden md:flex items-center gap-2 bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] hover:from-[var(--brand-secondary)] hover:to-[var(--brand-primary)] px-6 py-2.5 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
@@ -460,17 +455,17 @@ export default function Header() {
                 {/* Desktop Utility Controls */}
                 <div className="hidden md:flex items-center bg-[var(--card)]/50 backdrop-blur-sm rounded-full px-2 py-1 shadow-md border border-[var(--border)]/30">
                   {/* Search Button */}
-                  <button 
-                    onClick={openSearch} 
-                    className="p-2.5 rounded-full hover:bg-[var(--accent)] transition-all duration-200 group" 
+                  <button
+                    onClick={openSearch}
+                    className="p-2.5 rounded-full hover:bg-[var(--accent)] transition-all duration-200 group"
                     aria-label="Search"
                   >
                     <LucideSearch className="w-5 h-5 group-hover:text-[var(--brand-primary)] transition-colors" />
                   </button>
 
                   {/* Theme Toggle */}
-                  <button 
-                    onClick={toggleTheme} 
+                  <button
+                    onClick={toggleTheme}
                     className="p-2.5 rounded-full hover:bg-[var(--accent)] transition-all duration-200 group"
                     aria-label="Toggle theme"
                   >
@@ -484,9 +479,9 @@ export default function Header() {
                   </button>
 
                   {/* Language Toggle */}
-                  <button 
-                    onClick={toggleLocale} 
-                    className="p-2.5 rounded-full hover:bg-[var(--accent)] transition-all duration-200 group" 
+                  <button
+                    onClick={toggleLocale}
+                    className="p-2.5 rounded-full hover:bg-[var(--accent)] transition-all duration-200 group"
                     aria-label="Toggle language"
                   >
                     <div className="flex items-center gap-1">
@@ -501,9 +496,9 @@ export default function Header() {
                 {/* Mobile Controls */}
                 <div className="md:hidden flex items-center gap-2">
                   {/* Mobile Language Toggle */}
-                  <button 
-                    onClick={toggleLocale} 
-                    className="p-2.5 rounded-full bg-[var(--card)]/50 backdrop-blur-sm border border-[var(--border)]/30 shadow-md hover:bg-[var(--accent)] transition-all duration-200 group" 
+                  <button
+                    onClick={toggleLocale}
+                    className="p-2.5 rounded-full bg-[var(--card)]/50 backdrop-blur-sm border border-[var(--border)]/30 shadow-md hover:bg-[var(--accent)] transition-all duration-200 group"
                     aria-label="Toggle language"
                   >
                     <div className="flex items-center gap-1">
@@ -515,8 +510,8 @@ export default function Header() {
                   </button>
 
                   {/* Mobile Menu Toggle */}
-                  <button 
-                    className="p-2.5 rounded-full bg-[var(--card)]/50 backdrop-blur-sm border border-[var(--border)]/30 shadow-md" 
+                  <button
+                    className="p-2.5 rounded-full bg-[var(--card)]/50 backdrop-blur-sm border border-[var(--border)]/30 shadow-md"
                     onClick={() => setMobileOpen(!mobileOpen)}
                     aria-label="Toggle mobile menu"
                   >
@@ -541,7 +536,7 @@ export default function Header() {
               className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[60]"
               onClick={() => setMobileOpen(false)}
             />
-            
+
             {/* Mobile Menu Panel */}
             <motion.div
               initial={{ x: currentLocale === 'ar' ? 400 : -400, opacity: 0 }}
@@ -568,7 +563,7 @@ export default function Header() {
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Close Button */}
                   <button
                     onClick={() => setMobileOpen(false)}
@@ -585,16 +580,14 @@ export default function Header() {
                 {/* Home Link */}
                 <Link
                   href={`/${currentLocale}`}
-                  className={`flex items-center gap-3 p-4 rounded-2xl mb-4 transition-all duration-200 ${
-                    pathname === `/${currentLocale}`
+                  className={`flex items-center gap-3 p-4 rounded-2xl mb-4 transition-all duration-200 ${pathname === `/${currentLocale}`
                       ? 'bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white shadow-lg'
                       : 'hover:bg-[var(--accent)] text-[var(--foreground)]'
-                  }`}
+                    }`}
                   onClick={() => setMobileOpen(false)}
                 >
-                  <div className={`w-2 h-2 rounded-full ${
-                    pathname === `/${currentLocale}` ? 'bg-white' : 'bg-[var(--brand-primary)]'
-                  }`}></div>
+                  <div className={`w-2 h-2 rounded-full ${pathname === `/${currentLocale}` ? 'bg-white' : 'bg-[var(--brand-primary)]'
+                    }`}></div>
                   <span className="font-semibold">
                     {currentLocale === 'en' ? 'Home' : 'الرئيسية'}
                   </span>
@@ -614,16 +607,14 @@ export default function Header() {
                           <Link
                             key={href}
                             href={href}
-                            className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
-                              isActive
+                            className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${isActive
                                 ? 'bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white shadow-md'
                                 : 'hover:bg-[var(--accent)] text-[var(--foreground)]'
-                            }`}
+                              }`}
                             onClick={() => setMobileOpen(false)}
                           >
-                            <div className={`w-2 h-2 rounded-full ${
-                              isActive ? 'bg-white' : 'bg-[var(--brand-secondary)]'
-                            }`}></div>
+                            <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-[var(--brand-secondary)]'
+                              }`}></div>
                             <span className="text-sm font-medium">
                               {currentLocale === 'en' ? label : labelAr}
                             </span>
@@ -649,17 +640,17 @@ export default function Header() {
 
                 {/* Utility Controls */}
                 <div className="flex items-center justify-center gap-2">
-                  <button 
-                    onClick={openSearch} 
+                  <button
+                    onClick={openSearch}
                     className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[var(--card)] border border-[var(--border)]/30 hover:bg-[var(--accent)] transition-all"
                     aria-label="Search"
                   >
                     <LucideSearch className="w-4 h-4" />
                     <span className="text-sm">{currentLocale === 'en' ? 'Search' : 'بحث'}</span>
                   </button>
-                  
-                  <button 
-                    onClick={toggleTheme} 
+
+                  <button
+                    onClick={toggleTheme}
                     className="p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]/30 hover:bg-[var(--accent)] transition-all"
                     aria-label="Toggle theme"
                   >
@@ -675,7 +666,7 @@ export default function Header() {
           </>
         )}
       </AnimatePresence>
-      
+
       {/* Enhanced Search Dialog */}
       <AnimatePresence>
         {searchOpen && (
@@ -733,17 +724,17 @@ export default function Header() {
                         {currentLocale === 'en' ? 'Try: "water project", "education", "sustainability"' : 'جرب: "مشروع المياه"، "التعليم"، "الاستدامة"'}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
-                      <button 
-                        type="button" 
-                        onClick={() => setSearchOpen(false)} 
+                      <button
+                        type="button"
+                        onClick={() => setSearchOpen(false)}
                         className="px-4 py-2 rounded-xl text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--accent)] transition-all"
                       >
                         {currentLocale === 'en' ? 'Cancel' : 'إلغاء'}
                       </button>
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-secondary)] text-white rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105"
                       >
                         <LucideSearch className="w-4 h-4" />
