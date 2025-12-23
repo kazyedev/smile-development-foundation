@@ -28,13 +28,13 @@ interface OverviewSectionProps {
   isLocaleEnglish: boolean;
 }
 
-export default function OverviewSection({ 
-  overview, 
-  story, 
-  mission, 
-  vision, 
-  locale, 
-  isLocaleEnglish 
+export default function OverviewSection({
+  overview,
+  story,
+  mission,
+  vision,
+  locale,
+  isLocaleEnglish
 }: OverviewSectionProps) {
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
@@ -54,7 +54,7 @@ export default function OverviewSection({
     <section className="py-24 bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           className="text-center mb-20"
           initial="initial"
           whileInView="animate"
@@ -71,7 +71,7 @@ export default function OverviewSection({
         </motion.div>
 
         {/* Main Content Grid */}
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20"
           initial="initial"
           whileInView="animate"
@@ -106,7 +106,7 @@ export default function OverviewSection({
           </motion.div>
 
           {/* Right Image */}
-          <motion.div 
+          <motion.div
             className="relative"
             variants={fadeInUp}
           >
@@ -120,7 +120,7 @@ export default function OverviewSection({
               />
               {/* Overlay with brand colors */}
               <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/20 via-transparent to-transparent" />
-              
+
               {/* Floating icon */}
               <div className="absolute top-4 right-4 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
                 <Sparkles className="w-6 h-6 text-brand-primary" />
@@ -130,7 +130,7 @@ export default function OverviewSection({
         </motion.div>
 
         {/* Mission, Vision, Story Cards */}
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
           initial="initial"
           whileInView="animate"
@@ -188,8 +188,8 @@ export default function OverviewSection({
                   {isLocaleEnglish ? story.title.en : story.title.ar}
                 </h3>
                 <p className="text-muted-foreground leading-relaxed text-sm">
-                  {isLocaleEnglish 
-                    ? story.content.en.substring(0, 120) + "..." 
+                  {isLocaleEnglish
+                    ? story.content.en.substring(0, 120) + "..."
                     : story.content.ar.substring(0, 120) + "..."
                   }
                 </p>

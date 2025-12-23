@@ -37,13 +37,13 @@ interface WhoWeAreSectionProps {
 
 export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlEn, videoUrlAr, visionEn, visionAr, messageEn, messageAr, valuesEn, valuesAr, goalsEn, goalsAr, policesEn, policesAr, rulesEn, rulesAr, seoAnnouncementEn, seoAnnouncementAr, cards }: WhoWeAreSectionProps) {
     const isLocaleEn = locale === 'en';
-    
+
     // Single state to manage which accordion is open (only one at a time)
     const [openAccordion, setOpenAccordion] = useState<string | null>(null);
-    
+
     // State to control video overlay visibility
     const [showVideoOverlay, setShowVideoOverlay] = useState(true);
-    
+
     // Toggle function that ensures only one accordion is open
     const toggleAccordion = (accordionId: string) => {
         setOpenAccordion(prev => prev === accordionId ? null : accordionId);
@@ -82,9 +82,9 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
         children?: React.ReactNode;
     }) => {
         const isOpen = openAccordion === id;
-        
+
         return (
-            <motion.div 
+            <motion.div
                 className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-500 hover:shadow-xl dark:hover:shadow-gray-900/30 hover:border-brand-primary/20"
                 whileHover={{ y: -2 }}
                 layout
@@ -93,12 +93,11 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                     className="w-full flex items-center gap-4 p-6 cursor-pointer hover:bg-gradient-to-r hover:from-brand-primary/5 hover:to-brand-secondary/5 dark:hover:from-brand-primary/10 dark:hover:to-brand-secondary/10 transition-all duration-300"
                     onClick={() => toggleAccordion(id)}
                 >
-                    <motion.div 
-                        className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                            isOpen 
-                                ? 'bg-gradient-to-br from-brand-primary to-brand-secondary text-white scale-110 shadow-lg' 
+                    <motion.div
+                        className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${isOpen
+                                ? 'bg-gradient-to-br from-brand-primary to-brand-secondary text-white scale-110 shadow-lg'
                                 : 'bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 dark:from-brand-primary/10 dark:to-brand-secondary/10 text-brand-primary'
-                        }`}
+                            }`}
                         animate={isOpen ? { rotate: 360 } : { rotate: 0 }}
                         transition={{ duration: 0.5 }}
                     >
@@ -107,14 +106,14 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                     <h3 className="flex-1 text-lg font-bold text-gray-900 dark:text-gray-100 transition-colors duration-300">
                         {title}
                     </h3>
-                    <motion.div 
+                    <motion.div
                         className={`transition-all duration-500 ease-out ${isOpen ? 'text-brand-primary' : 'text-gray-400 dark:text-gray-500'}`}
                         animate={{ rotate: isOpen ? 180 : 0 }}
                     >
                         <ArrowDown className="w-5 h-5" />
                     </motion.div>
                 </div>
-                
+
                 {/* Smooth accordion content with proper height animation */}
                 <AnimatePresence>
                     {isOpen && (
@@ -152,7 +151,7 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Hero Section */}
-                <motion.div 
+                <motion.div
                     className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-24"
                     initial={{ opacity: 0, y: 60 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -164,24 +163,24 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                                 <Sparkles className="w-4 h-4" />
                                 {isLocaleEn ? "About Our Foundation" : "عن مؤسستنا"}
                             </div>
-                            
+
                             <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight transition-colors duration-300">
                                 {isLocaleEn ? "Who We Are" : "من نحن"}
                             </h1>
-                            
+
                             <div className="w-32 h-1 bg-gradient-to-r from-brand-primary to-brand-secondary rounded-full"></div>
                         </div>
-                        
+
                         <p className="text-xl text-muted-foreground leading-relaxed transition-colors duration-300">
                             {isLocaleEn ? bioEn : bioAr}
                         </p>
-                        
+
                         {/* <div className="inline-block px-6 py-3 bg-gradient-to-r from-brand-primary/10 to-brand-secondary/10 dark:from-brand-primary/20 dark:to-brand-secondary/20 text-brand-primary rounded-xl text-base font-medium transition-colors duration-300 border border-brand-primary/20">
                             {isLocaleEn ? seoAnnouncementEn : seoAnnouncementAr}
                         </div> */}
                     </div>
-                    
-                    <motion.div 
+
+                    <motion.div
                         className="relative"
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -202,13 +201,13 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                 </motion.div>
 
                 {/* Vision & Mission Grid */}
-                <motion.div 
+                <motion.div
                     className="grid md:grid-cols-3 gap-8 mb-24"
                     initial={{ opacity: 0, y: 60 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
                 >
-                    <motion.div 
+                    <motion.div
                         className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 hover:shadow-2xl dark:hover:shadow-gray-900/30 transition-all duration-500 group hover:-translate-y-2"
                         whileHover={{ y: -8 }}
                     >
@@ -223,7 +222,7 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                         </p>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                         className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 hover:shadow-2xl dark:hover:shadow-gray-900/30 transition-all duration-500 group hover:-translate-y-2"
                         whileHover={{ y: -8 }}
                         transition={{ delay: 0.1 }}
@@ -239,7 +238,7 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                         </p>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                         className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 hover:shadow-2xl dark:hover:shadow-gray-900/30 transition-all duration-500 group hover:-translate-y-2"
                         whileHover={{ y: -8 }}
                         transition={{ delay: 0.2 }}
@@ -258,7 +257,7 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
 
                 {/* Video and Accordion Section */}
                 {(videoUrlEn || videoUrlAr) && (
-                    <motion.div 
+                    <motion.div
                         className="mb-24"
                         initial={{ opacity: 0, y: 60 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -277,7 +276,7 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                                         title="YouTube video player"
                                     />
                                     {showVideoOverlay && (
-                                        <div 
+                                        <div
                                             className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 cursor-pointer z-10"
                                             onClick={() => setShowVideoOverlay(false)}
                                             title={isLocaleEn ? "Click to watch video" : "انقر لمشاهدة الفيديو"}
@@ -302,8 +301,8 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                                 >
                                     <ul className="space-y-4">
                                         {(isLocaleEn ? goalsEn : goalsAr).map((goal, index) => (
-                                            <motion.li 
-                                                key={index} 
+                                            <motion.li
+                                                key={index}
                                                 className="flex items-start gap-3"
                                                 initial={{ opacity: 0, x: -20 }}
                                                 animate={{ opacity: 1, x: 0 }}
@@ -325,8 +324,8 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                                 >
                                     <ul className="space-y-4">
                                         {(isLocaleEn ? policesEn : policesAr).map((policy, index) => (
-                                            <motion.li 
-                                                key={index} 
+                                            <motion.li
+                                                key={index}
                                                 className="flex items-start gap-3"
                                                 initial={{ opacity: 0, x: -20 }}
                                                 animate={{ opacity: 1, x: 0 }}
@@ -348,8 +347,8 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                                 >
                                     <ul className="space-y-4">
                                         {(isLocaleEn ? rulesEn : rulesAr).map((rule, index) => (
-                                            <motion.li 
-                                                key={index} 
+                                            <motion.li
+                                                key={index}
                                                 className="flex items-start gap-3"
                                                 initial={{ opacity: 0, x: -20 }}
                                                 animate={{ opacity: 1, x: 0 }}
@@ -363,13 +362,33 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                                         ))}
                                     </ul>
                                 </CollapsibleSection>
+
+                                {/* Read More About Us Button */}
+                                <motion.div
+                                    whileHover={{ y: -2 }}
+                                >
+                                    <Link
+                                        href="/about-us"
+                                        className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-500 hover:shadow-xl dark:hover:shadow-gray-900/30 hover:border-brand-primary/20 flex items-center gap-4 p-6 hover:bg-gradient-to-r hover:from-brand-primary/5 hover:to-brand-secondary/5 dark:hover:from-brand-primary/10 dark:hover:to-brand-secondary/10 group"
+                                    >
+                                        <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 dark:from-brand-primary/10 dark:to-brand-secondary/10 text-brand-primary group-hover:bg-gradient-to-br group-hover:from-brand-primary group-hover:to-brand-secondary group-hover:text-white group-hover:scale-110 group-hover:shadow-lg">
+                                            <Users className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="flex-1 text-lg font-bold text-gray-900 dark:text-gray-100 transition-colors duration-300">
+                                            {isLocaleEn ? "Read More About Us" : "اقرأ المزيد عنا"}
+                                        </h3>
+                                        <div className="text-gray-400 dark:text-gray-500 transition-all duration-300 group-hover:text-brand-primary group-hover:translate-x-1 rtl:group-hover:-translate-x-1">
+                                            <ArrowDown className="w-5 h-5 -rotate-90 rtl:rotate-90" />
+                                        </div>
+                                    </Link>
+                                </motion.div>
                             </div>
                         </div>
                     </motion.div>
                 )}
 
                 {/* Cards Section - Single Row */}
-                <motion.div 
+                <motion.div
                     className="mb-20"
                     initial={{ opacity: 0, y: 60 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -380,7 +399,7 @@ export default function WhoWeAreSection({ locale, bioEn, bioAr, image, videoUrlE
                             {isLocaleEn ? "Explore Our Work" : "اكتشف عملنا"}
                         </h2>
                         <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                            {isLocaleEn 
+                            {isLocaleEn
                                 ? "Discover the various areas where we make a difference in communities around the world."
                                 : "اكتشف المجالات المختلفة التي نحدث فيها فرقاً في المجتمعات حول العالم."
                             }
