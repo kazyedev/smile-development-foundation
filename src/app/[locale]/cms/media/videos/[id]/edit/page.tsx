@@ -19,22 +19,22 @@ const videoSchema = z.object({
   descriptionEn: z.string().optional(),
   descriptionAr: z.string().optional(),
   mimeType: z.string().regex(/^video\//, "MIME type must be a video type"),
-  size: z.coerce.number().min(1, "Size must be greater than 0"),
-  width: z.coerce.number().min(1, "Width must be greater than 0"),
-  height: z.coerce.number().min(1, "Height must be greater than 0"),
+  size: z.number().min(1, "Size must be greater than 0"),
+  width: z.number().min(1, "Width must be greater than 0"),
+  height: z.number().min(1, "Height must be greater than 0"),
   url: z.string().url("Must be a valid URL"),
   locationEn: z.string().optional(),
   locationAr: z.string().optional(),
-  isPublic: z.boolean().default(true),
+  isPublic: z.boolean(),
   categoryId: z.number().optional().nullable(),
   slugEn: z.string().min(1, "English slug is required"),
   slugAr: z.string().min(1, "Arabic slug is required"),
-  keywordsEn: z.array(z.string()).default([]),
-  keywordsAr: z.array(z.string()).default([]),
-  tagsEn: z.array(z.string()).default([]),
-  tagsAr: z.array(z.string()).default([]),
-  views: z.number().default(0),
-  isPublished: z.boolean().default(false),
+  keywordsEn: z.array(z.string()),
+  keywordsAr: z.array(z.string()),
+  tagsEn: z.array(z.string()),
+  tagsAr: z.array(z.string()),
+  views: z.number(),
+  isPublished: z.boolean(),
   publishedAt: z.string().nullable().optional(),
 });
 
@@ -116,7 +116,7 @@ export default function EditVideoPage({ params }: EditVideoPageProps) {
       try {
         const resolvedParams = await params;
         setVideoId(resolvedParams.id);
-        
+
         const response = await fetch(`/api/cms/videos/${resolvedParams.id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch video");
@@ -164,7 +164,7 @@ export default function EditVideoPage({ params }: EditVideoPageProps) {
 
   const onSubmit = async (data: VideoFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch(`/api/cms/videos/${videoId}`, {
         method: "PATCH",
@@ -182,7 +182,7 @@ export default function EditVideoPage({ params }: EditVideoPageProps) {
 
       toast.success(text.updateSuccess);
 
-      router.push(`/${locale}/cms/videos`);
+      router.push(`/${locale}/cms/media/videos`);
     } catch (error) {
       console.error("Error updating video:", error);
       toast.error(error instanceof Error ? error.message : text.updateError);
@@ -224,7 +224,7 @@ export default function EditVideoPage({ params }: EditVideoPageProps) {
               {text.back}
             </Button>
           </div>
-          
+
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">{text.title}</CardTitle>
