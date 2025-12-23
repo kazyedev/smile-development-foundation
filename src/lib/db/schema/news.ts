@@ -68,13 +68,18 @@ export const insertNewsSchema = createInsertSchema(news, {
   slugEn: z.string().min(1).max(200),
   slugAr: z.string().min(1).max(200),
   featuredImageUrl: z.string().url(),
-  categoryId: z.number().int().positive().optional(),
-  programId: z.number().int().positive().optional(),
-  projectId: z.number().int().positive().optional(),
-  activityId: z.number().int().positive().optional(),
+  categoryId: z.number().int().positive().optional().nullable(),
+  programId: z.number().int().positive().optional().nullable(),
+  projectId: z.number().int().positive().optional().nullable(),
+  activityId: z.number().int().positive().optional().nullable(),
   readTime: z.number().int().min(0).optional(),
   pageViews: z.number().int().min(0).optional(),
   authorId: z.string().uuid(),
+  publishedAt: z.union([z.date(), z.string(), z.null()]).optional().transform((val) => {
+    if (!val) return null;
+    if (val instanceof Date) return val;
+    return new Date(val);
+  }),
 });
 
 export const selectNewsSchema = createSelectSchema(news);
