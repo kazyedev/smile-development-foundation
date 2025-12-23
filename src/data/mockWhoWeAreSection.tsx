@@ -32,18 +32,18 @@ export const mockWhoWeAreSection: WhoWeAreSectionProps = {
   bioEn:
     "We are a non-profit organization dedicated to creating sustainable solutions for communities in need. Our work spans education, healthcare, environment, and economic empowerment.",
   bioAr:
-    "نحن منظمة غير ربحية مكرسة لإنشاء حلول مستدامة للمجتمعات المحتاجة. يمتد عملنا ليشمل التعليم والرعاية الصحية والبيئة والتمكين الاقتصادي.",
+    "مؤسسة ابتسامة التنموية هي منظمة إنسانية تعمل في اليمن لتقديم الدعم والمساعدة للفئات المحتاجة والهشة في المجتمع، بما في ذلك الأطفال، والأفراد ذوي الاحتياجات الخاصة. وتركز على تلبية الاحتياجات الأساسية : «الغذاء والصحة والتعليم » بهدف تحقيق حياة آمنة ومستقرة للفئات المستهدفة",
   image: "https://lisfqqpzsqrccikkffqr.supabase.co/storage/v1/object/public/media/profile.jpeg",
   videoUrlEn: "https://www.youtube.com/embed/g7hncMpviRY?si=o8DvaHRp3lhIxsVf",
   videoUrlAr: "https://www.youtube.com/embed/g7hncMpviRY?si=o8DvaHRp3lhIxsVf",
   visionEn:
     "A world where every individual has access to basic needs, equal opportunities, and the ability to shape their future.",
   visionAr:
-    "عالم يتمتع فيه كل فرد بالاحتياجات الأساسية والفرص المتساوية والقدرة على تشكيل مستقبله.",
+    "تحقيق التنمية الشاملة والعدالة الاجتماعية في اليمن من خلال تقديم الدعم الإنساني لتحسين حياة الأفراد والأسر",
   messageEn:
     "Our message is one of hope, collaboration, and lasting change. Together, we can build resilient communities.",
   messageAr:
-    "رسالتنا هي الأمل والتعاون والتغيير المستدام. معًا يمكننا بناء مجتمعات قادرة على الصمود.",
+    "حشد الجهود وتوظيف الطاقات لصناعة البسمة على وجوه المحتاجين في اليمن من خلال مجموعة من البرامج التعليمية والصحية والاغاثية والتنموية",
   valuesEn:
     "Integrity, Transparency, Innovation, Sustainability, and Respect for Diversity.",
   valuesAr:
